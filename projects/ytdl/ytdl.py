@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""ytdl — yt-dlp wrapper. Downloads to D:/Downloads (see config.toml)."""
+"""ytdl — yt-dlp wrapper. Downloads to the configured Videos folder."""
 
+import os
 import subprocess
 import sys
 import tomllib
@@ -22,21 +23,28 @@ def load_config() -> dict:
 
 
 def resolve_cookie_file_path(raw: str) -> Path:
-    p = Path(raw.strip()).expanduser()
+    p = Path(os.path.expandvars(raw.strip())).expanduser()
+    if not p.is_absolute():
+        p = SCRIPT_DIR / p
+    return p
+
+
+def resolve_download_dir(raw: str) -> Path:
+    p = Path(os.path.expandvars(raw.strip())).expanduser()
     if not p.is_absolute():
         p = SCRIPT_DIR / p
     return p
 
 
 def build_args(url: str, cfg: dict, quality: str | None, audio_only: bool) -> tuple[list[str], bool]:
-    out_dir = cfg["paths"]["download_dir"]
+    out_dir = resolve_download_dir(cfg["paths"]["download_dir"])
     fmt = cfg["defaults"]["format"]
     q = quality or cfg["defaults"]["quality"]
 
     ccfg = cfg.get("cookies") or {}
     cookie_file_raw = (ccfg.get("file") or "").strip()
     cookie_spec = (ccfg.get("from_browser") or "chrome:Default").strip()
-    args = ["yt-dlp", "--no-mtime", "--no-playlist", "-o", f"{out_dir}/%(title)s.%(ext)s"]
+    args = ["yt-dlp", "--no-mtime", "--no-playlist", "-o", str(out_dir / "%(title)s.%(ext)s")]
     used_browser_cookies = False
 
     cookie_path: Path | None = None
@@ -106,13 +114,16 @@ def replace_browser_cookie_spec(cmd: list[str], new_spec: str) -> list[str]:
 
 
 def main():
+    cfg = load_config()
+    download_dir = resolve_download_dir(cfg["paths"]["download_dir"])
+
     if len(sys.argv) < 2 or sys.argv[1] in ("-h", "--help"):
         console.print(Panel(
             "[bold]ytdl[/bold] [cyan]<url>[/cyan] [dim][[--audio] [--quality 1080|720|480|best] [--playlist]][/dim]\n\n"
             "  [cyan]--audio[/cyan]       Download audio only (mp3)\n"
             "  [cyan]--quality[/cyan]     Video quality: best (default), 1080, 720, 480\n"
             "  [cyan]--playlist[/cyan]    Download full playlist (single video by default)\n\n"
-            "Downloads go to [yellow]D:/Downloads[/yellow]",
+            f"Downloads go to [yellow]{download_dir}[/yellow]",
             title="yt-dlp wrapper",
             border_style="blue"
         ))
@@ -134,7 +145,6 @@ def main():
         console.print("[red]Error:[/red] No URL provided.")
         sys.exit(1)
 
-    cfg = load_config()
     cmd, used_browser_cookies = build_args(url, cfg, quality, audio_only)
     if playlist:
         cmd = [c for c in cmd if c != "--no-playlist"]
@@ -179,7 +189,7 @@ def main():
                 "[yellow]Note:[/yellow] Download succeeded without browser cookies. "
                 "For login-gated videos, export Netscape cookies.txt to use stable cookie auth."
             )
-        console.print(f"\n[bold green]✓[/bold green] Saved to [yellow]{cfg['paths']['download_dir']}[/yellow]")
+        console.print(f"\n[bold green]✓[/bold green] Saved to [yellow]{download_dir}[/yellow]")
     else:
         console.print("\n[bold red]✗[/bold red] Download failed.")
         if "xhamster.com" in url:

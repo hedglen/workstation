@@ -4,7 +4,7 @@ Batch rename and move video files from a Downloads inbox into a structured media
 
 ## Workflow
 
-1. Drop downloaded videos into `R:\Media\x\dl` (matches `ytdl` / `dl` output)
+1. Move videos you want organized into `R:\Media\x\dl`
 2. Run `orgmed` to preview, `orgmed --apply` to commit
 3. Or run `orgmedx` to move everything straight to `x` and apply immediately
 
@@ -38,7 +38,7 @@ R:\Media\
 │       └── Season 01\
 ├── Music Videos\
 └── x\                  # classified bucket; inbox is x\dl\ (sibling of loose files in x\)
-    └── dl\             # yt-dlp inbox (paths.inbox)
+    └── dl\             # organizer inbox (paths.inbox)
 ```
 
 ## Classification logic

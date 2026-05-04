@@ -1,6 +1,6 @@
 # ytdl
 
-yt-dlp wrapper with presets. Downloads go to `D:/Downloads` (see `config.toml`).
+yt-dlp wrapper with presets. Downloads go to the current user's `Videos` folder by default (see `config.toml`).
 
 ## Usage
 
