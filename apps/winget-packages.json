@@ -36,7 +36,6 @@
 
         { "PackageIdentifier": "Google.Chrome.EXE" },
         { "PackageIdentifier": "Mozilla.Firefox" },
-        { "PackageIdentifier": "Vivaldi.Vivaldi" },
 
         { "PackageIdentifier": "Daum.PotPlayer" },
         { "PackageIdentifier": "ShareX.ShareX" },
