@@ -232,44 +232,47 @@ function Install-DotfilesPythonProject {
         Write-Warn "Project not found — $RelativePath"
         return
     }
+    # uv is much faster and manifest-managed (astral-sh.uv); fall back to py + pip.
+    $uv = Get-Command uv -ErrorAction SilentlyContinue
     $py = Get-Command py -ErrorAction SilentlyContinue
-    if (-not $py) {
-        Write-Warn "Python launcher (py) not on PATH — skip venv for $RelativePath"
+    if (-not $uv -and -not $py) {
+        Write-Warn "Neither uv nor the Python launcher (py) is on PATH — skip venv for $RelativePath"
         return
     }
     $venvPy = Join-Path $proj ".venv\Scripts\python.exe"
     if ($DryRun) {
+        $tool = if ($uv) { "uv" } else { "pip" }
         if (Test-Path $venvPy) {
-            Write-Skip "Would pip install in $RelativePath (venv exists)"
+            Write-Skip "Would $tool install in $RelativePath (venv exists)"
         } else {
-            Write-Skip "Would create .venv and pip install in $RelativePath"
+            Write-Skip "Would create .venv ($tool) and install deps in $RelativePath"
         }
         return
     }
     Push-Location $proj
     try {
         if (-not (Test-Path $venvPy)) {
-            & py -3 -m venv .venv
+            if ($uv) { & uv venv .venv } else { & py -3 -m venv .venv }
             if ($LASTEXITCODE -ne 0) {
-                Write-Warn "python -m venv failed in $RelativePath"
+                Write-Warn "venv creation failed in $RelativePath"
                 return
             }
         }
-        $pip = Join-Path $proj ".venv\Scripts\pip.exe"
-        if (-not (Test-Path $pip)) {
-            Write-Warn "pip not found under $RelativePath\.venv"
-            return
-        }
         $prevEA = $ErrorActionPreference
         $ErrorActionPreference = 'Continue'
-        & $pip install --upgrade pip 2>$null | Out-Null
-        & $pip install @PipArgs
+        if ($uv) {
+            & uv pip install --python $venvPy @PipArgs
+        } else {
+            # uv-created venvs have no pip; python -m pip only works on stdlib venvs
+            & $venvPy -m pip install --upgrade pip 2>$null | Out-Null
+            & $venvPy -m pip install @PipArgs
+        }
         $exit = $LASTEXITCODE
         $ErrorActionPreference = $prevEA
         if ($exit -eq 0) {
             Write-OK "Python venv: $RelativePath"
         } else {
-            Write-Warn "pip install exited $exit for $RelativePath"
+            Write-Warn "dependency install exited $exit for $RelativePath"
         }
     } finally {
         Pop-Location

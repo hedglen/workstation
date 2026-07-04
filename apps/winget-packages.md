@@ -35,6 +35,7 @@ Categories in the JSON: **dev toolchain → AI desktop apps → .NET / Windows p
 
 | ID | What it does | Example use |
 |----|----------------|-------------|
+| **Microsoft.DotNet.SDK.10** | .NET 10 SDK (compiler, `dotnet` CLI, templates). | Build .NET projects; required for Rider/VS Community workflows |
 | **Microsoft.DotNet.DesktopRuntime.6–10** | .NET desktop runtime for WinForms/WPF per major version. | Run apps that ask for “.NET 8 Desktop Runtime” |
 | **Microsoft.DotNet.Runtime.6/8/9** | Console / ASP.NET .NET runtime (non-desktop). | Apps that need a specific .NET major without the desktop pack |
 | **Microsoft.VCRedist.2015+.x86/x64** | Visual C++ runtime for native Windows apps. | Avoid “VCRUNTIME140.dll missing” on a fresh install |

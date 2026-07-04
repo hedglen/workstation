@@ -254,20 +254,30 @@ function ytdl {
 Set-Alias dl ytdl
 function dll { yt-dlp --list-extractors @args }
 
+# uv-first venv dependency install; works on pip-based and uv-created (pip-less) venvs
+function Install-VenvRequirements {
+    param([string]$VenvPython, [string]$Requirements)
+    if (Get-Command uv -ErrorAction SilentlyContinue) {
+        uv pip install --upgrade --python $VenvPython -r $Requirements
+    } else {
+        & $VenvPython -m pip install --upgrade -r $Requirements
+    }
+}
+
 function Update-MediaOrganizerPip {
     & "$HOME\workstation\dotfiles\projects\media-organizer\.venv\Scripts\python.exe" -m pip install --upgrade pip
 }
 
 function Update-MediaOrganizerDeps {
-    & "$HOME\workstation\dotfiles\projects\media-organizer\.venv\Scripts\pip.exe" install -r "$HOME\workstation\dotfiles\projects\media-organizer\requirements.txt"
+    Install-VenvRequirements "$HOME\workstation\dotfiles\projects\media-organizer\.venv\Scripts\python.exe" "$HOME\workstation\dotfiles\projects\media-organizer\requirements.txt"
 }
 
 function Update-YtdlDeps {
-    & "$HOME\workstation\dotfiles\projects\ytdl\.venv\Scripts\pip.exe" install -U -r "$HOME\workstation\dotfiles\projects\ytdl\requirements.txt"
+    Install-VenvRequirements "$HOME\workstation\dotfiles\projects\ytdl\.venv\Scripts\python.exe" "$HOME\workstation\dotfiles\projects\ytdl\requirements.txt"
 }
 
 function Update-TranscribeDeps {
-    & "$HOME\workstation\tools\transcribe-env\Scripts\pip.exe" install -U -r "$HOME\workstation\dotfiles\scripts\requirements-transcribe.txt"
+    Install-VenvRequirements "$HOME\workstation\tools\transcribe-env\Scripts\python.exe" "$HOME\workstation\dotfiles\scripts\requirements-transcribe.txt"
 }
 
 function Update-ProjectVenvs {

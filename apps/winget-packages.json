@@ -27,6 +27,7 @@
     "Anthropic.Claude",
 
     // ── .NET / Windows platform runtimes ─────────────────────────────────────
+    "Microsoft.DotNet.SDK.10",
     "Microsoft.DotNet.DesktopRuntime.6",
     "Microsoft.DotNet.DesktopRuntime.8",
     "Microsoft.DotNet.DesktopRuntime.9",

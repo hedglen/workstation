@@ -20,6 +20,7 @@
     "glow",         // markdown in the terminal
     "delta",        // rich git diffs
     "sd",           // simple find-and-replace
+    "less",         // plain pager (referenced by the coding-tab cheat sheet)
 
     // ── Git & GitHub ─────────────────────────────────────────────────────────
     "gh",           // GitHub CLI
@@ -32,6 +33,7 @@
 
     // ── System & files ───────────────────────────────────────────────────────
     "dust",         // disk usage tree
+    "exiftool",     // media metadata read/write (pairs with media-organizer / yt-dlp)
     "eza",          // modern ls
     "fastfetch",    // system info banner
     "gsudo",        // sudo for Windows

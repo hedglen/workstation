@@ -20,6 +20,7 @@ Or install packages individually. These complement GUI and runtime apps in **`wi
 | **bat** | `cat` with syntax highlighting, paging, and Git integration. | Read a config or log with line numbers: `bat README.md` |
 | **delta** | Rich diffs in the terminal (often wired into Git). | `git diff` with side-by-side syntax highlighting after configuring Git to use `delta` |
 | **dust** | Disk usage by folder, fast and readable tree. | Find what is eating space: `dust` or `dust C:\Projects` |
+| **exiftool** | Read/write metadata in images, video, audio. | `exiftool -CreateDate photo.jpg`; batch-fix dates before organizing media |
 | **eza** | Modern `ls` with colors, icons, git status, tree. | `eza -la --git` in a repo |
 | **fastfetch** | System info summary in the terminal (neofetch-style). | Quick “what machine is this?” in a new shell |
 | **fd** | Fast, user-friendly `find` for files by name. | `fd '*.rs'` or `fd config` under the current tree |
@@ -32,6 +33,7 @@ Or install packages individually. These complement GUI and runtime apps in **`wi
 | **jq** | Query and transform JSON on the command line. | `curl -s API | jq '.items[].id'` |
 | **just** | Command runner / mini task runner (like a focused Makefile). | `just test` from a repo with a `justfile` |
 | **lazygit** | Full-screen TUI for Git staging, commits, branches, logs. | Quick interactive Git when you do not want the full GUI |
+| **less** | Plain terminal pager. | `less file.log`; the coding-tab cheat sheet references it |
 | **pandoc** | Converts between Markdown, Word, PDF, HTML, LaTeX, and more. | `pandoc report.md -o report.pdf` |
 | **rclone** | Syncs and mounts cloud storage (S3, Drive, Dropbox, etc.). | `rclone sync remote:bucket D:\backup` |
 | **ripgrep** (`rg`) | Extremely fast recursive text search with regex and filtering. | `rg 'TODO' --type rust` across a codebase |

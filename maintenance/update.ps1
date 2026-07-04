@@ -485,21 +485,28 @@ if (-not $SkipPython) {
         }
     )
 
+    $uvCmd = Get-Command uv -ErrorAction SilentlyContinue
     foreach ($t in $pythonTargets) {
         if (-not (Test-Path $t.py)) {
             Write-Skip "$($t.name): venv not found (run install.ps1 -NoApps to create)"
             continue
         }
         if ($DryRun) {
-            Write-Skip "$($t.name): would upgrade pip + $($t.deps -join ' ')"
+            $tool = if ($uvCmd) { 'uv' } else { 'pip' }
+            Write-Skip "$($t.name): would $tool install --upgrade $($t.deps -join ' ')"
             continue
         }
-        & $t.py -m pip install --upgrade pip --quiet 2>&1 | Out-Null
-        & $t.py -m pip install --upgrade @($t.deps) --quiet
+        if ($uvCmd) {
+            # uv works against any venv (pip-based or uv-created, which has no pip)
+            & uv pip install --upgrade --python $t.py @($t.deps) --quiet
+        } else {
+            & $t.py -m pip install --upgrade pip --quiet 2>&1 | Out-Null
+            & $t.py -m pip install --upgrade @($t.deps) --quiet
+        }
         if ($LASTEXITCODE -eq 0) {
             Write-OK "$($t.name): dependencies up to date"
         } else {
-            Write-Warn "$($t.name): pip exited $LASTEXITCODE"
+            Write-Warn "$($t.name): dependency install exited $LASTEXITCODE"
         }
     }
 }

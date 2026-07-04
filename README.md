@@ -73,7 +73,7 @@ This will:
 1. Clone this repo to `$HOME\workstation\dotfiles` (i.e. `%USERPROFILE%\workstation\dotfiles`)
 2. Clone **`hedglen-profile`**. Create **`workstation\tools`** if missing. Ensure **`dotfiles\scripts`** and **`dotfiles\projects`** exist; add **junctions** **`workstation\scripts`** → **`dotfiles\scripts`** and **`workstation\projects`** → **`dotfiles\projects`** when those paths are not already taken (legacy-friendly paths). Personal notes: **`notes/`** in this repo.
 3. Install apps: **`winget install`** per package ID from **`apps/winget-packages.json`** (JSONC with category comments — no `winget import`); then **Scoop** via **get.scoop.sh** (unless **`-NoScoop`**), the **extras** bucket, and **`scoop install`** from **`apps/scoop-packages.json`** (see **`apps/winget-packages.md`** / **`apps/scoop-packages.md`**).
-4. Create Python **`.venv`**s for **`projects\media-organizer`** and **`projects\ytdl`** and install dependencies (needs **`py`** on PATH; skipped by **`-NoPythonProjects`** or **`-ConfigsOnly`**).
+4. Create Python **`.venv`**s for **`projects\media-organizer`** and **`projects\ytdl`** and install dependencies from their `requirements.txt` (uses **`uv`** when available, else **`py`** + pip; skipped by **`-NoPythonProjects`** or **`-ConfigsOnly`**).
 5. Apply Windows tweaks (requires admin)
 6. Symlink all configs to their correct locations
 7. Install all VS Code extensions
@@ -499,7 +499,7 @@ For **how to use** installed apps and profile helpers (not just the install list
 
 | Category | Apps (from `apps/winget-packages.json`) |
 | --- | --- |
-| **Dev / runtimes** | Git, VS Code, **Notepad++**, Windsurf, Cursor, Claude (desktop), PowerShell 7, Python 3.14 + Python Launcher, **uv**, AutoHotkey, Node.js LTS, Deno, JetBrainsMono Nerd Font; .NET Desktop + .NET runtimes, VC++ redists, VCLibs, App Installer, UI XAML, Windows App Runtime; **WSL** + **Ubuntu 24.04** |
+| **Dev / runtimes** | Git, VS Code, **Notepad++**, Windsurf, Cursor, Claude (desktop), PowerShell 7, Python 3.14 + Python Launcher, **uv**, AutoHotkey, Node.js LTS, Deno, JetBrainsMono Nerd Font; .NET SDK 10 + .NET runtimes, VC++ redists, VCLibs, App Installer, UI XAML, Windows App Runtime; **WSL** + **Ubuntu 24.04** |
 | **CLI (Scoop)** | Full list in `apps/scoop-packages.json` — see **`apps/scoop-packages.md`** |
 | **Terminal / shell** | Windows Terminal, WezTerm, Oh My Posh (winget) |
 | **Browsers** | Chrome, Firefox Nightly |
