@@ -17,10 +17,12 @@ $RECYCLE.BIN/
 .vscode/
 *.swp
 
-# Bundled Python projects (local venv + secrets + cache — never commit)
+# Python cache — never commit, anywhere in the repo
+__pycache__/
+*.pyc
+
+# Bundled Python projects (local venv + secrets — never commit)
 projects/**/.venv/
-projects/**/__pycache__/
-projects/**/*.pyc
 projects/**/cookies.txt
 
 # mpv-config — see mpv-config/.gitignore for shader cache, watch_later, etc.
