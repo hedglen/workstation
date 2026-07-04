@@ -154,7 +154,7 @@ function M.spawn_tab_or_fallback(window, spawn_tbl, title, fallback_note)
           "Write-Host "
             .. "'"
             .. fallback_note
-            .. "' -ForegroundColor Yellow; Write-Host 'Install WSL: wsl --install -d Ubuntu-24.04' -ForegroundColor DarkGray\r\n"
+            .. "' -ForegroundColor Yellow; Write-Host 'Install WSL: wsl --install -d Ubuntu' -ForegroundColor DarkGray\r\n"
         )
       end)
     end

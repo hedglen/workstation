@@ -526,12 +526,13 @@ if (-not $AppsOnly -and -not $ConfigsOnly) {
         $distros = $rawDistroList -split "`r?`n" | ForEach-Object { $_.Trim() } | Where-Object { $_ }
         if ($distros.Count -eq 0) {
             if ($DryRun) {
-                Write-Skip "Would run: wsl --install -d Ubuntu-24.04 --no-launch"
+                Write-Skip "Would run: wsl --install -d Ubuntu --no-launch"
             } else {
                 try {
-                    & wsl.exe --install -d Ubuntu-24.04 --no-launch
+                    # "-d Ubuntu" registers the distro as "Ubuntu" — the name wezterm modules/distro.lua expects
+                    & wsl.exe --install -d Ubuntu --no-launch
                     if ($LASTEXITCODE -eq 0) {
-                        Write-OK "WSL distro bootstrap requested (Ubuntu-24.04)"
+                        Write-OK "WSL distro bootstrap requested (Ubuntu)"
                     } else {
                         Write-Warn "wsl --install exited $LASTEXITCODE (may require elevation/reboot)"
                     }

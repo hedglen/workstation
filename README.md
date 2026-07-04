@@ -499,17 +499,17 @@ For **how to use** installed apps and profile helpers (not just the install list
 
 | Category | Apps (from `apps/winget-packages.json`) |
 | --- | --- |
-| **Dev / runtimes** | Git, VS Code, **Notepad++**, Windsurf, Cursor, Claude (desktop), PowerShell 7, Python 3.14 + Python Launcher, **uv**, AutoHotkey, Node.js LTS, Deno, JetBrainsMono Nerd Font; .NET SDK 10 + .NET runtimes, VC++ redists, VCLibs, App Installer, UI XAML, Windows App Runtime; **WSL** + **Ubuntu 24.04** |
+| **Dev / runtimes** | Git, VS Code, **Notepad++**, Cursor, Claude (desktop), PowerShell 7, Python 3.14 + Python Launcher, **uv**, AutoHotkey, Node.js LTS, JetBrainsMono Nerd Font; .NET SDK 10 + .NET 8/10 runtimes, VC++ redists, VCLibs, App Installer, UI XAML, Windows App Runtime; **WSL** + **Ubuntu** |
 | **CLI (Scoop)** | Full list in `apps/scoop-packages.json` — see **`apps/scoop-packages.md`** |
 | **Terminal / shell** | Windows Terminal, WezTerm, Oh My Posh (winget) |
 | **Browsers** | Chrome, Firefox Nightly |
-| **Media** | PotPlayer, mpv (shinchiro build), VLC, ShareX, Bandicut, yt-dlp + FFmpeg, Mp3tag, XnViewMP, HandBrake, OBS Studio, MediaInfo, ImageGlass, ScreenToGif, SumatraPDF |
+| **Media** | mpv (shinchiro build, primary), VLC, ShareX, Bandicut, yt-dlp + FFmpeg, Mp3tag, XnViewMP, HandBrake, OBS Studio, MediaInfo, ImageGlass, ScreenToGif, SumatraPDF |
 | **File management** | Everything, Directory Opus, NanaZip, Bulk Rename Utility, WizTree |
-| **Productivity** | LibreOffice, Foxit PDF Editor, Calibre, Thorium, LocalSend, EarTrumpet, ModernCSV, DupeGuru, Tesseract OCR, Qobuz, PawnIO |
+| **Productivity** | LibreOffice, Foxit PDF Editor, Calibre, LocalSend, EarTrumpet, ModernCSV, DupeGuru, Tesseract OCR, Qobuz, PawnIO |
 | **Creative** | Adobe Creative Cloud |
 | **Privacy / chat** | Proton VPN, Drive, Pass, Authenticator; Signal |
 | **Cloud / downloads** | Google Drive, pCloud Drive; Internet Download Manager, JDownloader, qBittorrent |
-| **System / hardware** | HWiNFO, CrystalDiskInfo, MSI Afterburner, FanControl, AOMEI Partition Assistant, Sysinternals, UniGetUI, Corsair iCUE 5, Logitech G HUB |
+| **System / hardware** | HWiNFO, CrystalDiskInfo, MSI Afterburner, FanControl, AOMEI Partition Assistant, Sysinternals, Corsair iCUE 5, Logitech G HUB |
 | **Desktop shell** | StartAllBack, PowerToys, TranslucentTB |
 | **Games** | Steam |
 

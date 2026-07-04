@@ -19,13 +19,11 @@ Categories in the JSON: **dev toolchain → AI desktop apps → .NET / Windows p
 | **Microsoft.PowerShell** | PowerShell 7+ on Windows. | Scripts and daily terminal when you want `pwsh` features |
 | **Microsoft.VisualStudioCode** | Lightweight extensible code editor. | General coding, debugging with extensions |
 | **Notepad++.Notepad++** | Fast editor with syntax highlighting and plugins. | Quick edits, logs, XML/JSON without a full IDE |
-| **Codeium.Windsurf** | AI-assisted IDE (Codeium). | Agentic editing when you use Windsurf as primary IDE |
 | **AutoHotkey.AutoHotkey** | Hotkeys, text expansion, window automation. | Global shortcuts, remaps, simple GUI automation |
 | **OpenJS.NodeJS.LTS** | Long-term-support Node.js (JavaScript + npm). | Web frontends, tooling, `npx` utilities |
 | **Python.Python.3.14** | CPython 3.14 (system-wide install). | Base interpreter for venvs, scripts, and the `python` command |
 | **Python.Launcher** | `py` launcher to pick installed Python versions. | Run scripts when multiple Pythons are installed |
 | **astral-sh.uv** | Extremely fast Python package/venv manager. | `uv pip install`, `uv venv`, `uvx tool` without waiting on pip |
-| **DenoLand.Deno** | JavaScript/TypeScript runtime (V8). | Scripts, small servers, modern TS without a separate build step |
 | **JanDeDobbeleer.OhMyPosh** | Themed, informative shell prompts. | Git-aware path, duration, and icons in PowerShell or other shells |
 | **DEVCOM.JetBrainsMonoNerdFont** | Monospace font with icon glyphs for terminals. | Oh My Posh and terminals render icons without tofu |
 
@@ -36,8 +34,8 @@ Categories in the JSON: **dev toolchain → AI desktop apps → .NET / Windows p
 | ID | What it does | Example use |
 |----|----------------|-------------|
 | **Microsoft.DotNet.SDK.10** | .NET 10 SDK (compiler, `dotnet` CLI, templates). | Build .NET projects; required for Rider/VS Community workflows |
-| **Microsoft.DotNet.DesktopRuntime.6–10** | .NET desktop runtime for WinForms/WPF per major version. | Run apps that ask for “.NET 8 Desktop Runtime” |
-| **Microsoft.DotNet.Runtime.6/8/9** | Console / ASP.NET .NET runtime (non-desktop). | Apps that need a specific .NET major without the desktop pack |
+| **Microsoft.DotNet.DesktopRuntime.8/10** | .NET desktop runtime for WinForms/WPF (in-support LTS majors only). | Run apps that ask for “.NET 8 Desktop Runtime” |
+| **Microsoft.DotNet.Runtime.8** | Console / ASP.NET .NET runtime (non-desktop). | Apps that need .NET 8 without the desktop pack |
 | **Microsoft.VCRedist.2015+.x86/x64** | Visual C++ runtime for native Windows apps. | Avoid “VCRUNTIME140.dll missing” on a fresh install |
 | **Microsoft.VCLibs.14** / **Desktop.14** | UWP/WinUI dependency libraries. | Store-style or WinUI apps that expect these packages |
 | **Microsoft.AppInstaller** | Windows Package Manager / install infrastructure. | Keep winget and related install UX current |
@@ -51,7 +49,7 @@ Categories in the JSON: **dev toolchain → AI desktop apps → .NET / Windows p
 | ID | What it does | Example use |
 |----|----------------|-------------|
 | **Microsoft.WSL** | Windows Subsystem for Linux. | Run Linux distros and dev tooling without a full VM |
-| **Canonical.Ubuntu.2404** | Ubuntu 24.04 LTS as a WSL distribution. | Default Linux environment for `bash`, Docker-from-WSL, etc. |
+| **Canonical.Ubuntu** | Ubuntu (latest LTS) as a WSL distribution — registers as distro name `Ubuntu`, which the WezTerm config expects. | Default Linux environment for `bash`, Docker-from-WSL, etc. |
 
 ---
 
@@ -68,8 +66,7 @@ Categories in the JSON: **dev toolchain → AI desktop apps → .NET / Windows p
 
 | ID | What it does | Example use |
 |----|----------------|-------------|
-| **Daum.PotPlayer** | Full-featured video/audio player. | Broad codecs and filters without extra plugins |
-| **shinchiro.mpv** | mpv player (shinchiro build). | Scriptable playback; `dotfiles/mpv-config` is junctioned in as its portable config |
+| **shinchiro.mpv** | mpv player (shinchiro build). | Primary player; `dotfiles/mpv-config` is junctioned in as its portable config |
 | **VideoLAN.VLC** | Plays nearly anything, streams, converts. | Fallback player and quick network-stream checks |
 | **ShareX.ShareX** | Screenshots, recording, uploads, workflows. | Region capture → clipboard or host in one shortcut |
 | **BandicamCompany.Bandicut** | Video cutter/joiner. | Trim clips without a full editor |
@@ -108,7 +105,6 @@ Categories in the JSON: **dev toolchain → AI desktop apps → .NET / Windows p
 | ID | What it does | Example use |
 |----|----------------|-------------|
 | **calibre.calibre** | E-book library and conversion. | Manage EPUB/PDF, send to e-readers |
-| **EDRLab.Thorium** | Accessible EPUB 3 reader (Readium). | Reflowable books with screen-reader support |
 | **TheDocumentFoundation.LibreOffice** | Office suite (Writer, Calc, Impress, …). | Documents/spreadsheets without Microsoft 365 |
 | **Foxit.PhantomPDF.Subscription.MSI** | Foxit PDF Editor (subscription). | Edit, annotate, and fill PDFs beyond a viewer |
 | **File-New-Project.EarTrumpet** | Per-app volume in the tray. | Quiet one noisy app without muting everything |
@@ -142,7 +138,6 @@ Categories in the JSON: **dev toolchain → AI desktop apps → .NET / Windows p
 | **Guru3D.Afterburner** | GPU overclocking and on-screen stats. | Fan curves, FPS overlay while gaming |
 | **Rem0o.FanControl** | Fan curves for many boards/GPUs. | Balance noise and cooling |
 | **AOMEI.PartitionAssistant** | Partition resize, copy, migrate (edition-dependent). | When Disk Management is not enough |
-| **Devolutions.UniGetUI** | GUI for winget and other package sources. | Browse installs without memorizing IDs |
 | **Microsoft.Sysinternals.Suite** | Process Explorer, Autoruns, TCPView, etc. | Deep Windows troubleshooting |
 | **Logitech.GHUB** | Drivers and lighting for Logitech G gear. | **Install only on PCs with supported Logitech hardware** |
 | **Corsair.iCUE.5** | RGB and device control for Corsair. | **Install only on PCs with Corsair devices** |

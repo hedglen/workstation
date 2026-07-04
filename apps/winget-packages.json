@@ -12,13 +12,11 @@
     "Microsoft.PowerShell",
     "Microsoft.VisualStudioCode",
     "Notepad++.Notepad++",
-    "Codeium.Windsurf",
     "AutoHotkey.AutoHotkey",
     "OpenJS.NodeJS.LTS",
     "Python.Python.3.14",
     "Python.Launcher",
     "astral-sh.uv",
-    "DenoLand.Deno",
     "JanDeDobbeleer.OhMyPosh",
     "DEVCOM.JetBrainsMonoNerdFont",
 
@@ -27,14 +25,11 @@
     "Anthropic.Claude",
 
     // ── .NET / Windows platform runtimes ─────────────────────────────────────
+    // Only in-support .NET majors (8 LTS, 10 LTS); EOL 6/9 were trimmed 2026-07
     "Microsoft.DotNet.SDK.10",
-    "Microsoft.DotNet.DesktopRuntime.6",
     "Microsoft.DotNet.DesktopRuntime.8",
-    "Microsoft.DotNet.DesktopRuntime.9",
     "Microsoft.DotNet.DesktopRuntime.10",
-    "Microsoft.DotNet.Runtime.6",
     "Microsoft.DotNet.Runtime.8",
-    "Microsoft.DotNet.Runtime.9",
     "Microsoft.VCRedist.2015+.x86",
     "Microsoft.VCRedist.2015+.x64",
     "Microsoft.VCLibs.14",
@@ -45,7 +40,7 @@
 
     // ── WSL ──────────────────────────────────────────────────────────────────
     "Microsoft.WSL",
-    "Canonical.Ubuntu.2404",
+    "Canonical.Ubuntu", // registers distro named "Ubuntu" — matches wezterm modules/distro.lua
 
     // ── Browsers ─────────────────────────────────────────────────────────────
     "Google.Chrome.EXE",
@@ -56,7 +51,6 @@
     "wez.wezterm",
 
     // ── Media: playback, capture, download ───────────────────────────────────
-    "Daum.PotPlayer",
     "shinchiro.mpv",
     "VideoLAN.VLC",
     "ShareX.ShareX",
@@ -91,7 +85,6 @@
     "Foxit.PhantomPDF.Subscription.MSI",
     "SumatraPDF.SumatraPDF",
     "calibre.calibre",
-    "EDRLab.Thorium",
     "PFOJEnterprisesLLC.ModernCSV",
     "UB-Mannheim.TesseractOCR",
     "LocalSend.LocalSend",
@@ -114,7 +107,6 @@
     "namazso.PawnIO", // kernel driver used by FanControl/HWiNFO sensors
     "AOMEI.PartitionAssistant",
     "Microsoft.Sysinternals.Suite",
-    "Devolutions.UniGetUI",
     "Logitech.GHUB",
     "Corsair.iCUE.5",
 
