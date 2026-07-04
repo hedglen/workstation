@@ -75,29 +75,35 @@ Write-Host ' drives       uptime       sysinfo      users        admins' -Foregr
 Write-Host ' startup-list tasks-user   pkillf       reload       sync-dots' -ForegroundColor DarkGray
 Write-Host ' orgmed       ytdl         trans        save-dots' -ForegroundColor DarkGray
 Write-Host ''
-Write-Host 'Updates & Upgrades' -ForegroundColor Magenta
-Write-Host ' Run order (recommended):' -ForegroundColor Cyan
-Write-Host '  ' -NoNewline -ForegroundColor Yellow; Write-Host 'dots-health' -NoNewline -ForegroundColor Yellow; Write-Host '  precheck layout + key tools' -ForegroundColor DarkGray
-Write-Host '  ' -NoNewline -ForegroundColor Yellow; Write-Host 'dots-update -DryRun' -NoNewline -ForegroundColor Yellow; Write-Host '  preview dotfiles/apps actions' -ForegroundColor DarkGray
-Write-Host '  ' -NoNewline -ForegroundColor Yellow; Write-Host 'Start ms-settings:windowsupdate' -NoNewline -ForegroundColor Yellow; Write-Host '  apply Windows updates first' -ForegroundColor DarkGray
-Write-Host '  ' -NoNewline -ForegroundColor Yellow; Write-Host 'dots-update' -NoNewline -ForegroundColor Yellow; Write-Host '  primary full update run' -ForegroundColor DarkGray
-Write-Host '  ' -NoNewline -ForegroundColor Yellow; Write-Host 'pip-upgrade' -NoNewline -ForegroundColor Yellow; Write-Host '  media-organizer venv pip upgrade' -ForegroundColor DarkGray
-Write-Host '  ' -NoNewline -ForegroundColor Yellow; Write-Host 'py-media-deps' -NoNewline -ForegroundColor Yellow; Write-Host '  media-organizer deps' -ForegroundColor DarkGray
-Write-Host '  ' -NoNewline -ForegroundColor Yellow; Write-Host 'py-ytdl-deps' -NoNewline -ForegroundColor Yellow; Write-Host '  ytdl helper deps' -ForegroundColor DarkGray
-Write-Host '  ' -NoNewline -ForegroundColor Yellow; Write-Host 'py-transcribe-deps' -NoNewline -ForegroundColor Yellow; Write-Host '  transcribe env package' -ForegroundColor DarkGray
-Write-Host '  ' -NoNewline -ForegroundColor Yellow; Write-Host 'py-refresh-venvs' -NoNewline -ForegroundColor Yellow; Write-Host '  rerun install -NoApps when needed' -ForegroundColor DarkGray
+function _u($cmd, $desc) {
+  Write-Host '  ' -NoNewline
+  Write-Host $cmd -NoNewline -ForegroundColor Yellow
+  Write-Host ('  ' + $desc) -ForegroundColor DarkGray
+}
+
+Write-Host 'System update - run order' -ForegroundColor Magenta
+_u '1. start ms-settings:windowsupdate' 'Windows updates first'
+_u '2. dots-health' 'precheck layout + key tools'
+_u '3. update-all -DryRun' 'preview everything (no changes)'
+_u '4. update-all' 'THE update: git pull, relink, winget, scoop, python venvs'
+_u '5. save-dots "msg"' 'commit + push if configs changed'
 Write-Host ''
-Write-Host ' Manual package manager path (optional):' -ForegroundColor Cyan
-Write-Host '  ' -NoNewline -ForegroundColor Yellow; Write-Host 'winget source update' -NoNewline -ForegroundColor Yellow; Write-Host '  refresh package sources' -ForegroundColor DarkGray
-Write-Host '  ' -NoNewline -ForegroundColor Yellow; Write-Host 'winget list --upgrade-available' -NoNewline -ForegroundColor Yellow; Write-Host '  list pending upgrades' -ForegroundColor DarkGray
-Write-Host '  ' -NoNewline -ForegroundColor Yellow; Write-Host 'scoop status' -NoNewline -ForegroundColor Yellow; Write-Host '  list outdated buckets/apps' -ForegroundColor DarkGray
-Write-Host '  ' -NoNewline -ForegroundColor Yellow; Write-Host 'winget upgrade --all' -NoNewline -ForegroundColor Yellow; Write-Host '  upgrade all winget apps' -ForegroundColor DarkGray
-Write-Host '  ' -NoNewline -ForegroundColor Yellow; Write-Host 'winget upgrade --id <PackageId>' -NoNewline -ForegroundColor Yellow; Write-Host '  upgrade one package' -ForegroundColor DarkGray
-Write-Host '  ' -NoNewline -ForegroundColor Yellow; Write-Host 'scoop update scoop' -NoNewline -ForegroundColor Yellow; Write-Host '  update scoop itself' -ForegroundColor DarkGray
-Write-Host '  ' -NoNewline -ForegroundColor Yellow; Write-Host 'scoop update *' -NoNewline -ForegroundColor Yellow; Write-Host '  update all scoop apps' -ForegroundColor DarkGray
-Write-Host '  ' -NoNewline -ForegroundColor Yellow; Write-Host 'scoop cleanup *' -NoNewline -ForegroundColor Yellow; Write-Host '  remove old versions' -ForegroundColor DarkGray
+Write-Host 'One package manager only' -ForegroundColor Cyan
+_u 'winget upgrade --all' 'all winget apps (incl. non-manifest)'
+_u 'winget upgrade --id <Id> -e' 'one app, exact match'
+_u 'scoop status' 'list outdated CLI tools'
+_u 'scoop update *' 'update all scoop apps'
+_u 'scoop cleanup *' 'purge old scoop versions'
 Write-Host ''
-Write-Host '  ' -NoNewline -ForegroundColor Yellow; Write-Host 'usoclient StartScan' -NoNewline -ForegroundColor Yellow; Write-Host '  trigger scan (may be policy-limited)' -ForegroundColor DarkGray
+Write-Host 'Python only' -ForegroundColor Cyan
+_u 'pip-upgrade' 'media-organizer venv: upgrade pip'
+_u 'py-media-deps / py-ytdl-deps' 'project venv deps'
+_u 'py-transcribe-deps' 'whisper transcribe env'
+_u 'py-refresh-venvs' 'rebuild venvs (install.ps1 -NoApps)'
+Write-Host ''
+Write-Host 'Dotfiles only' -ForegroundColor Cyan
+_u 'sync-dots' 'pull + relink configs, no app upgrades'
+_u 'save-dots "msg"' 'commit + push local changes'
 Write-Host ''
 ]]
 

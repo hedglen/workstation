@@ -2,7 +2,7 @@
   // =============================================================================
   //   Theme & Appearance
   // =============================================================================
-  "workbench.colorTheme": "Neon Dark",
+  "workbench.colorTheme": "Oled Neon Theme Black",
   "workbench.iconTheme": "material-icon-theme",
   "workbench.tree.indent": 16,
   "workbench.editor.enablePreview": false,
@@ -212,8 +212,9 @@
   "chat.tools.terminal.autoApprove": true,
   "workbench.scrollbar.verticalScrollbarSize": 14,
   "editor.scrollbar.verticalScrollbarSize": 14,
-  "cSpell.userWords": ["autohotkey", "hedglen"],
+  "cSpell.userWords": ["Aethra", "autohotkey", "hedglen", "shinchiro", "slnx"],
   "git.openRepositoryInParentFolders": "never",
   "cursorpyright.analysis.autoImportCompletions": true,
   "cursorpyright.analysis.typeCheckingMode": "basic",
+  "vsicons.dontShowNewVersionMessage": true,
 }

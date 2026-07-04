@@ -3,17 +3,19 @@
 #   Keep a running machine in sync with your dotfiles repo.
 #
 #   Usage:
-#     .\maintenance\update.ps1           # full update
-#     .\maintenance\update.ps1 -SkipApps # pull + relink + extensions, no winget/scoop upgrades
-#     .\maintenance\update.ps1 -SkipDots # upgrade apps only, skip git pull
-#     .\maintenance\update.ps1 -DryRun   # preview without making changes
+#     .\maintenance\update.ps1             # full update
+#     .\maintenance\update.ps1 -SkipApps   # pull + relink + extensions, no winget/scoop upgrades
+#     .\maintenance\update.ps1 -SkipDots   # upgrade apps only, skip git pull
+#     .\maintenance\update.ps1 -SkipPython # skip Python venv dependency updates
+#     .\maintenance\update.ps1 -DryRun     # preview without making changes
 #
-#   Tip: use `sync-dots` from your PowerShell profile for the quick version.
+#   Tip: use `dots-update` (alias `update-all`) from your PowerShell profile.
 # =============================================================================
 
 param(
     [switch]$SkipApps,
     [switch]$SkipDots,
+    [switch]$SkipPython,
     [switch]$DryRun
 )
 
@@ -194,9 +196,9 @@ $configs = @(
         desc = "yt-dlp global config (from projects/ytdl)"
     },
     @{
-        src  = "wezterm\wezterm.lua"
-        dst  = "$HOME\.wezterm.lua"
-        desc = "WezTerm"
+        src  = "wezterm"
+        dst  = "$HOME\.config\wezterm"
+        desc = "WezTerm (directory)"
     }
 )
 
@@ -209,10 +211,10 @@ foreach ($c in $configs) {
         continue
     }
 
-    # Check if symlink already points to the right place (full paths; Target may be string[])
+    # Check if link already points to the right place (full paths; Target may be string[])
     if (Test-Path -LiteralPath $dst -ErrorAction SilentlyContinue) {
         $item = Get-Item -LiteralPath $dst -Force -ErrorAction SilentlyContinue
-        if ($item -and $item.LinkType -eq 'SymbolicLink') {
+        if ($item -and $item.LinkType -in 'SymbolicLink', 'Junction') {
             $t = $item.Target
             if ($t -is [System.Array]) { $t = $t[0] }
             try {
@@ -234,7 +236,7 @@ foreach ($c in $configs) {
 
     $existing = Get-Item -LiteralPath $dst -Force -ErrorAction SilentlyContinue
     if ($existing) {
-        if ($existing.LinkType -eq 'SymbolicLink') {
+        if ($existing.LinkType -in 'SymbolicLink', 'Junction') {
             Remove-Item -LiteralPath $dst -Force
         } elseif ($existing.PSIsContainer) {
             Copy-Item -LiteralPath $dst -Destination "$dst.backup" -Recurse -Force
@@ -248,11 +250,24 @@ foreach ($c in $configs) {
     }
 
     try {
-        New-Item -ItemType SymbolicLink -Path $dst -Target $src -Force | Out-Null
-        Write-OK "$($c.desc) (symlinked)"
+        # Junction for directories (no admin needed), symlink for files
+        $linkType = if ((Get-Item -LiteralPath $src).PSIsContainer) { 'Junction' } else { 'SymbolicLink' }
+        New-Item -ItemType $linkType -Path $dst -Target $src -Force | Out-Null
+        Write-OK "$($c.desc) ($($linkType.ToLower()))"
     } catch {
-        Copy-Item $src $dst -Force
+        Copy-Item $src $dst -Force -Recurse
         Write-Warn "$($c.desc) (copied -- run as admin for symlinks)"
+    }
+}
+
+# Legacy WezTerm config file superseded by the ~/.config/wezterm directory junction
+$legacyWezterm = "$HOME\.wezterm.lua"
+if (Test-Path -LiteralPath $legacyWezterm) {
+    if ($DryRun) {
+        Write-Skip "Would remove legacy ~/.wezterm.lua (config lives in ~/.config/wezterm)"
+    } else {
+        Remove-Item -LiteralPath $legacyWezterm -Force -ErrorAction SilentlyContinue
+        Write-OK "Removed legacy ~/.wezterm.lua"
     }
 }
 
@@ -374,7 +389,7 @@ if (-not $SkipApps) {
                 }
 
                 $upgradeResult = Invoke-WingetSafe -PackageId $id -Verb "upgrade" -Arguments @(
-                    "upgrade", "--id", $id, "--accept-package-agreements", "--accept-source-agreements"
+                    "upgrade", "--id", $id, "-e", "--accept-package-agreements", "--accept-source-agreements"
                 )
                 $upgradeText = ($upgradeResult.Output -join "`n")
                 if (
@@ -448,6 +463,49 @@ if (-not $SkipApps) {
             Write-OK "scoop update *"
         } else {
             Write-Warn "scoop update exited $LASTEXITCODE"
+        }
+    }
+}
+
+# =============================================================================
+#   6. Python venvs -- upgrade pip + project dependencies
+# =============================================================================
+if (-not $SkipPython) {
+    Write-Step "Updating Python venv dependencies"
+
+    $pythonTargets = @(
+        @{
+            name = "media-organizer"
+            py   = Join-Path $DotfilesDir "projects\media-organizer\.venv\Scripts\python.exe"
+            deps = @("-r", (Join-Path $DotfilesDir "projects\media-organizer\requirements.txt"))
+        },
+        @{
+            name = "ytdl"
+            py   = Join-Path $DotfilesDir "projects\ytdl\.venv\Scripts\python.exe"
+            deps = @("rich")
+        },
+        @{
+            name = "transcribe-env"
+            py   = "$HOME\workstation\tools\transcribe-env\Scripts\python.exe"
+            deps = @("openai-whisper")
+        }
+    )
+
+    foreach ($t in $pythonTargets) {
+        if (-not (Test-Path $t.py)) {
+            Write-Skip "$($t.name): venv not found (run install.ps1 -NoApps to create)"
+            continue
+        }
+        if ($DryRun) {
+            Write-Skip "$($t.name): would upgrade pip + $($t.deps -join ' ')"
+            continue
+        }
+        & $t.py -m pip install --upgrade pip --quiet 2>&1 | Out-Null
+        & $t.py -m pip install --upgrade @($t.deps) --quiet
+        if ($LASTEXITCODE -eq 0) {
+            Write-OK "$($t.name): dependencies up to date"
+        } else {
+            Write-Warn "$($t.name): pip exited $LASTEXITCODE"
         }
     }
 }

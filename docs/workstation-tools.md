@@ -97,7 +97,7 @@ Install everything from the JSON (keeps the list in sync): see **`dotfiles/apps/
 | **mpv** (binary under `tools\mpv\`; config in **`dotfiles\mpv-config`**; bootstrapped by `mpv-config/install.ps1` via main installer) | Primary player | [dotfiles/mpv-config](https://github.com/hedglen/dotfiles/tree/master/mpv-config) - HDR, shaders, scripts; legacy [hedglen/mpv-config](https://github.com/hedglen/mpv-config) may be archived |
 | **PotPlayer** (winget)           | Alternate player                         | Broad codecs / UI                                                                 |
 | **yt-dlp** + **FFmpeg** (winget) | Download and remux                       | Also used by `ytdl` / `dl` wrapper; global CLI config is **`dotfiles/projects/ytdl/appdata-config`** → `%APPDATA%\yt-dlp\config` via **`install.ps1`** |
-| **foobar2000** (winget)          | Music library                            | `PeterPawlowski.foobar2000` in `winget-packages.json`                               |
+| **foobar2000** (optional)        | Music library                            | Not in the winget manifest; install manually via `foobar2000/QUICKSTART.md` if wanted |
 | **Qobuz**                        | Streaming client                         | Login in app                                                                        |
 | **ShareX**                       | Screenshots, screen recording, workflows | Hotkeys in ShareX settings                                                          |
 | **Bandicut**                     | Lossless-ish cuts                        | Paid; good for quick trims                                                          |
@@ -190,9 +190,8 @@ Install everything from the JSON (keeps the list in sync): see **`dotfiles/apps/
 | Tool                                          | Role                                        |
 | --------------------------------------------- | ------------------------------------------- |
 | **Obsidian**                                  | Notes (Markdown vaults, winget)             |
-| **Zoom**                                      | Video calls (winget)                        |
 | **Tesseract OCR** (installer)                 | OCR engine (winget); used by other tools    |
-| **Chrome** / **Firefox** / **Vivaldi**         | Browsers (winget)                           |
+| **Chrome** / **Firefox**                      | Browsers (winget)                           |
 | **Steam**                                     | Games (winget)                              |
 | **Adobe Creative Cloud**                      | Creative suite (winget)                     |
 | **Logitech G HUB** / **Corsair iCUE**         | Peripherals                                 |

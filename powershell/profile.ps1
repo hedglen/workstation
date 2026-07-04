@@ -32,7 +32,8 @@ if ($script:IsInteractiveTerminal -and (Get-Command oh-my-posh -ErrorAction Sile
 
 if (Get-Command zoxide -ErrorAction SilentlyContinue) {
     # zoxide only accepts "powershell" here (covers Windows PowerShell and pwsh)
-    Invoke-Expression (& { (zoxide init powershell | Out-String) })
+    $zoxideInit = zoxide init powershell | Out-String
+    if ($zoxideInit) { Invoke-Expression $zoxideInit }
 }
 
 # =============================================================================
@@ -300,6 +301,7 @@ Set-Alias tasks-user   Get-UserTasks
 Set-Alias startup-find Search-Startup
 Set-Alias uptime       Get-Uptime
 Set-Alias dots-update  Update-Dotfiles
+Set-Alias update-all   Update-Dotfiles
 Set-Alias dots-health  Test-WorkstationHealth
 Set-Alias pip-upgrade  Update-MediaOrganizerPip
 Set-Alias py-media-deps Update-MediaOrganizerDeps

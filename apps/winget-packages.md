@@ -6,7 +6,7 @@ Companion notes for **`winget-packages.json`** in this folder (`dotfiles/apps`).
 winget import "$HOME\workstation\dotfiles\apps\winget-packages.json" --accept-package-agreements
 ```
 
-The JSON groups packages roughly as: **dev toolchain → .NET / Windows platform → WSL → browsers → media → files & cloud → productivity → Proton / Signal / Discord → hardware → desktop shell & AI tools → creative / games**. **`install.ps1`** imports this file, then installs **Scoop** (get.scoop.sh) and **`apps/scoop-packages.json`** unless you pass **`-NoScoop`**. Keep **only** this copy in the repo (no duplicate manifests under `%USERPROFILE%\Documents`). See **`scoop-packages.md`** for the Scoop CLI list.
+The JSON groups packages roughly as: **dev toolchain → .NET / Windows platform → WSL → browsers → media → files & cloud → productivity → Proton / Signal → hardware → desktop shell & AI tools → creative / games**. **`install.ps1`** imports this file, then installs **Scoop** (get.scoop.sh) and **`apps/scoop-packages.json`** unless you pass **`-NoScoop`**. Keep **only** this copy in the repo (no duplicate manifests under `%USERPROFILE%\Documents`). See **`scoop-packages.md`** for the Scoop CLI list.
 
 ---
 
@@ -21,7 +21,9 @@ The JSON groups packages roughly as: **dev toolchain → .NET / Windows platform
 | **Codeium.Windsurf** | AI-assisted IDE (Codeium). | Agentic editing when you use Windsurf as primary IDE |
 | **AutoHotkey.AutoHotkey** | Hotkeys, text expansion, window automation. | Global shortcuts, remaps, simple GUI automation |
 | **OpenJS.NodeJS.LTS** | Long-term-support Node.js (JavaScript + npm). | Web frontends, tooling, `npx` utilities |
+| **Python.Python.3.14** | CPython 3.14 (system-wide install). | Base interpreter for venvs, scripts, and the `python` command |
 | **Python.Launcher** | `py` launcher to pick installed Python versions. | Run scripts when multiple Pythons are installed |
+| **astral-sh.uv** | Extremely fast Python package/venv manager. | `uv pip install`, `uv venv`, `uvx tool` without waiting on pip |
 | **DenoLand.Deno** | JavaScript/TypeScript runtime (V8). | Scripts, small servers, modern TS without a separate build step |
 | **JanDeDobbeleer.OhMyPosh** | Themed, informative shell prompts. | Git-aware path, duration, and icons in PowerShell or other shells |
 | **DEVCOM.JetBrainsMonoNerdFont** | Monospace font with icon glyphs for terminals. | Oh My Posh and terminals render icons without tofu |
@@ -55,9 +57,8 @@ The JSON groups packages roughly as: **dev toolchain → .NET / Windows platform
 
 | ID | What it does | Example use |
 |----|----------------|-------------|
-| **Google.Chrome.EXE** | Google Chrome (EXE installer id in winget). | Primary or compatibility testing browser |
+| **Google.Chrome.EXE** | Google Chrome (EXE installer id in winget). | Primary browser |
 | **Mozilla.Firefox** | Firefox. | Different engine for testing or privacy-focused browsing |
-| **Vivaldi.Vivaldi** | Highly customizable Chromium browser. | Tab stacks, side panels, power-user workflows |
 
 ---
 
@@ -66,10 +67,13 @@ The JSON groups packages roughly as: **dev toolchain → .NET / Windows platform
 | ID | What it does | Example use |
 |----|----------------|-------------|
 | **Daum.PotPlayer** | Full-featured video/audio player. | Broad codecs and filters without extra plugins |
+| **shinchiro.mpv** | mpv player (shinchiro build). | Scriptable playback; `dotfiles/mpv-config` is junctioned in as its portable config |
+| **VideoLAN.VLC** | Plays nearly anything, streams, converts. | Fallback player and quick network-stream checks |
 | **ShareX.ShareX** | Screenshots, recording, uploads, workflows. | Region capture → clipboard or host in one shortcut |
 | **BandicamCompany.Bandicut** | Video cutter/joiner. | Trim clips without a full editor |
 | **yt-dlp.FFmpeg** | FFmpeg packaged for yt-dlp workflows. | Encoding/decoding for downloads and tools that call ffmpeg |
 | **yt-dlp.yt-dlp** | Downloads video/audio from many sites (CLI). | Archive a stream or grab audio: `yt-dlp URL` |
+| **FlorianHeidenreich.Mp3tag** | Tag editor for audio files. | Batch-fix album/artist tags and cover art |
 | **XnSoft.XnViewMP** | Image browser, viewer, batch operations. | Fast review of large photo folders |
 
 ---
@@ -93,6 +97,7 @@ The JSON groups packages roughly as: **dev toolchain → .NET / Windows platform
 | **pCloudAG.pCloudDrive** | pCloud virtual drive. | Cloud folder as a drive letter |
 | **Tonec.InternetDownloadManager** | Download accelerator (commercial). | Large files, segmented downloads, browser hooks |
 | **AppWork.JDownloader** | Download manager for hosts and playlists. | Bulk downloads from file hosts |
+| **qBittorrent.qBittorrent** | Open-source BitTorrent client. | Linux ISOs and other legitimate torrents |
 
 ---
 
@@ -104,19 +109,18 @@ The JSON groups packages roughly as: **dev toolchain → .NET / Windows platform
 | **calibre.calibre** | E-book library and conversion. | Manage EPUB/PDF, send to e-readers |
 | **EDRLab.Thorium** | Accessible EPUB 3 reader (Readium). | Reflowable books with screen-reader support |
 | **TheDocumentFoundation.LibreOffice** | Office suite (Writer, Calc, Impress, …). | Documents/spreadsheets without Microsoft 365 |
+| **Foxit.PhantomPDF.Subscription.MSI** | Foxit PDF Editor (subscription). | Edit, annotate, and fill PDFs beyond a viewer |
 | **File-New-Project.EarTrumpet** | Per-app volume in the tray. | Quiet one noisy app without muting everything |
 | **LocalSend.LocalSend** | LAN file send between devices. | Phone ↔ PC on same Wi‑Fi |
 | **UB-Mannheim.TesseractOCR** | OCR engine; often used by other tools. | Text extraction from scans |
 | **DupeGuru.DupeGuru** | Duplicate file finder. | Reclaim space in messy download folders |
 | **PFOJEnterprisesLLC.ModernCSV** | Spreadsheet editor tuned for large CSV. | When Excel chokes on huge files |
 | **Qobuz.Qobuz** | Hi-res streaming desktop app. | Lossless streaming with a Qobuz subscription |
-| **PeterPawlowski.foobar2000** | Highly customizable local music player. | FLAC library, DSP chains, layout scripting |
-| **Zoom.Zoom** | Video meetings. | Work calls and webinars |
 | **namazso.PawnIO** | Driver/tooling for specific hardware experiments. | Only when you know you need Pawn IO on that PC |
 
 ---
 
-## Privacy and messaging (Proton + Signal + Discord)
+## Privacy and messaging (Proton + Signal)
 
 | ID | What it does | Example use |
 |----|----------------|-------------|
@@ -125,7 +129,6 @@ The JSON groups packages roughly as: **dev toolchain → .NET / Windows platform
 | **Proton.ProtonPass** | Password manager. | Vault, autofill, secure notes |
 | **Proton.ProtonAuthenticator** | TOTP / 2FA from Proton. | Second factor for accounts |
 | **OpenWhisperSystems.Signal** | Encrypted chat and calls. | Personal messaging off SMS |
-| **Discord.Discord** | Voice/text for communities and gaming. | Servers, screen share |
 
 ---
 

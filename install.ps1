@@ -590,9 +590,13 @@ if (-not $AppsOnly) {
 
     $configs = @(
         @{
-            src  = "powershell\profile.ps1"
-            dst  = "$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"
-            desc = "PowerShell profile"
+            src    = "powershell\profile.ps1"
+            dst    = "$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"
+            desc   = "PowerShell profile"
+            # Materialize as a real loader file, NOT a symlink. Windows' Redirection
+            # Trust mitigation blocks dot-sourcing a symlinked profile with
+            # "untrusted mount point", which stops the profile from loading.
+            loader = $true
         },
         @{
             src  = "git\.gitconfig"
@@ -638,6 +642,24 @@ if (-not $AppsOnly) {
 
         if ($DryRun) {
             Write-Skip "$($c.desc): $src -> $dst"
+            continue
+        }
+
+        # Loader stub: write a REAL file that dot-sources the canonical profile.
+        # A symlink here triggers Windows' Redirection Trust mitigation
+        # ("untrusted mount point"), which prevents the profile from loading.
+        if ($c.loader) {
+            New-Item -ItemType Directory -Path $dstDir -Force | Out-Null
+            $loaderLine = ". `"$src`""
+            $existingLoader = Get-Item -LiteralPath $dst -Force -ErrorAction SilentlyContinue
+            if ($existingLoader -and ($existingLoader.LinkType -eq 'SymbolicLink' -or $existingLoader.LinkType -eq 'Junction')) {
+                Remove-Item -LiteralPath $dst -Force
+            } elseif ($existingLoader -and ((Get-Content -LiteralPath $dst -Raw -ErrorAction SilentlyContinue).Trim() -eq $loaderLine)) {
+                Write-Skip "$($c.desc) loader already in place"
+                continue
+            }
+            Set-Content -LiteralPath $dst -Value $loaderLine -Encoding utf8
+            Write-OK "$($c.desc) (loader stub — avoids untrusted mount point)"
             continue
         }
 

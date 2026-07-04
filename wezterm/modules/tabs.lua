@@ -150,7 +150,7 @@ wezterm.on('gui-startup', function(cmd)
     end
   end
 
-  coding_tab:activate()
+  system_tab:activate()
   window:gui_window():maximize()
 end)
 

@@ -175,14 +175,15 @@ dotfiles/
 
 ## 🔄 Keeping Up to Date
 
-After initial setup, two commands handle ongoing maintenance:
+After initial setup, three commands handle ongoing maintenance (all defined in `powershell/profile.ps1`, and listed in WezTerm tab 1's system pane):
 
 | Command | What it does |
 | --- | --- |
+| `dots-update` (alias `update-all`) | **Full system update**: git pull, relink configs, VS Code extensions, fonts, winget upgrades from the manifest, Scoop install + update, Python venv deps |
 | `save-dots` | Commit & push your local changes to GitHub |
-| `sync-dots` | Pull latest from GitHub, relink any new configs, install new extensions/fonts |
+| `sync-dots` | Pull latest from GitHub, relink any new configs, install new extensions/fonts (no app upgrades) |
 
-For a full system update (apps + dotfiles):
+`dots-update` runs `maintenance\update.ps1`, which you can also call directly:
 
 ```powershell
 .\maintenance\update.ps1
@@ -191,9 +192,10 @@ For a full system update (apps + dotfiles):
 Options:
 
 ```powershell
-.\maintenance\update.ps1 -SkipApps   # pull + relink only, no winget upgrade
-.\maintenance\update.ps1 -SkipDots   # winget upgrade only, skip git pull
-.\maintenance\update.ps1 -DryRun     # preview without making changes
+.\maintenance\update.ps1 -SkipApps    # pull + relink only, no winget/scoop upgrades
+.\maintenance\update.ps1 -SkipDots    # upgrade apps only, skip git pull
+.\maintenance\update.ps1 -SkipPython  # skip Python venv dependency updates
+.\maintenance\update.ps1 -DryRun      # preview without making changes
 ```
 
 ---
@@ -283,7 +285,7 @@ Script: `autohotkey/main.ahk` — loads on startup via registry Run key.
 | --- | --- |
 | `Win+T` | Windows Terminal (`wt`) |
 | `Win+E` | Directory Opus → File Pilot → Explorer (first found) |
-| `Win+B` | Brave if installed, else **Chrome** (matches `winget-packages.json` default) |
+| `Win+B` | **Chrome** (primary browser in `winget-packages.json`) |
 | `Win+N` | **Firefox** (winget) |
 | `Win+O` | Obsidian |
 | `Win+C` | VS Code (`code`) |
@@ -495,16 +497,16 @@ For **how to use** installed apps and profile helpers (not just the install list
 
 | Category | Apps (from `apps/winget-packages.json`) |
 | --- | --- |
-| **Dev / runtimes** | Git, VS Code, **Notepad++**, Windsurf, Cursor, Claude (desktop), Ollama, PowerShell 7, Python Launcher, AutoHotkey, Node.js LTS, Deno, JetBrainsMono Nerd Font; .NET Desktop + .NET runtimes, VC++ redists, VCLibs, App Installer, UI XAML, Windows App Runtime; **WSL** + **Ubuntu 24.04** |
+| **Dev / runtimes** | Git, VS Code, **Notepad++**, Windsurf, Cursor, Claude (desktop), Ollama, PowerShell 7, Python 3.14 + Python Launcher, **uv**, AutoHotkey, Node.js LTS, Deno, JetBrainsMono Nerd Font; .NET Desktop + .NET runtimes, VC++ redists, VCLibs, App Installer, UI XAML, Windows App Runtime; **WSL** + **Ubuntu 24.04** |
 | **CLI (Scoop)** | Full list in `apps/scoop-packages.json` — see **`apps/scoop-packages.md`** |
 | **Terminal / shell** | Windows Terminal, WezTerm, Oh My Posh (winget) |
-| **Browsers** | Chrome, Firefox, Vivaldi |
-| **Media** | PotPlayer, mpv (shinchiro build), ShareX, Bandicut, yt-dlp + FFmpeg, XnViewMP, HandBrake, OBS Studio, MediaInfo, ImageGlass, ScreenToGif, SumatraPDF |
+| **Browsers** | Chrome, Firefox |
+| **Media** | PotPlayer, mpv (shinchiro build), VLC, ShareX, Bandicut, yt-dlp + FFmpeg, Mp3tag, XnViewMP, HandBrake, OBS Studio, MediaInfo, ImageGlass, ScreenToGif, SumatraPDF |
 | **File management** | Everything, Directory Opus, NanaZip, Bulk Rename Utility, WizTree |
-| **Productivity** | Obsidian, LibreOffice, Calibre, Thorium, Zoom, LocalSend, EarTrumpet, ModernCSV, DupeGuru, Tesseract OCR, Qobuz, **foobar2000**, PawnIO |
+| **Productivity** | Obsidian, LibreOffice, Foxit PDF Editor, Calibre, Thorium, LocalSend, EarTrumpet, ModernCSV, DupeGuru, Tesseract OCR, Qobuz, PawnIO |
 | **Creative** | Adobe Creative Cloud |
-| **Privacy / chat** | Proton VPN, Drive, Pass, Authenticator; Signal; **Discord** |
-| **Cloud / downloads** | Google Drive, pCloud Drive; Internet Download Manager, JDownloader |
+| **Privacy / chat** | Proton VPN, Drive, Pass, Authenticator; Signal |
+| **Cloud / downloads** | Google Drive, pCloud Drive; Internet Download Manager, JDownloader, qBittorrent |
 | **System / hardware** | HWiNFO, CrystalDiskInfo, MSI Afterburner, FanControl, AOMEI Partition Assistant, Sysinternals, UniGetUI, Corsair iCUE 5, Logitech G HUB |
 | **Desktop shell** | StartAllBack, PowerToys, TranslucentTB |
 | **Games** | Steam |

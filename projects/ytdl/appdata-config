@@ -7,5 +7,5 @@
 --audio-quality 0
 --embed-thumbnail
 --embed-metadata
---output "R:\Media\Music\%(uploader)s\%(title)s.%(ext)s"
+--output "D:\Media\%(uploader)s\%(title)s.%(ext)s"
 --sponsorblock-remove all

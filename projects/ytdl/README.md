@@ -16,6 +16,7 @@ dll                               # list all supported extractors
 
 - **`config.toml`** — wrapper: download directory, quality, format, **`[cookies].from_browser`**, etc.
 - **`appdata-config`** — global **`yt-dlp` CLI** defaults (any bare `yt-dlp` invocation). **`install.ps1`** symlinks it to **`%APPDATA%\yt-dlp\config`**.
+- **`plugins/`** — custom yt-dlp extractor plugins. **`install.ps1`** symlinks each package to **`%APPDATA%\yt-dlp\plugins\<package>`**. See `plugins/README.md`.
 
 Cookies come from your real browser so logged-in / restricted videos work. Default is **`chrome:Default`**.
 

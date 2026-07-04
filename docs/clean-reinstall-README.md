@@ -78,8 +78,8 @@ These are expected post-wipe tasks.
 - Handle manual-only installs (for current setup, Battle.net).
 - Re-apply optional app-specific tuning that is intentionally personal.
 - Validate apps that may occasionally fail in winget and retry manually if needed:
-  - `winget upgrade --id Discord.Discord --accept-package-agreements --accept-source-agreements`
   - `winget upgrade --id Corsair.iCUE.5 --accept-package-agreements --accept-source-agreements`
+  - `winget upgrade --id Adobe.CreativeCloud --accept-package-agreements --accept-source-agreements`
 
 ## Recovery order (fast path)
 

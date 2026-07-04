@@ -28,14 +28,8 @@
         Run "explorer.exe"
 }
 
-; Win+B → Brave if installed, else Chrome (primary browser in winget manifest)
-#b:: {
-    brave := A_LocalAppData "\BraveSoftware\Brave-Browser\Application\brave.exe"
-    if FileExist(brave)
-        Run brave
-    else
-        Run "chrome.exe"
-}
+; Win+B → Chrome (primary browser in winget manifest)
+#b:: Run "chrome.exe"
 
 ; Win+N → Firefox (winget manifest)
 #n:: Run "firefox.exe"

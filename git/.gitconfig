@@ -1,6 +1,6 @@
 [user]
-    name  = hedglen
-    email = hedglen@pm.me
+	name = Rob Hedglen
+	email = 108037230+hedglen@users.noreply.github.com
 
 [core]
     autocrlf   = input
@@ -63,3 +63,8 @@
     tags     = tag -l
     stashes  = stash list
     changed  = diff HEAD~1 HEAD --name-only
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
