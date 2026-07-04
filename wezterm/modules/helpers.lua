@@ -81,29 +81,25 @@ function _u($cmd, $desc) {
   Write-Host ('  ' + $desc) -ForegroundColor DarkGray
 }
 
-Write-Host 'System update - run order' -ForegroundColor Magenta
-_u '1. start ms-settings:windowsupdate' 'Windows updates first'
-_u '2. dots-health' 'precheck layout + key tools'
-_u '3. update-all -DryRun' 'preview everything (no changes)'
-_u '4. update-all' 'THE update: git pull, relink, winget, scoop, python venvs'
-_u '5. save-dots "msg"' 'commit + push if configs changed'
+Write-Host 'STAY UP TO DATE - type these, in order' -ForegroundColor Magenta
+_u 'update-all -DryRun' 'preview everything; changes nothing'
+_u 'update-all' 'THE update: dotfiles pull + relink, winget, scoop, python venvs'
+_u 'start ms-settings:windowsupdate' 'Windows Update (check weekly, reboot if asked)'
 Write-Host ''
-Write-Host 'One package manager only' -ForegroundColor Cyan
-_u 'winget upgrade --all' 'all winget apps (incl. non-manifest)'
-_u 'winget upgrade --id <Id> -e' 'one app, exact match'
+Write-Host 'AFTER YOU EDIT CONFIGS' -ForegroundColor Cyan
+_u 'save-dots "msg"' 'commit + push dotfiles to GitHub'
+_u 'reload' 're-source the pwsh profile in this shell'
+Write-Host ''
+Write-Host 'IF SOMETHING SEEMS BROKEN' -ForegroundColor Cyan
+_u 'dots-health' 'check workstation layout + key tools'
+_u 'sync-dots' 're-pull + relink configs only (no app upgrades)'
+_u 'py-refresh-venvs' 'rebuild the python venvs'
+Write-Host ''
+Write-Host 'ONE PIECE AT A TIME (optional)' -ForegroundColor Cyan
+_u 'winget upgrade --all' 'every winget app'
 _u 'scoop status' 'list outdated CLI tools'
-_u 'scoop update *' 'update all scoop apps'
-_u 'scoop cleanup *' 'purge old scoop versions'
-Write-Host ''
-Write-Host 'Python only' -ForegroundColor Cyan
-_u 'pip-upgrade' 'media-organizer venv: upgrade pip'
-_u 'py-media-deps / py-ytdl-deps' 'project venv deps'
-_u 'py-transcribe-deps' 'whisper transcribe env'
-_u 'py-refresh-venvs' 'rebuild venvs (install.ps1 -NoApps)'
-Write-Host ''
-Write-Host 'Dotfiles only' -ForegroundColor Cyan
-_u 'sync-dots' 'pull + relink configs, no app upgrades'
-_u 'save-dots "msg"' 'commit + push local changes'
+_u 'scoop update *' 'update all CLI tools'
+_u 'py-media-deps / py-ytdl-deps / py-transcribe-deps' 'one venv each'
 Write-Host ''
 ]]
 
@@ -135,11 +131,16 @@ Clear-Host
   Write-Host 'View and diffs' -ForegroundColor Cyan
   _cliRow 'bat file' 'syntax-highlighted file view'
   _cliRow 'less file' 'plain pager'
-  _cliRow 'git diff' 'uses delta if set in gitconfig pager / diff filter'
+  _cliRow 'git diff' 'delta pager (configured in gitconfig); n/N jump files, q quits'
   Write-Host ''
 
-  Write-Host 'Data' -ForegroundColor Cyan
+  Write-Host 'Data and media' -ForegroundColor Cyan
   _cliRow 'jq' 'query JSON (.key, map, select; stdin = JSON text)'
+  _cliRow 'exiftool file' 'read/write media metadata (dates, tags, codecs)'
+  Write-Host ''
+
+  Write-Host 'Learn' -ForegroundColor Cyan
+  _cliRow 'tldr cmd' 'practical examples for any CLI tool'
   Write-Host ''
 
   Write-Host 'Navigate' -ForegroundColor Cyan

@@ -6,6 +6,15 @@
     autocrlf   = input
     editor     = code --wait
     whitespace = trailing-space,space-before-tab
+    pager      = delta
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate     = true
+    line-numbers = true
+    dark         = true
 
 [init]
     defaultBranch = main
