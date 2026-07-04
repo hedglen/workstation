@@ -51,8 +51,8 @@
     "wez.wezterm",
 
     // ── Media: playback, capture, download ───────────────────────────────────
+    "Daum.PotPlayer", // primary player
     "shinchiro.mpv",
-    "VideoLAN.VLC",
     "ShareX.ShareX",
     "BandicamCompany.Bandicut",
     "yt-dlp.FFmpeg",

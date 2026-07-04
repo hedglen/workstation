@@ -503,7 +503,7 @@ For **how to use** installed apps and profile helpers (not just the install list
 | **CLI (Scoop)** | Full list in `apps/scoop-packages.json` — see **`apps/scoop-packages.md`** |
 | **Terminal / shell** | Windows Terminal, WezTerm, Oh My Posh (winget) |
 | **Browsers** | Chrome, Firefox Nightly |
-| **Media** | mpv (shinchiro build, primary), VLC, ShareX, Bandicut, yt-dlp + FFmpeg, Mp3tag, XnViewMP, HandBrake, OBS Studio, MediaInfo, ImageGlass, ScreenToGif, SumatraPDF |
+| **Media** | PotPlayer (primary), mpv (shinchiro build), ShareX, Bandicut, yt-dlp + FFmpeg, Mp3tag, XnViewMP, HandBrake, OBS Studio, MediaInfo, ImageGlass, ScreenToGif, SumatraPDF |
 | **File management** | Everything, Directory Opus, NanaZip, Bulk Rename Utility, WizTree |
 | **Productivity** | LibreOffice, Foxit PDF Editor, Calibre, LocalSend, EarTrumpet, ModernCSV, DupeGuru, Tesseract OCR, Qobuz, PawnIO |
 | **Creative** | Adobe Creative Cloud |

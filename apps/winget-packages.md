@@ -66,8 +66,8 @@ Categories in the JSON: **dev toolchain → AI desktop apps → .NET / Windows p
 
 | ID | What it does | Example use |
 |----|----------------|-------------|
-| **shinchiro.mpv** | mpv player (shinchiro build). | Primary player; `dotfiles/mpv-config` is junctioned in as its portable config |
-| **VideoLAN.VLC** | Plays nearly anything, streams, converts. | Fallback player and quick network-stream checks |
+| **Daum.PotPlayer** | Full-featured video/audio player. | Primary player — broad codecs and filters without extra plugins |
+| **shinchiro.mpv** | mpv player (shinchiro build). | Scriptable playback; `dotfiles/mpv-config` is junctioned in as its portable config |
 | **ShareX.ShareX** | Screenshots, recording, uploads, workflows. | Region capture → clipboard or host in one shortcut |
 | **BandicamCompany.Bandicut** | Video cutter/joiner. | Trim clips without a full editor |
 | **yt-dlp.FFmpeg** | FFmpeg packaged for yt-dlp workflows. | Encoding/decoding for downloads and tools that call ffmpeg |

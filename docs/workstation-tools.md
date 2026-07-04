@@ -94,8 +94,8 @@ Install everything from the JSON (keeps the list in sync): see **`dotfiles/apps/
 
 | Tool                             | Role                                     | Notes                                                                               |
 | -------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------- |
-| **mpv** (binary under `tools\mpv\`; config in **`dotfiles\mpv-config`**; bootstrapped by `mpv-config/install.ps1` via main installer) | Primary player | [dotfiles/mpv-config](https://github.com/hedglen/dotfiles/tree/master/mpv-config) - HDR, shaders, scripts; legacy [hedglen/mpv-config](https://github.com/hedglen/mpv-config) may be archived |
-| **VLC** (winget)                 | Alternate player                         | Fallback playback and network-stream checks                                        |
+| **PotPlayer** (winget)           | Primary player                           | Broad codecs / UI                                                                 |
+| **mpv** (binary under `tools\mpv\`; config in **`dotfiles\mpv-config`**; bootstrapped by `mpv-config/install.ps1` via main installer) | Scripted/HDR player | [dotfiles/mpv-config](https://github.com/hedglen/dotfiles/tree/master/mpv-config) - HDR, shaders, scripts; legacy [hedglen/mpv-config](https://github.com/hedglen/mpv-config) may be archived |
 | **yt-dlp** + **FFmpeg** (winget) | Download and remux                       | Also used by `ytdl` / `dl` wrapper; global CLI config is **`dotfiles/projects/ytdl/appdata-config`** → `%APPDATA%\yt-dlp\config` via **`install.ps1`** |
 | **Audirvana Origin** (manual)    | Primary local music player               | Not on winget — installer from [audirvana.com](https://audirvana.com/origin/); license in Proton Pass |
 | **Qobuz**                        | Streaming client                         | Login in app                                                                        |
