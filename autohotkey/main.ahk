@@ -31,11 +31,8 @@
 ; Win+B → Chrome (primary browser in winget manifest)
 #b:: Run "chrome.exe"
 
-; Win+N → Firefox (winget manifest)
+; Win+N → Firefox Nightly (winget manifest)
 #n:: Run "firefox.exe"
-
-; Win+O → Obsidian
-#o:: Run "obsidian.exe"
 
 ; Win+C → VS Code
 #c:: Run "code"

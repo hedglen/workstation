@@ -1,8 +1,6 @@
 import json
 import os
-import subprocess
 import sys
-import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -13,9 +11,6 @@ GEMINI_DEFAULT_MODEL = "gemini-2.5-flash"
 ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages"
 ANTHROPIC_DEFAULT_MODEL = "claude-3-5-haiku-latest"
 ANTHROPIC_API_VERSION = "2023-06-01"
-OLLAMA_API_URL = "http://127.0.0.1:11434/api/chat"
-OLLAMA_DEFAULT_MODEL = "qwen3:8b"
-WINDOWS_OLLAMA_PATH = os.path.expandvars(r"%LOCALAPPDATA%\Programs\Ollama\ollama.exe")
 
 
 class BackendError(Exception):
@@ -44,34 +39,6 @@ Rules:
 Current shell: PowerShell
 Current working directory: {cwd}
 """
-
-
-def maybe_start_ollama() -> None:
-    if not os.path.exists(WINDOWS_OLLAMA_PATH):
-        return
-
-    creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
-    try:
-        subprocess.Popen(
-            [WINDOWS_OLLAMA_PATH, "serve"],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            creationflags=creationflags,
-        )
-    except OSError:
-        return
-
-    for _ in range(12):
-        time.sleep(1)
-        try:
-            request = urllib.request.Request(
-                os.environ.get("OLLAMA_TAGS_URL", "http://127.0.0.1:11434/api/tags"),
-                method="GET",
-            )
-            with urllib.request.urlopen(request, timeout=5):
-                return
-        except Exception:
-            continue
 
 
 def call_gemini(prompt: str, cwd: str) -> str:
@@ -131,52 +98,6 @@ def call_gemini(prompt: str, cwd: str) -> str:
     return answer
 
 
-def call_ollama(prompt: str, cwd: str) -> str:
-    model = os.environ.get("OLLAMA_ASK_MODEL", OLLAMA_DEFAULT_MODEL)
-    payload = {
-        "model": model,
-        "stream": False,
-        "options": {
-            "temperature": 0.2,
-            "num_predict": 700,
-        },
-        "messages": [
-            {"role": "system", "content": build_system_prompt(cwd)},
-            {"role": "user", "content": prompt},
-        ],
-    }
-
-    request = urllib.request.Request(
-        os.environ.get("OLLAMA_HOST", OLLAMA_API_URL),
-        data=json.dumps(payload).encode("utf-8"),
-        headers={"content-type": "application/json"},
-        method="POST",
-    )
-
-    try:
-        with urllib.request.urlopen(request, timeout=90) as response:
-            body = json.loads(response.read().decode("utf-8"))
-    except urllib.error.HTTPError as exc:
-        details = exc.read().decode("utf-8", errors="replace")
-        raise BackendError(f"Ollama API error ({exc.code}): {details}")
-    except urllib.error.URLError as exc:
-        maybe_start_ollama()
-        try:
-            with urllib.request.urlopen(request, timeout=90) as response:
-                body = json.loads(response.read().decode("utf-8"))
-        except urllib.error.HTTPError as retry_exc:
-            details = retry_exc.read().decode("utf-8", errors="replace")
-            raise BackendError(f"Ollama API error ({retry_exc.code}): {details}")
-        except urllib.error.URLError:
-            raise BackendError(f"Ollama is not running yet: {exc.reason}")
-
-    message = body.get("message", {})
-    answer = (message.get("content") or "").strip()
-    if not answer:
-        raise BackendError("Ollama returned an empty response.")
-    return answer
-
-
 def call_anthropic(prompt: str, cwd: str) -> str:
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:
@@ -231,12 +152,6 @@ def main() -> None:
 
     cwd = os.getcwd()
     problems = []
-
-    try:
-        print(call_ollama(prompt, cwd))
-        return
-    except BackendError as exc:
-        problems.append(str(exc))
 
     if os.environ.get("GEMINI_API_KEY"):
         try:

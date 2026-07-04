@@ -9,8 +9,8 @@
 #   Flags:
 #     -AppsOnly     Skip most setup/config steps; still installs apps
 #     -ConfigsOnly  Only symlink config files
-#     -NoApps    Skip winget import and Scoop installs
-#     -NoScoop   Skip Scoop only (winget import still runs)
+#     -NoApps    Skip winget and Scoop installs
+#     -NoScoop   Skip Scoop only (winget installs still run)
 #     -NoPythonProjects  Skip venv setup for projects\media-organizer and projects\ytdl
 #     -NoElevate Skip auto-elevation (single UAC at start)
 #     -DryRun    Preview what would happen without doing anything
@@ -403,19 +403,30 @@ if (-not $AppsOnly -and -not $ConfigsOnly) {
 if (-not $ConfigsOnly -and -not $NoApps) {
     Write-Step "Installing apps from winget"
 
+    # Manifest is JSONC (// comments), so it is installed per-ID here rather than
+    # via `winget import`, which requires strict schema JSON.
     $pkgFile = Join-Path $DotfilesDir "apps\winget-packages.json"
     if (Test-Path $pkgFile) {
+        $wingetIds = @((Get-Content $pkgFile -Raw | ConvertFrom-Json).packages | Where-Object { $_ })
         if ($DryRun) {
-            Write-Skip "Would run: winget import -i $pkgFile"
+            Write-Skip "Would winget install $($wingetIds.Count) packages from apps\winget-packages.json"
         } else {
-            try {
-                winget import -i $pkgFile --accept-package-agreements --accept-source-agreements --ignore-versions
-                Write-OK "winget import finished"
-                Install-PCloudIfMissing
-            } catch {
-                Write-Warn "winget import finished with errors (some packages may have failed) — $_"
-                Install-PCloudIfMissing
+            $failed = New-Object System.Collections.Generic.List[string]
+            foreach ($id in $wingetIds) {
+                & winget install --id $id -e --accept-package-agreements --accept-source-agreements 2>&1 | Out-Null
+                # 0 = installed; -1978335189 = no applicable update; -1978335135 = already installed
+                if ($LASTEXITCODE -in 0, -1978335189, -1978335135) {
+                    Write-OK $id
+                } else {
+                    Write-Warn "$id failed (exit $LASTEXITCODE)"
+                    $failed.Add($id)
+                }
             }
+            if ($failed.Count -gt 0) {
+                Write-Warn ("{0} package(s) failed: {1}" -f $failed.Count, ($failed -join ', '))
+                Write-Warn "Retry one with: winget install --id <PackageId> -e"
+            }
+            Install-PCloudIfMissing
         }
     } else {
         Write-Warn "apps\winget-packages.json not found — skipping"
@@ -458,8 +469,14 @@ if (-not $ConfigsOnly -and -not $NoApps) {
         if (-not $haveScoop -and -not $DryRun) {
             Write-Warn "Scoop not on PATH — skipping apps\scoop-packages.json"
         } elseif ($DryRun -and $haveScoop) {
-            Write-Skip "Would run: scoop install <names from apps\scoop-packages.json>"
+            Write-Skip "Would run: scoop bucket add extras; scoop install <names from apps\scoop-packages.json>"
         } elseif (-not $DryRun -and $haveScoop) {
+            # extras bucket is needed for lazygit
+            $buckets = @(& scoop bucket list 2>$null | ForEach-Object { ($_ -split '\s+')[0] })
+            if ($buckets -notcontains 'extras') {
+                & scoop bucket add extras
+                if ($LASTEXITCODE -eq 0) { Write-OK "scoop bucket add extras" } else { Write-Warn "scoop bucket add extras exited $LASTEXITCODE" }
+            }
             $names = @((Get-Content $scoopFile -Raw | ConvertFrom-Json).packages | Where-Object { $_ })
             if ($names.Count -eq 0) {
                 Write-Skip "No package names in scoop-packages.json"
@@ -486,7 +503,6 @@ if (-not $AppsOnly -and -not $ConfigsOnly) {
     Write-Step "WezTerm + WSL bootstrap"
     $weztermExe = "$env:LOCALAPPDATA\Programs\WezTerm\wezterm-gui.exe"
     $wslHelper = Join-Path $DotfilesDir "wezterm\wsl-helper.sh"
-    $ollamaHelper = Join-Path $DotfilesDir "wezterm\ollama-helper.sh"
     if (Test-Path -LiteralPath $weztermExe) {
         Write-OK "WezTerm installed"
     } else {
@@ -497,11 +513,6 @@ if (-not $AppsOnly -and -not $ConfigsOnly) {
         Write-OK "WezTerm helper present: wezterm\wsl-helper.sh"
     } else {
         Write-Warn "Missing wezterm\wsl-helper.sh (WSL right pane will degrade to shell fallback)"
-    }
-    if (Test-Path -LiteralPath $ollamaHelper) {
-        Write-OK "WezTerm helper present: wezterm\ollama-helper.sh"
-    } else {
-        Write-Warn "Missing wezterm\ollama-helper.sh (optional; ollama helper pane will degrade)"
     }
 
     $wslCmd = Get-Command wsl.exe -ErrorAction SilentlyContinue
@@ -555,7 +566,7 @@ if (-not $AppsOnly -and -not $ConfigsOnly) {
 if (-not $ConfigsOnly -and -not $NoPythonProjects) {
     Write-Step "Python venvs (media-organizer, ytdl)"
     Install-DotfilesPythonProject -RelativePath "projects\media-organizer" -PipArgs @("-r", "requirements.txt") -DryRun:$DryRun
-    Install-DotfilesPythonProject -RelativePath "projects\ytdl" -PipArgs @("rich") -DryRun:$DryRun
+    Install-DotfilesPythonProject -RelativePath "projects\ytdl" -PipArgs @("-r", "requirements.txt") -DryRun:$DryRun
 } elseif ($ConfigsOnly) {
     Write-Skip "Skipping Python project venvs (-ConfigsOnly)"
 } else {
@@ -946,20 +957,7 @@ if (-not $AppsOnly -and -not $ConfigsOnly) {
 }
 
 # =============================================================================
-#   11. foobar2000 theme
-# =============================================================================
-if (-not $AppsOnly) {
-    Write-Step "foobar2000 theme"
-    $fb2kScript = Join-Path $DotfilesDir "foobar2000\install-theme.ps1"
-    if (Test-Path $fb2kScript) {
-        & $fb2kScript -DryRun:$DryRun
-    } else {
-        Write-Warn "foobar2000\install-theme.ps1 not found — skipping"
-    }
-}
-
-# =============================================================================
-#   12. AutoHotkey — register on startup
+#   11. AutoHotkey — register on startup
 # =============================================================================
 if (-not $AppsOnly) {
     Write-Step "AutoHotkey startup"

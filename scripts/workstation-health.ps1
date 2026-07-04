@@ -89,18 +89,12 @@ if (Test-Path $mpvBundled) {
 }
 
 $weztermHelpersDir = Join-Path $dotfilesDirForLayout "wezterm"
-foreach ($helperName in @("wsl-helper.sh", "ollama-helper.sh")) {
-    $helperPath = Join-Path $weztermHelpersDir $helperName
-    if (Test-Path $helperPath) {
-        OK "wezterm/$helperName present"
-    } else {
-        if ($helperName -eq "wsl-helper.sh") {
-            Warn "wezterm/$helperName missing (required for WSL right pane)"
-            $errors += "WezTermHelperMissing:$helperName"
-        } else {
-            Warn "wezterm/$helperName missing (optional helper for ollama tab)"
-        }
-    }
+$wslHelperPath = Join-Path $weztermHelpersDir "wsl-helper.sh"
+if (Test-Path $wslHelperPath) {
+    OK "wezterm/wsl-helper.sh present"
+} else {
+    Warn "wezterm/wsl-helper.sh missing (required for WSL right pane)"
+    $errors += "WezTermHelperMissing:wsl-helper.sh"
 }
 
 $mpvTools     = Join-Path $root "tools\mpv"

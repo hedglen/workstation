@@ -1,29 +1,47 @@
 {
-  "comment": "Scoop packages (main bucket). install.ps1 runs get.scoop.sh if needed, then scoop install for these. maintenance/update.ps1 runs scoop update *. Use install.ps1 -NoScoop to skip.",
+  // ===========================================================================
+  //  Scoop CLI manifest — portable command-line tools.
+  //  Parsed by install.ps1 and maintenance/update.ps1 (PowerShell ConvertFrom-Json,
+  //  which tolerates these // comments).
+  //  Buckets: main, except lazygit (extras) — install.ps1 adds the extras bucket.
+  //  Per-package notes: apps/scoop-packages.md
+  // ===========================================================================
   "packages": [
-    "bat",
-    "delta",
-    "dust",
-    "eza",
-    "fastfetch",
-    "fd",
-    "fzf",
-    "gh",
-    "git-lfs",
-    "glow",
-    "gsudo",
-    "hyperfine",
-    "jq",
-    "just",
-    "lazygit",
-    "pandoc",
-    "rclone",
-    "ripgrep",
-    "scoop-search",
-    "sd",
-    "tealdeer",
-    "wget",
-    "yq",
-    "zoxide"
+
+    // ── Search & navigation ──────────────────────────────────────────────────
+    "fd",           // find files by name
+    "fzf",          // fuzzy picker
+    "ripgrep",      // search file contents (rg)
+    "zoxide",       // smart cd (z / zi)
+    "scoop-search", // search scoop manifests
+
+    // ── View, edit, diff ─────────────────────────────────────────────────────
+    "bat",          // cat with syntax highlighting
+    "glow",         // markdown in the terminal
+    "delta",        // rich git diffs
+    "sd",           // simple find-and-replace
+
+    // ── Git & GitHub ─────────────────────────────────────────────────────────
+    "gh",           // GitHub CLI
+    "git-lfs",      // large file storage
+    "lazygit",      // git TUI (extras bucket)
+
+    // ── Data wrangling ───────────────────────────────────────────────────────
+    "jq",           // JSON
+    "yq",           // YAML/XML/CSV
+
+    // ── System & files ───────────────────────────────────────────────────────
+    "dust",         // disk usage tree
+    "eza",          // modern ls
+    "fastfetch",    // system info banner
+    "gsudo",        // sudo for Windows
+    "hyperfine",    // command benchmarking
+    "rclone",       // cloud storage sync
+    "wget",         // downloads in scripts
+
+    // ── Docs & task running ──────────────────────────────────────────────────
+    "pandoc",       // document conversion
+    "just",         // command runner
+    "tealdeer"      // tldr pages
   ]
 }

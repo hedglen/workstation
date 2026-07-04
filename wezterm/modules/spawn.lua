@@ -116,28 +116,6 @@ function M.wsl_helper_spawn()
   }
 end
 
-function M.ollama_helper_spawn()
-  local helper_win = paths.dotfiles .. '\\wezterm\\ollama-helper.sh'
-  local fh = io.open(helper_win, 'r')
-  if fh then
-    fh:close()
-    local helper_script = M.wsl_path(helper_win)
-    return {
-      args = { 'wsl.exe', '-d', distro.wsl_distro, 'bash', helper_script },
-    }
-  end
-  return {
-    args = {
-      'wsl.exe',
-      '-d',
-      distro.wsl_distro,
-      'bash',
-      '-lc',
-      'echo "ollama-helper.sh not in dotfiles/wezterm (optional)."; exec zsh -il',
-    },
-  }
-end
-
 function M.mux_tab_primary_pane(tab, pane)
   if pane then
     return pane

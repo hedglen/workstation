@@ -1,10 +1,12 @@
 # `scoop-packages.json`
 
-Portable CLI tools from the **Scoop `main` bucket**. Install [Scoop](https://scoop.sh/) first (`irm get.scoop.sh | iex`), then install everything from this folder with:
+Portable CLI tools from the **Scoop `main` bucket**, plus `lazygit` from **extras** (`install.ps1` adds that bucket automatically). The manifest is JSONC — categorized with `//` comments — which PowerShell's `ConvertFrom-Json` reads fine. Install [Scoop](https://scoop.sh/) first (`irm get.scoop.sh | iex`), then install everything from this folder with:
 
 ```powershell
 Set-Location $HOME\workstation\dotfiles\apps
-Get-Content .\scoop-packages.json | ConvertFrom-Json | ForEach-Object { $_.packages } | ForEach-Object { scoop install $_ }
+scoop bucket add extras
+$pkgs = (Get-Content .\scoop-packages.json -Raw | ConvertFrom-Json).packages
+scoop install @pkgs
 ```
 
 Or install packages individually. These complement GUI and runtime apps in **`winget-packages.json`**. **`install.ps1`** runs **get.scoop.sh** if Scoop is missing, then installs this list. See **`winget-packages.md`** for the winget list.

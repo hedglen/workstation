@@ -1,0 +1,3 @@
+# ytdl wrapper venv deps (created by install.ps1, updated by maintenance/update.ps1)
+# yt-dlp itself is installed system-wide via winget (yt-dlp.yt-dlp), not in this venv.
+rich      # console output formatting

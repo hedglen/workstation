@@ -1,6 +1,6 @@
 ## WSL Shell Files
 
-This folder tracks the Linux-side shell setup used by the WezTerm `wsl`, `claude`, `codex`, and `ollama` tabs.
+This folder tracks the Linux-side shell setup used by the WezTerm `wsl`, `claude`, and `codex` tabs.
 
 Tracked files:
 
@@ -19,10 +19,6 @@ Live targets inside WSL:
 - adds `$HOME/.local/bin` to `PATH` so user installs like `uv` work
 - defines `WORKSTATION` from the Windows user profile path
 - provides workstation launch helpers for `claude` and `codex`
-- provides Ollama shortcuts:
-  - `oc` → `qwen2.5-coder:7b`
-  - `og` → `qwen3:8b`
-  - `ov` → `gemma3:4b`
 - adds `fd` as an alias for Ubuntu's `fdfind`
 - initializes `zoxide` if installed
 - sets `BROWSER=wslview` when `wslu` is installed so browser-based flows from WSL open correctly in Windows

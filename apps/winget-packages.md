@@ -1,12 +1,13 @@
 # `winget-packages.json`
 
-Companion notes for **`winget-packages.json`** in this folder (`dotfiles/apps`). Import from the repo root or `apps` with:
+Companion notes for **`winget-packages.json`** in this folder (`dotfiles/apps`). The manifest is **JSONC** (JSON with `//` category headers), parsed by PowerShell — `winget import` will NOT read it. It is installed per package ID by `install.ps1` / `maintenance/update.ps1`, or manually:
 
 ```powershell
-winget import "$HOME\workstation\dotfiles\apps\winget-packages.json" --accept-package-agreements
+$ids = (Get-Content "$HOME\workstation\dotfiles\apps\winget-packages.json" -Raw | ConvertFrom-Json).packages
+foreach ($id in $ids) { winget install --id $id -e --accept-package-agreements --accept-source-agreements }
 ```
 
-The JSON groups packages roughly as: **dev toolchain → .NET / Windows platform → WSL → browsers → media → files & cloud → productivity → Proton / Signal → hardware → desktop shell & AI tools → creative / games**. **`install.ps1`** imports this file, then installs **Scoop** (get.scoop.sh) and **`apps/scoop-packages.json`** unless you pass **`-NoScoop`**. Keep **only** this copy in the repo (no duplicate manifests under `%USERPROFILE%\Documents`). See **`scoop-packages.md`** for the Scoop CLI list.
+Categories in the JSON: **dev toolchain → AI desktop apps → .NET / Windows platform → WSL → browsers → terminals & shell → media → files & archives → cloud & downloads → documents & productivity → privacy & messaging → hardware & monitoring → desktop shell → creative & games**. **`install.ps1`** installs this list, then installs **Scoop** (get.scoop.sh), adds the **extras** bucket, and installs **`apps/scoop-packages.json`** unless you pass **`-NoScoop`**. Keep **only** this copy in the repo (no duplicate manifests under `%USERPROFILE%\Documents`). See **`scoop-packages.md`** for the Scoop CLI list.
 
 ---
 
@@ -58,7 +59,7 @@ The JSON groups packages roughly as: **dev toolchain → .NET / Windows platform
 | ID | What it does | Example use |
 |----|----------------|-------------|
 | **Google.Chrome.EXE** | Google Chrome (EXE installer id in winget). | Primary browser |
-| **Mozilla.Firefox** | Firefox. | Different engine for testing or privacy-focused browsing |
+| **Mozilla.Firefox.Nightly.MSIX** | Firefox Nightly (MSIX build — the only Nightly channel on winget). | Bleeding-edge Gecko; second browser |
 
 ---
 
@@ -105,7 +106,6 @@ The JSON groups packages roughly as: **dev toolchain → .NET / Windows platform
 
 | ID | What it does | Example use |
 |----|----------------|-------------|
-| **Obsidian.Obsidian** | Local-first Markdown notes and plugins. | Second brain, linked project notes |
 | **calibre.calibre** | E-book library and conversion. | Manage EPUB/PDF, send to e-readers |
 | **EDRLab.Thorium** | Accessible EPUB 3 reader (Readium). | Reflowable books with screen-reader support |
 | **TheDocumentFoundation.LibreOffice** | Office suite (Writer, Calc, Impress, …). | Documents/spreadsheets without Microsoft 365 |
@@ -157,7 +157,6 @@ The JSON groups packages roughly as: **dev toolchain → .NET / Windows platform
 | **Microsoft.PowerToys** | FancyZones, PowerRename, Color Picker, Keyboard Manager, … | Tiling, bulk rename in Explorer, remaps |
 | **wez.wezterm** | GPU terminal with Lua configuration. | Splits, themes, advanced terminal users |
 | **CharlesMilette.TranslucentTB** | Transparent or blurred taskbar. | Visual desktop tweak |
-| **Ollama.Ollama** | Run local LLMs. | Offline models and private inference |
 | **Anysphere.Cursor** | VS Code–style editor with AI features. | Daily coding with AI assistance |
 | **Anthropic.Claude** | Official Claude desktop app. | Chat outside the browser |
 
@@ -176,5 +175,6 @@ The JSON groups packages roughly as: **dev toolchain → .NET / Windows platform
 
 - **Licenses:** Opus, IDM, StartAllBack, Adobe, and others assume you **own a license** on that machine.
 - **Hardware:** Skip or uninstall GHUB/iCUE on PCs without matching gear.
-- **Overlap:** Multiple browsers and media players are intentional for some setups; trim the JSON on minimal installs if you want faster `winget import`.
+- **Overlap:** Multiple browsers and media players are intentional for some setups; trim the JSON on minimal installs for a faster first run.
+- **Music player:** Audirvana Origin is the primary local music player — manual install (not on winget), see the README "Manual Installs" section.
 - **Single source:** Do not maintain a second `winget-packages.json` under Documents or elsewhere; edit **this** file and run `install.ps1` / `maintenance\update.ps1`.

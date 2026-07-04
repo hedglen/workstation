@@ -147,16 +147,10 @@ if (-not $SkipDots) {
 
 Write-Step "WezTerm helper scripts"
 $wslHelper = Join-Path $DotfilesDir "wezterm\wsl-helper.sh"
-$ollamaHelper = Join-Path $DotfilesDir "wezterm\ollama-helper.sh"
 if (Test-Path -LiteralPath $wslHelper) {
     Write-OK "wezterm\wsl-helper.sh present"
 } else {
     Write-Warn "Missing wezterm\wsl-helper.sh (WSL right pane will degrade to shell fallback)"
-}
-if (Test-Path -LiteralPath $ollamaHelper) {
-    Write-OK "wezterm\ollama-helper.sh present"
-} else {
-    Write-Warn "Missing wezterm\ollama-helper.sh (optional; ollama helper pane will degrade)"
 }
 
 # =============================================================================
@@ -362,7 +356,7 @@ if (-not $SkipApps) {
     if (-not (Test-Path $pkgFile)) {
         Write-Warn "apps\winget-packages.json not found -- skipping"
     } else {
-        $packages = (Get-Content $pkgFile | ConvertFrom-Json).Sources.Packages.PackageIdentifier
+        $packages = @((Get-Content $pkgFile -Raw | ConvertFrom-Json).packages | Where-Object { $_ })
         $wingetFailures = New-Object System.Collections.Generic.List[string]
 
         foreach ($id in $packages) {
@@ -482,12 +476,12 @@ if (-not $SkipPython) {
         @{
             name = "ytdl"
             py   = Join-Path $DotfilesDir "projects\ytdl\.venv\Scripts\python.exe"
-            deps = @("rich")
+            deps = @("-r", (Join-Path $DotfilesDir "projects\ytdl\requirements.txt"))
         },
         @{
             name = "transcribe-env"
             py   = "$HOME\workstation\tools\transcribe-env\Scripts\python.exe"
-            deps = @("openai-whisper")
+            deps = @("-r", (Join-Path $DotfilesDir "scripts\requirements-transcribe.txt"))
         }
     )
 

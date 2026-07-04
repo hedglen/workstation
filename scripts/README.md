@@ -6,7 +6,7 @@ Utility scripts for this workstation. The repo holds the small tools that do not
 
 Everything below lives under **`dotfiles/scripts/`**. For **`autohotkey/`**, **`powershell/`**, **`vscode/`**, **`projects/`**, and the rest of the repo, see the tree in the root **[`README.md`](../README.md#-whats-in-here)**.
 
-- **`python/`** — cross-platform CLI helpers (e.g. `ollama-files.py`)
+- **`python/`** — cross-platform CLI helpers
 - **`workstation-health.ps1`** — layout, tooling, and installer dry-runs
 - **`transcribe.py`** / **`transcribe.ps1`** — transcription helpers
 - **`video-ocr-translate.py`** / **`.ps1`**, **`organize_media*.ps1`**, **`media-rename-downloads.ps1`** — media / one-off operational scripts
@@ -25,7 +25,7 @@ What it checks:
 - key Windows tools on `PATH`
 - dry-run safety for `dotfiles/install.ps1`
 - dry-run safety for `dotfiles/mpv-config/install.ps1` when present
-- WezTerm helper scripts (`wezterm/wsl-helper.sh`, `wezterm/ollama-helper.sh`)
+- WezTerm helper scripts (`wezterm/wsl-helper.sh`)
 - presence of important linked config files
 - dirty git repos across the main workstation repos
 
@@ -34,68 +34,6 @@ For more detail:
 ```powershell
 pwsh -File "$HOME\workstation\dotfiles\scripts\workstation-health.ps1" -Verbose
 ```
-
-## Ollama File Helper
-
-`python/ollama-files.py` lets you explicitly feed files to a local Ollama model and optionally apply edits back to disk.
-
-Use it from WSL when possible. That is the most reliable path for this workstation.
-
-### Ask About A File
-
-```bash
-python ~/workstation/dotfiles/scripts/python/ollama-files.py \
-  --model qwen3:8b \
-  --file README.md \
-  ask "Summarize this file"
-```
-
-### Ask About Multiple Files
-
-```bash
-python ~/workstation/dotfiles/scripts/python/ollama-files.py \
-  --model qwen2.5-coder:7b \
-  --file app.py \
-  --file utils.py \
-  ask "What should be refactored first?"
-```
-
-### Include A Glob
-
-```bash
-python ~/workstation/dotfiles/scripts/python/ollama-files.py \
-  --model qwen2.5-coder:7b \
-  --glob "src/*.py" \
-  ask "Find duplicated logic"
-```
-
-### Preview Edits Without Writing
-
-```bash
-python ~/workstation/dotfiles/scripts/python/ollama-files.py \
-  --model qwen2.5-coder:7b \
-  --file app.py \
-  edit "Refactor this into smaller functions"
-```
-
-The script prints a unified diff and stops.
-
-### Apply Edits
-
-```bash
-python ~/workstation/dotfiles/scripts/python/ollama-files.py \
-  --model qwen2.5-coder:7b \
-  --file app.py \
-  edit --apply "Refactor this into smaller functions"
-```
-
-### Guardrails
-
-- only files passed with `--file` or `--glob` are visible to the model
-- files larger than `--max-bytes` are refused
-- edits are dry-run by default
-- `--apply` is required before any file is written
-- on Windows, very large prompts are intentionally refused because WSL is more reliable for larger file sets
 
 ## Repo Hygiene
 

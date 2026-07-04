@@ -97,7 +97,7 @@ Install everything from the JSON (keeps the list in sync): see **`dotfiles/apps/
 | **mpv** (binary under `tools\mpv\`; config in **`dotfiles\mpv-config`**; bootstrapped by `mpv-config/install.ps1` via main installer) | Primary player | [dotfiles/mpv-config](https://github.com/hedglen/dotfiles/tree/master/mpv-config) - HDR, shaders, scripts; legacy [hedglen/mpv-config](https://github.com/hedglen/mpv-config) may be archived |
 | **PotPlayer** (winget)           | Alternate player                         | Broad codecs / UI                                                                 |
 | **yt-dlp** + **FFmpeg** (winget) | Download and remux                       | Also used by `ytdl` / `dl` wrapper; global CLI config is **`dotfiles/projects/ytdl/appdata-config`** → `%APPDATA%\yt-dlp\config` via **`install.ps1`** |
-| **foobar2000** (optional)        | Music library                            | Not in the winget manifest; install manually via `foobar2000/QUICKSTART.md` if wanted |
+| **Audirvana Origin** (manual)    | Primary local music player               | Not on winget — installer from [audirvana.com](https://audirvana.com/origin/); license in Proton Pass |
 | **Qobuz**                        | Streaming client                         | Login in app                                                                        |
 | **ShareX**                       | Screenshots, screen recording, workflows | Hotkeys in ShareX settings                                                          |
 | **Bandicut**                     | Lossless-ish cuts                        | Paid; good for quick trims                                                          |
@@ -139,12 +139,12 @@ Install everything from the JSON (keeps the list in sync): see **`dotfiles/apps/
 | **GitHub CLI** (`gh`)                   | PRs, clones, API — `gh auth login`                           |
 | **VS Code** / **Cursor** / **Windsurf** | Editors; extensions from `dotfiles/vscode/extensions.txt`; **Claude** desktop (winget) for Anthropic chat |
 | **PowerShell 7**                        | Default shell in Windows Terminal / WezTerm                  |
-| **Windows Terminal** / **WezTerm**      | **WezTerm** (`dotfiles/wezterm/wezterm.lua`): system tab (drives, IP, pwsh helper names); **coding** tab (CLI quick reference in the right pane); **git** tab (workspace-folder clean/dirty + commit checklist, refreshes); **wsl** tab with right-pane helper (`wezterm/wsl-helper.sh`); dedicated **claude** and **codex** tabs; and the **ollama** tab. **Windows Terminal**: linked `dotfiles/windows-terminal/settings.json`. |
+| **Windows Terminal** / **WezTerm**      | **WezTerm** (`dotfiles/wezterm/wezterm.lua`): system tab (drives, IP, update runbook in the right pane); **coding** tab (CLI quick reference in the right pane); **git** tab (workspace-folder clean/dirty + commit checklist, refreshes); **wsl** tab with right-pane helper (`wezterm/wsl-helper.sh`); dedicated **claude** and **codex** tabs. **Windows Terminal**: linked `dotfiles/windows-terminal/settings.json`. |
 | **Node.js LTS**                         | `node`, `npm`                                                |
 | **Deno**                                | TS/JS runtime                                                |
 | **Python Launcher** (`py`)              | Picks installed Python                                       |
 | **AutoHotkey**                          | Hotkeys — `dotfiles/autohotkey/main.ahk`                     |
-| **Ollama**                              | Local LLM server — CLI + API                                 |
+| **uv**                                  | Fast Python package/venv manager (winget)                    |
 
 
 ---
@@ -189,9 +189,8 @@ Install everything from the JSON (keeps the list in sync): see **`dotfiles/apps/
 
 | Tool                                          | Role                                        |
 | --------------------------------------------- | ------------------------------------------- |
-| **Obsidian**                                  | Notes (Markdown vaults, winget)             |
 | **Tesseract OCR** (installer)                 | OCR engine (winget); used by other tools    |
-| **Chrome** / **Firefox**                      | Browsers (winget)                           |
+| **Chrome** / **Firefox Nightly**              | Browsers (winget)                           |
 | **Steam**                                     | Games (winget)                              |
 | **Adobe Creative Cloud**                      | Creative suite (winget)                     |
 | **Logitech G HUB** / **Corsair iCUE**         | Peripherals                                 |

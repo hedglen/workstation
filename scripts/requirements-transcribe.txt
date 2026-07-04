@@ -1,0 +1,3 @@
+# transcribe-env deps (venv lives at ~\workstation\tools\transcribe-env, outside the repo)
+# Used by scripts/transcribe.py and scripts/video-ocr-translate.py via the `trans` / `vtrans` helpers.
+openai-whisper   # local speech-to-text

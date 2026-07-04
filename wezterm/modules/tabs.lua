@@ -116,40 +116,6 @@ wezterm.on('gui-startup', function(cmd)
     end
   end
 
-  local ollama_tab, ollama_pane, ollama_fb = spawn.spawn_tab_or_fallback(
-    window,
-    spawn.wsl_spawn(paths.workstation),
-    'ollama',
-    'Install WSL to use Ollama helpers in this tab.'
-  )
-  if ollama_tab and ollama_pane and not ollama_fb then
-    local ollama_main_pane = ollama_pane
-    wezterm.time.call_after(450, function()
-      pcall(function()
-        ollama_main_pane:send_text('qc\n')
-      end)
-    end)
-    local ok_ollama_split, ollama_helper_pane = pcall(function()
-      return ollama_pane:split {
-        direction = 'Right',
-        size = 0.32,
-        args = spawn.ollama_helper_spawn().args,
-      }
-    end)
-    if ok_ollama_split and ollama_helper_pane then
-      local ok_ollama_bottom, ollama_bottom_err = pcall(function()
-        ollama_helper_pane:split {
-          direction = 'Bottom',
-          size = 0.33,
-          args = spawn.wsl_spawn(paths.workstation).args,
-        }
-      end)
-      if not ok_ollama_bottom then
-        wezterm.log_error('Ollama bottom pane split failed: ' .. tostring(ollama_bottom_err))
-      end
-    end
-  end
-
   system_tab:activate()
   window:gui_window():maximize()
 end)

@@ -1,119 +1,129 @@
 {
-  "$schema": "https://aka.ms/winget-packages.schema.2.0.json",
-  "CreationDate": "2026-04-01T00:00:00.000-00:00",
-  "Sources": [
-    {
-      "Packages": [
-        { "PackageIdentifier": "Git.Git" },
-        { "PackageIdentifier": "Microsoft.PowerShell" },
-        { "PackageIdentifier": "Microsoft.VisualStudioCode" },
-        { "PackageIdentifier": "Notepad++.Notepad++" },
-        { "PackageIdentifier": "Codeium.Windsurf" },
-        { "PackageIdentifier": "AutoHotkey.AutoHotkey" },
-        { "PackageIdentifier": "OpenJS.NodeJS.LTS" },
-        { "PackageIdentifier": "Python.Python.3.14" },
-        { "PackageIdentifier": "Python.Launcher" },
-        { "PackageIdentifier": "astral-sh.uv" },
-        { "PackageIdentifier": "DenoLand.Deno" },
-        { "PackageIdentifier": "JanDeDobbeleer.OhMyPosh" },
-        { "PackageIdentifier": "DEVCOM.JetBrainsMonoNerdFont" },
+  // ===========================================================================
+  //  winget app manifest — single source of truth for GUI apps and runtimes.
+  //  Parsed by install.ps1 and maintenance/update.ps1 (PowerShell ConvertFrom-Json,
+  //  which tolerates these // comments). NOT compatible with `winget import`.
+  //  Per-package notes: apps/winget-packages.md
+  // ===========================================================================
+  "packages": [
 
-        { "PackageIdentifier": "Microsoft.DotNet.DesktopRuntime.6" },
-        { "PackageIdentifier": "Microsoft.DotNet.DesktopRuntime.8" },
-        { "PackageIdentifier": "Microsoft.DotNet.DesktopRuntime.9" },
-        { "PackageIdentifier": "Microsoft.DotNet.DesktopRuntime.10" },
-        { "PackageIdentifier": "Microsoft.DotNet.Runtime.6" },
-        { "PackageIdentifier": "Microsoft.DotNet.Runtime.8" },
-        { "PackageIdentifier": "Microsoft.DotNet.Runtime.9" },
-        { "PackageIdentifier": "Microsoft.VCRedist.2015+.x86" },
-        { "PackageIdentifier": "Microsoft.VCRedist.2015+.x64" },
-        { "PackageIdentifier": "Microsoft.VCLibs.14" },
-        { "PackageIdentifier": "Microsoft.VCLibs.Desktop.14" },
-        { "PackageIdentifier": "Microsoft.AppInstaller" },
-        { "PackageIdentifier": "Microsoft.UI.Xaml.2.8" },
-        { "PackageIdentifier": "Microsoft.WindowsAppRuntime.1.8" },
+    // ── Dev toolchain ────────────────────────────────────────────────────────
+    "Git.Git",
+    "Microsoft.PowerShell",
+    "Microsoft.VisualStudioCode",
+    "Notepad++.Notepad++",
+    "Codeium.Windsurf",
+    "AutoHotkey.AutoHotkey",
+    "OpenJS.NodeJS.LTS",
+    "Python.Python.3.14",
+    "Python.Launcher",
+    "astral-sh.uv",
+    "DenoLand.Deno",
+    "JanDeDobbeleer.OhMyPosh",
+    "DEVCOM.JetBrainsMonoNerdFont",
 
-        { "PackageIdentifier": "Microsoft.WSL" },
-        { "PackageIdentifier": "Canonical.Ubuntu.2404" },
+    // ── AI desktop apps ──────────────────────────────────────────────────────
+    "Anysphere.Cursor",
+    "Anthropic.Claude",
 
-        { "PackageIdentifier": "Google.Chrome.EXE" },
-        { "PackageIdentifier": "Mozilla.Firefox" },
+    // ── .NET / Windows platform runtimes ─────────────────────────────────────
+    "Microsoft.DotNet.DesktopRuntime.6",
+    "Microsoft.DotNet.DesktopRuntime.8",
+    "Microsoft.DotNet.DesktopRuntime.9",
+    "Microsoft.DotNet.DesktopRuntime.10",
+    "Microsoft.DotNet.Runtime.6",
+    "Microsoft.DotNet.Runtime.8",
+    "Microsoft.DotNet.Runtime.9",
+    "Microsoft.VCRedist.2015+.x86",
+    "Microsoft.VCRedist.2015+.x64",
+    "Microsoft.VCLibs.14",
+    "Microsoft.VCLibs.Desktop.14",
+    "Microsoft.AppInstaller",
+    "Microsoft.UI.Xaml.2.8",
+    "Microsoft.WindowsAppRuntime.1.8",
 
-        { "PackageIdentifier": "Daum.PotPlayer" },
-        { "PackageIdentifier": "shinchiro.mpv" },
-        { "PackageIdentifier": "VideoLAN.VLC" },
-        { "PackageIdentifier": "ShareX.ShareX" },
-        { "PackageIdentifier": "BandicamCompany.Bandicut" },
-        { "PackageIdentifier": "yt-dlp.FFmpeg" },
-        { "PackageIdentifier": "yt-dlp.yt-dlp" },
-        { "PackageIdentifier": "FlorianHeidenreich.Mp3tag" },
-        { "PackageIdentifier": "XnSoft.XnViewMP" },
+    // ── WSL ──────────────────────────────────────────────────────────────────
+    "Microsoft.WSL",
+    "Canonical.Ubuntu.2404",
 
-        { "PackageIdentifier": "voidtools.Everything" },
-        { "PackageIdentifier": "GPSoftware.DirectoryOpus" },
-        { "PackageIdentifier": "M2Team.NanaZip" },
-        { "PackageIdentifier": "TGRMNSoftware.BulkRenameUtility" },
-        { "PackageIdentifier": "AntibodySoftware.WizTree" },
-        { "PackageIdentifier": "MediaArea.MediaInfo.GUI" },
-        { "PackageIdentifier": "HandBrake.HandBrake" },
-        { "PackageIdentifier": "DuongDieuPhap.ImageGlass" },
-        { "PackageIdentifier": "NickeManarin.ScreenToGif" },
-        { "PackageIdentifier": "SumatraPDF.SumatraPDF" },
-        { "PackageIdentifier": "OBSProject.OBSStudio" },
-        { "PackageIdentifier": "Google.GoogleDrive" },
-        { "PackageIdentifier": "pCloudAG.pCloudDrive" },
-        { "PackageIdentifier": "Tonec.InternetDownloadManager" },
-        { "PackageIdentifier": "AppWork.JDownloader" },
-        { "PackageIdentifier": "qBittorrent.qBittorrent" },
+    // ── Browsers ─────────────────────────────────────────────────────────────
+    "Google.Chrome.EXE",
+    "Mozilla.Firefox.Nightly.MSIX",
 
-        { "PackageIdentifier": "Obsidian.Obsidian" },
-        { "PackageIdentifier": "calibre.calibre" },
-        { "PackageIdentifier": "EDRLab.Thorium" },
-        { "PackageIdentifier": "TheDocumentFoundation.LibreOffice" },
-        { "PackageIdentifier": "Foxit.PhantomPDF.Subscription.MSI" },
-        { "PackageIdentifier": "File-New-Project.EarTrumpet" },
-        { "PackageIdentifier": "LocalSend.LocalSend" },
-        { "PackageIdentifier": "UB-Mannheim.TesseractOCR" },
-        { "PackageIdentifier": "DupeGuru.DupeGuru" },
-        { "PackageIdentifier": "PFOJEnterprisesLLC.ModernCSV" },
-        { "PackageIdentifier": "Qobuz.Qobuz" },
-        { "PackageIdentifier": "namazso.PawnIO" },
+    // ── Terminals & shell ────────────────────────────────────────────────────
+    "Microsoft.WindowsTerminal",
+    "wez.wezterm",
 
-        { "PackageIdentifier": "Proton.ProtonVPN" },
-        { "PackageIdentifier": "Proton.ProtonDrive" },
-        { "PackageIdentifier": "Proton.ProtonPass" },
-        { "PackageIdentifier": "Proton.ProtonAuthenticator" },
-        { "PackageIdentifier": "OpenWhisperSystems.Signal" },
+    // ── Media: playback, capture, download ───────────────────────────────────
+    "Daum.PotPlayer",
+    "shinchiro.mpv",
+    "VideoLAN.VLC",
+    "ShareX.ShareX",
+    "BandicamCompany.Bandicut",
+    "yt-dlp.FFmpeg",
+    "yt-dlp.yt-dlp",
+    "FlorianHeidenreich.Mp3tag",
+    "XnSoft.XnViewMP",
+    "MediaArea.MediaInfo.GUI",
+    "HandBrake.HandBrake",
+    "DuongDieuPhap.ImageGlass",
+    "NickeManarin.ScreenToGif",
+    "OBSProject.OBSStudio",
 
-        { "PackageIdentifier": "REALiX.HWiNFO" },
-        { "PackageIdentifier": "CrystalDewWorld.CrystalDiskInfo" },
-        { "PackageIdentifier": "Guru3D.Afterburner" },
-        { "PackageIdentifier": "Rem0o.FanControl" },
-        { "PackageIdentifier": "AOMEI.PartitionAssistant" },
-        { "PackageIdentifier": "Devolutions.UniGetUI" },
-        { "PackageIdentifier": "Microsoft.Sysinternals.Suite" },
-        { "PackageIdentifier": "Logitech.GHUB" },
-        { "PackageIdentifier": "Corsair.iCUE.5" },
+    // ── Files & archives ─────────────────────────────────────────────────────
+    "voidtools.Everything",
+    "GPSoftware.DirectoryOpus",
+    "M2Team.NanaZip",
+    "TGRMNSoftware.BulkRenameUtility",
+    "AntibodySoftware.WizTree",
+    "DupeGuru.DupeGuru",
 
-        { "PackageIdentifier": "StartIsBack.StartAllBack" },
-        { "PackageIdentifier": "Microsoft.WindowsTerminal" },
-        { "PackageIdentifier": "Microsoft.PowerToys" },
-        { "PackageIdentifier": "wez.wezterm" },
-        { "PackageIdentifier": "CharlesMilette.TranslucentTB" },
-        { "PackageIdentifier": "Ollama.Ollama" },
-        { "PackageIdentifier": "Anysphere.Cursor" },
-        { "PackageIdentifier": "Anthropic.Claude" },
+    // ── Cloud & downloads ────────────────────────────────────────────────────
+    "Google.GoogleDrive",
+    "pCloudAG.pCloudDrive",
+    "Tonec.InternetDownloadManager",
+    "AppWork.JDownloader",
+    "qBittorrent.qBittorrent",
 
-        { "PackageIdentifier": "Adobe.CreativeCloud" },
-        { "PackageIdentifier": "Valve.Steam" }
-      ],
-      "SourceDetails": {
-        "Argument": "https://cdn.winget.microsoft.com/cache",
-        "Identifier": "Microsoft.Winget.Source_8wekyb3d8bbwe",
-        "Name": "winget",
-        "Type": "Microsoft.PreIndexed.Package"
-      }
-    }
-  ],
-  "WinGetVersion": "1.28.220"
+    // ── Documents & productivity ─────────────────────────────────────────────
+    "TheDocumentFoundation.LibreOffice",
+    "Foxit.PhantomPDF.Subscription.MSI",
+    "SumatraPDF.SumatraPDF",
+    "calibre.calibre",
+    "EDRLab.Thorium",
+    "PFOJEnterprisesLLC.ModernCSV",
+    "UB-Mannheim.TesseractOCR",
+    "LocalSend.LocalSend",
+    "File-New-Project.EarTrumpet",
+    "Qobuz.Qobuz",
+    // Audirvana Origin (music player) is NOT on winget — manual install, see README "Manual Installs"
+
+    // ── Privacy & messaging ──────────────────────────────────────────────────
+    "Proton.ProtonVPN",
+    "Proton.ProtonDrive",
+    "Proton.ProtonPass",
+    "Proton.ProtonAuthenticator",
+    "OpenWhisperSystems.Signal",
+
+    // ── Hardware & monitoring ────────────────────────────────────────────────
+    "REALiX.HWiNFO",
+    "CrystalDewWorld.CrystalDiskInfo",
+    "Guru3D.Afterburner",
+    "Rem0o.FanControl",
+    "namazso.PawnIO", // kernel driver used by FanControl/HWiNFO sensors
+    "AOMEI.PartitionAssistant",
+    "Microsoft.Sysinternals.Suite",
+    "Devolutions.UniGetUI",
+    "Logitech.GHUB",
+    "Corsair.iCUE.5",
+
+    // ── Desktop shell ────────────────────────────────────────────────────────
+    "StartIsBack.StartAllBack",
+    "Microsoft.PowerToys",
+    "CharlesMilette.TranslucentTB",
+
+    // ── Creative & games ─────────────────────────────────────────────────────
+    "Adobe.CreativeCloud",
+    "Valve.Steam"
+  ]
 }

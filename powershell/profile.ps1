@@ -263,11 +263,11 @@ function Update-MediaOrganizerDeps {
 }
 
 function Update-YtdlDeps {
-    & "$HOME\workstation\dotfiles\projects\ytdl\.venv\Scripts\pip.exe" install rich
+    & "$HOME\workstation\dotfiles\projects\ytdl\.venv\Scripts\pip.exe" install -U -r "$HOME\workstation\dotfiles\projects\ytdl\requirements.txt"
 }
 
 function Update-TranscribeDeps {
-    & "$HOME\workstation\tools\transcribe-env\Scripts\pip.exe" install -U openai-whisper
+    & "$HOME\workstation\tools\transcribe-env\Scripts\pip.exe" install -U -r "$HOME\workstation\dotfiles\scripts\requirements-transcribe.txt"
 }
 
 function Update-ProjectVenvs {

@@ -1,2 +1,3 @@
-guessit
-rich
+# media-organizer venv deps (created by install.ps1, updated by maintenance/update.ps1)
+guessit   # parse media filenames into title/season/episode
+rich      # console output formatting
