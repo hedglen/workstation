@@ -156,6 +156,8 @@ Categories in the JSON: **dev toolchain → AI desktop apps → .NET / Windows p
 | **Anysphere.Cursor** | VS Code–style editor with AI features. | Daily coding with AI assistance |
 | **Anthropic.Claude** | Official Claude desktop app. | Chat outside the browser |
 
+> **Claude Code CLI** is intentionally *not* in this manifest: `install.ps1` installs it with the native installer (`irm https://claude.ai/install.ps1 | iex`), which auto-updates in the background — the winget build (`Anthropic.ClaudeCode`) does not, and mixing the two causes conflicting installs.
+
 ---
 
 ## Creative and games

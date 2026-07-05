@@ -71,15 +71,16 @@ irm https://raw.githubusercontent.com/hedglen/dotfiles/master/install.ps1 | iex
 This will:
 
 1. Clone this repo to `$HOME\workstation\dotfiles` (i.e. `%USERPROFILE%\workstation\dotfiles`)
-2. Clone **`hedglen-profile`**. Create **`workstation\tools`** if missing. Ensure **`dotfiles\scripts`** and **`dotfiles\projects`** exist; add **junctions** **`workstation\scripts`** → **`dotfiles\scripts`** and **`workstation\projects`** → **`dotfiles\projects`** when those paths are not already taken (legacy-friendly paths). Personal notes: **`notes/`** in this repo.
-3. Install apps: **`winget install`** per package ID from **`apps/winget-packages.json`** (JSONC with category comments — no `winget import`); then **Scoop** via **get.scoop.sh** (unless **`-NoScoop`**), the **extras** bucket, and **`scoop install`** from **`apps/scoop-packages.json`** (see **`apps/winget-packages.md`** / **`apps/scoop-packages.md`**).
-4. Create Python **`.venv`**s for **`projects\media-organizer`** and **`projects\ytdl`** and install dependencies from their `requirements.txt` (uses **`uv`** when available, else **`py`** + pip; skipped by **`-NoPythonProjects`** or **`-ConfigsOnly`**).
+2. Clone **`hedglen-profile`**. Create **`workstation\tools`** if missing. Ensure **`dotfiles\scripts`** and **`dotfiles\projects`** exist; add **junctions** **`workstation\scripts`** → **`dotfiles\scripts`** and **`workstation\projects`** → **`dotfiles\projects`** when those paths are not already taken (legacy-friendly paths). Personal notes: **`notes/`** in this repo. Restore workstation-root docs: **`CLAUDE.md`** (from **`claude/CLAUDE.md`**) and the **`WORKSTATION-SETUP.md`** stub.
+3. Install apps: **`winget install`** per package ID from **`apps/winget-packages.json`** (JSONC with category comments — no `winget import`); then **Scoop** via **get.scoop.sh** (unless **`-NoScoop`**), the **extras** bucket, and **`scoop install`** from **`apps/scoop-packages.json`** (see **`apps/winget-packages.md`** / **`apps/scoop-packages.md`**). Then the **Claude Code CLI** (native installer — auto-updates) when `claude` is not on PATH.
+4. Create Python **`.venv`**s for **`projects\media-organizer`**, **`projects\ytdl`**, and **`tools\transcribe-env`** (Whisper deps — large download) from their `requirements` files (uses **`uv`** when available, else **`py`** + pip; skipped by **`-NoPythonProjects`** or **`-ConfigsOnly`**).
 5. Apply Windows tweaks (requires admin)
-6. Symlink all configs to their correct locations
-7. Install all VS Code extensions
+6. Symlink all configs to their correct locations (incl. **`claude/settings.json`** → `~/.claude/settings.json`)
+7. Install all VS Code + Cursor extensions
 8. Install CaskaydiaCove Nerd Font
 9. Junction `tools\mpv\portable_config` to `dotfiles\mpv-config` for mpv (when the installer configures mpv)
 10. Register AutoHotkey on startup
+11. Provision WSL: **`wsl/setup.sh`** (apt tools, zsh + oh-my-zsh + Powerlevel10k, tracked `.zshrc`/`.p10k.zsh`, uv, claude/codex CLIs) and **`wsl/setup-crons.sh`** (cron jobs). Only remaining WSL manual step: `gh auth login`.
 
 **Guides and runbook:** start at **[`docs/README.md`](docs/README.md)** (workstation layout, setup, tools, Opus).
 
@@ -90,6 +91,16 @@ This will:
 ```text
 dotfiles/
 ├── install.ps1                    ← bootstrap script
+├── lib/                           ← shared helpers for install/update/health
+│   ├── common.ps1                 ← loggers + Test-IsAdmin
+│   ├── config-links.ps1           ← THE config map + loader-aware linker
+│   ├── startup-policy.ps1         ← HKCU Run cleanup policy
+│   ├── fonts.ps1                  ← Nerd Font install
+│   ├── extensions.ps1             ← VS Code/Cursor extension sync
+│   └── python-projects.ps1        ← uv-first venv creation
+├── claude/
+│   ├── CLAUDE.md                  ← workstation-root Claude Code context (copied to workstation\)
+│   └── settings.json              ← ~/.claude/settings.json (symlinked)
 ├── autohotkey/
 │   └── main.ahk                   ← hotkeys, app launchers, text expanders
 ├── powershell/
@@ -104,7 +115,9 @@ dotfiles/
 ├── wsl/
 │   ├── .zshrc                     ← WSL shell aliases, workstation helpers
 │   ├── .p10k.zsh                  ← WSL Powerlevel10k prompt
-│   └── README.md                  ← sync instructions for the tracked WSL shell files
+│   ├── setup.sh                   ← idempotent WSL provisioning (apt, zsh/omz/p10k, uv, claude/codex)
+│   ├── setup-crons.sh             ← WSL cron jobs (run by install.ps1)
+│   └── README.md                  ← WSL setup notes + gh auth
 ├── vscode/
 │   ├── settings.json              ← editor settings, font, theme
 │   └── extensions.txt             ← extension list for auto-install
@@ -176,7 +189,7 @@ After initial setup, three commands handle ongoing maintenance (all defined in `
 
 | Command | What it does |
 | --- | --- |
-| `dots-update` (alias `update-all`) | **Full system update**: git pull, relink configs, VS Code extensions, fonts, winget upgrades from the manifest, Scoop install + update, Python venv deps |
+| `dots-update` (alias `update-all`) | **Full system update**: git pull, relink configs, VS Code/Cursor extensions, fonts, winget upgrades from the manifest, Scoop install + update, Python venv deps |
 | `save-dots` | Commit & push your local changes to GitHub |
 | `sync-dots` | Pull latest from GitHub, relink any new configs, install new extensions/fonts (no app upgrades) |
 
@@ -393,7 +406,7 @@ Script: `autohotkey/main.ahk` — loads on startup via registry Run key.
 
 | Category | Extension |
 | --- | --- |
-| AI | Claude Code, GitHub Copilot, Copilot Chat |
+| AI | Claude Code (Copilot + Chat ship built into VS Code) |
 | Git | GitLens |
 | PowerShell | ms-vscode.powershell |
 | Python | ms-python.python (Pylance) |

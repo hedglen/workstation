@@ -33,7 +33,7 @@ Defined in `dotfiles/powershell/profile.ps1`. Some depend on **`dotfiles/project
 | `orgmed` / `orgmedx`                  | Media organizer (`dotfiles/projects/media-organizer`; venv from `install.ps1`) — inbox `R:\Media\x\dl`; library roots `R:\Media\Movies`, `TV Shows`, `Music Videos`, `x` (`config.toml`); `orgmedx` is `--dest x --apply`. See `organize.py --help` |
 | `ytdl` / `dl`                         | yt-dlp wrapper (`dotfiles/projects/ytdl/ytdl.py`); `dl` is an alias; downloads to the current user's `Videos` folder by default. `--audio`, `--quality 1080|720|480|best`, `--playlist` (`workstation\projects\ytdl` works if junction exists)                                   |
 | `dll`                                 | `yt-dlp --list-extractors`                                                                                                                           |
-| `trans`                               | Transcribe video → `.srt` + `.md` (`dotfiles/scripts/transcribe.py`, venv in `tools/transcribe-env`; create manually)                                         |
+| `trans`                               | Transcribe video → `.srt` + `.md` (`dotfiles/scripts/transcribe.py`, venv in `tools/transcribe-env`; created by `install.ps1` — Whisper deps are a large download)                                         |
 | `vtrans` / `fixsub`                   | Video OCR / translate path (`dotfiles/scripts/video-ocr-translate.py`)                                                                                        |
 | `scimitar`                            | Corsair Scimitar helper (`dotfiles/corsair/scimitar.ps1`)                                                                                            |
 

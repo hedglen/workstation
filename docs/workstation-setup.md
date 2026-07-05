@@ -43,27 +43,31 @@ irm https://raw.githubusercontent.com/hedglen/dotfiles/master/install.ps1 | iex
 This clones and configures the workspace:
 
 1. `dotfiles` → `workstation/dotfiles`
-2. `hedglen-profile` → workspace dir; **`workstation\tools`** created if missing. Junctions **`workstation\scripts`** → **`dotfiles\scripts`** and **`workstation\projects`** → **`dotfiles\projects`** when those paths are unused. Utility scripts: **`dotfiles/scripts/`**. Personal notes: **`dotfiles/notes/`**.
-3. Apps via winget + Scoop (`dotfiles/apps/winget-packages.json` and `scoop-packages.json`; use **`-NoScoop`** to skip Scoop only).
-4. Python **`.venv`** setup for **`dotfiles\projects\media-organizer`** and **`dotfiles\projects\ytdl`** (needs **`py`** on PATH; skip with **`-NoPythonProjects`** or **`-ConfigsOnly`**).
+2. `hedglen-profile` → workspace dir; **`workstation\tools`** created if missing. Junctions **`workstation\scripts`** → **`dotfiles\scripts`** and **`workstation\projects`** → **`dotfiles\projects`** when those paths are unused. Utility scripts: **`dotfiles/scripts/`**. Personal notes: **`dotfiles/notes/`**. Workstation-root docs restored: **`CLAUDE.md`** (from `dotfiles/claude/CLAUDE.md`) and the **`WORKSTATION-SETUP.md`** stub.
+3. Apps via winget + Scoop (`dotfiles/apps/winget-packages.json` and `scoop-packages.json`; use **`-NoScoop`** to skip Scoop only), then the **Claude Code CLI** (native installer, auto-updates) if `claude` is missing.
+4. Python **`.venv`** setup for **`dotfiles\projects\media-organizer`**, **`dotfiles\projects\ytdl`**, and **`tools\transcribe-env`** (Whisper deps — large download; needs **`uv`** or **`py`** on PATH; skip with **`-NoPythonProjects`** or **`-ConfigsOnly`**).
 5. Windows tweaks (admin required)
-6. Config symlinks, VS Code extensions, fonts, mpv config, AutoHotkey
+6. Config symlinks, VS Code + Cursor extensions, fonts, mpv config, AutoHotkey
+   - config map lives in **`dotfiles/lib/config-links.ps1`** — the single source used by `install.ps1`, `maintenance/update.ps1`, and the health check
+   - **Claude Code:** `dotfiles/claude/settings.json` → `~/.claude/settings.json`
    - **mpv:** junction **`tools\mpv\portable_config`** → **`dotfiles\mpv-config`** (when `install.ps1` sets it up)
    - **yt-dlp global CLI:** `dotfiles/projects/ytdl/appdata-config` → `%APPDATA%\yt-dlp\config` (same as [workstation-tools.md](workstation-tools.md))
-7. Startup cleanup policy (auto-enforced by `install.ps1` and `maintenance/update.ps1`)
-   - HKCU Run entries removed when present: `AdobeBridge`, `Adobe Acrobat Synchronizer`, `GoogleChromeAutoLaunch_2B79721E5FCF3159A6E77C5981E57BF6`, `Discord`, `org.whispersystems.signal-desktop`, `WingetUI`, `IDMan`, `LGHUB`
+7. WSL provisioning: **`wsl/setup.sh`** (apt tools, zsh + oh-my-zsh + Powerlevel10k, tracked `.zshrc`/`.p10k.zsh`, uv, claude/codex) and **`wsl/setup-crons.sh`** (cron jobs). If the distro was just registered, launch Ubuntu once to create your user, then re-run `install.ps1`.
+8. Startup cleanup policy (auto-enforced by `install.ps1` and `maintenance/update.ps1`)
+   - HKCU Run entries removed when present: `AdobeBridge`, `Adobe Acrobat Synchronizer`, `GoogleChromeAutoLaunch_*` (machine-specific hash), `Discord`, `org.whispersystems.signal-desktop`, `WingetUI`, `IDMan`, `LGHUB`
    - Startup shortcut removed when present: `%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\Send to OneNote.lnk`
 
-**Python helpers:** venvs are created by **`install.ps1`** by default. To **repair** manually (e.g. after a bad upgrade):
+**Python helpers:** venvs are created by **`install.ps1`** by default. To **repair** manually (e.g. after a bad upgrade), recreate any of them the uv-first way:
 
 ```powershell
+# media-organizer / ytdl (same pattern)
 Set-Location "$HOME\workstation\dotfiles\projects\media-organizer"
-py -3 -m venv .venv
-.\.venv\Scripts\pip install -r requirements.txt
+uv venv .venv
+uv pip install --python .\.venv\Scripts\python.exe -r requirements.txt
 
-Set-Location "$HOME\workstation\dotfiles\projects\ytdl"
-py -3 -m venv .venv
-.\.venv\Scripts\pip install rich
+# transcribe-env (lives under tools\)
+uv venv "$HOME\workstation\tools\transcribe-env"
+uv pip install --python "$HOME\workstation\tools\transcribe-env\Scripts\python.exe" -r "$HOME\workstation\dotfiles\scripts\requirements-transcribe.txt"
 ```
 
 If **`workstation\projects`** is a junction, `Set-Location "$HOME\workstation\projects\media-organizer"` is equivalent.
@@ -132,5 +136,5 @@ Set-Location "$HOME\workstation\dotfiles\mpv-config"
 
 ---
 
-**Last updated:** 2026-04-06
+**Last updated:** 2026-07-05
 

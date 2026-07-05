@@ -22,6 +22,8 @@ Do this before you erase the machine.
   - media libraries, downloads, exports
   - app profiles not in this repo
   - license files/keys not stored in vault
+  - `$HOME\.secrets.ps1` (sourced by the PowerShell profile; holds API keys for `ask` etc.) — store its contents in Proton Pass so you can recreate it
+- Reconcile workstation-root `CLAUDE.md` with `dotfiles/claude/CLAUDE.md` (the health check warns if they differ) and commit
 - Save optional hardware/device exports (if needed):
   - mouse/keyboard profiles
   - fan/RGB profiles
@@ -75,6 +77,10 @@ After installer completes:
 These are expected post-wipe tasks.
 
 - Sign into apps and services (GitHub CLI, Steam, Adobe, Proton, etc.).
+- Recreate `$HOME\.secrets.ps1` from Proton Pass (the profile sources it when present).
+- Log into Claude Code: run `claude` and follow the browser prompt (the CLI itself is installed by `install.ps1`; settings come from the `dotfiles/claude/settings.json` symlink).
+- Re-authorize claude.ai connectors (Gmail, Google Calendar MCP) from claude.ai connector settings.
+- `gh auth login` — once in PowerShell and once in WSL (see `wsl/README.md`).
 - Handle manual-only installs (for current setup, Battle.net).
 - Re-apply optional app-specific tuning that is intentionally personal.
 - Validate apps that may occasionally fail in winget and retry manually if needed:

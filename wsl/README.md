@@ -2,6 +2,14 @@
 
 This folder tracks the Linux-side shell setup used by the WezTerm `wsl`, `claude`, and `codex` tabs.
 
+**Provisioning is automated:** `wsl/setup.sh` idempotently installs the apt tooling, zsh + oh-my-zsh + Powerlevel10k, copies the tracked shell files, and installs uv, yt-dlp, and the claude/codex CLIs. `dotfiles/install.ps1` runs it during bootstrap (after the distro's first launch has created your user); you can also run it any time from WSL:
+
+```bash
+bash "$WIN_HOME/workstation/dotfiles/wsl/setup.sh"
+```
+
+The only remaining manual step afterwards is `gh auth login` (see below).
+
 Tracked files:
 
 - `.zshrc`
@@ -25,7 +33,7 @@ Live targets inside WSL:
 
 ### Keep Tracked And Live Files In Sync
 
-Edit the tracked files first, then copy them into WSL.
+Edit the tracked files first, then copy them into WSL — re-running `wsl/setup.sh` does the copy for you. To copy just the shell files manually:
 
 Set a reusable Windows home mount variable first:
 
@@ -50,14 +58,7 @@ exec zsh -l
 
 ### Recommended WSL Tooling
 
-Install the tools this shell config expects:
-
-```bash
-sudo apt update
-sudo apt install -y ripgrep fd-find fzf jq tmux btop ncdu gh neovim pipx zoxide wslu
-curl -LsSf https://astral.sh/uv/install.sh | sh
-exec zsh -l
-```
+`wsl/setup.sh` installs everything this shell config expects (ripgrep, fd-find, fzf, jq, tmux, btop, ncdu, gh, neovim, pipx, zoxide, wslu, uv, and more). Run it instead of installing by hand; it skips anything already present.
 
 ### Node/npm global CLI path policy
 
@@ -118,25 +119,7 @@ If you change the prompt, update both the live WSL file and the tracked copy her
 
 ## Initial Setup
 
-Ubuntu 24.04 LTS installed via `wsl --install -d Ubuntu` from PowerShell. Shell is zsh with Powerlevel10k.
-
-```bash
-sudo apt update && sudo apt upgrade -y
-sudo apt install -y git curl wget ffmpeg python3 python3-pip nodejs npm jq htop neofetch
-```
-
-### yt-dlp
-
-```bash
-pip3 install --break-system-packages yt-dlp
-```
-
-Add local bin to PATH (pip installs here):
-
-```bash
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
-source ~/.zshrc
-```
+Ubuntu 24.04 LTS installed via `wsl --install -d Ubuntu` from PowerShell (done by `dotfiles/install.ps1`). Launch Ubuntu once to create your user, then re-run `install.ps1` — it runs `wsl/setup.sh`, which installs the apt packages, zsh + oh-my-zsh + Powerlevel10k, yt-dlp, uv, the shell files, and the claude/codex CLIs. Shell is zsh with Powerlevel10k.
 
 ### Git identity
 
