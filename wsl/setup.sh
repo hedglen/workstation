@@ -2,7 +2,7 @@
 # wsl/setup.sh
 # Idempotently provisions the WSL side of this dotfiles setup: apt tooling,
 # zsh + oh-my-zsh + Powerlevel10k, the tracked shell files, uv, npm global
-# prefix, and the claude/codex/grok CLIs the WezTerm tabs expect.
+# prefix, and the claude/codex/grok/vibe CLIs the WezTerm tabs expect.
 # Run as the normal WSL user (uses sudo only where needed).
 # Called by dotfiles/install.ps1 during machine bootstrap; safe to re-run.
 
@@ -120,7 +120,7 @@ export NPM_CONFIG_PREFIX="${NPM_CONFIG_PREFIX:-$HOME/.npm-global}"
 mkdir -p "$NPM_CONFIG_PREFIX/bin"
 ok "~/.npm-global ready"
 
-# ── claude/codex/grok CLIs (the WezTerm AI tabs expect these) ─────────────────
+# ── claude/codex/grok/vibe CLIs (the WezTerm AI tabs expect these) ────────────
 step "Claude Code CLI"
 if command -v claude &>/dev/null || [[ -x "$HOME/.local/bin/claude" ]]; then
   skip "claude already installed"
@@ -147,6 +147,17 @@ elif curl -fsSL https://x.ai/cli/install.sh | bash; then
   ok "grok installed"
 else
   warn "grok install failed — run: curl -fsSL https://x.ai/cli/install.sh | bash"
+fi
+
+step "Vibe CLI"
+# Mistral Vibe is a uv tool (vibe + vibe-acp shims land in ~/.local/bin)
+UV_BIN="$(command -v uv 2>/dev/null || echo "$HOME/.local/bin/uv")"
+if command -v vibe &>/dev/null || [[ -x "$HOME/.local/bin/vibe" ]]; then
+  skip "vibe already installed"
+elif [[ -x "$UV_BIN" ]] && "$UV_BIN" tool install mistral-vibe; then
+  ok "vibe installed"
+else
+  warn "vibe install failed — run: uv tool install mistral-vibe"
 fi
 
 # ── default shell ─────────────────────────────────────────────────────────────
