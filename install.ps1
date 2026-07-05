@@ -731,20 +731,7 @@ if (-not $AppsOnly) {
     if (Test-Path $ahkSrc) {
         $ahkSrc = (Resolve-Path $ahkSrc).Path
     }
-    # Prefer a real AutoHotkey64.exe. WindowsApps\AutoHotkey.exe is an app-alias shim that runs
-    # launcher.ahk and often throws "cannot find path" on FileRead(ScriptPath) at startup.
-    $ahkCandidates = @(
-        "${env:ProgramFiles}\AutoHotkey\v2\AutoHotkey64.exe",
-        "${env:ProgramFiles(x86)}\AutoHotkey\v2\AutoHotkey64.exe",
-        "$env:LOCALAPPDATA\Programs\AutoHotkey\AutoHotkey64.exe"
-    )
-    $ahkExe = $ahkCandidates | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
-    if (-not $ahkExe) {
-        $ahkCmd = Get-Command AutoHotkey.exe -ErrorAction SilentlyContinue
-        if ($ahkCmd -and $ahkCmd.Source -notmatch '\\WindowsApps\\') {
-            $ahkExe = $ahkCmd.Source
-        }
-    }
+    $ahkExe = Get-AutoHotkeyExe
     if (-not $ahkExe) {
         $ahkExe = "${env:ProgramFiles}\AutoHotkey\v2\AutoHotkey64.exe"
     }

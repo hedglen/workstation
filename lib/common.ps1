@@ -13,3 +13,22 @@ function Test-IsAdmin {
     ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).
         IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 }
+
+# Prefer a real AutoHotkey64.exe. The WindowsApps\AutoHotkey.exe app-alias shim
+# runs launcher.ahk and often throws "cannot find path" at startup. The winget
+# user-scope install lands under LOCALAPPDATA\Programs\AutoHotkey\v2 and is NOT
+# on PATH.
+function Get-AutoHotkeyExe {
+    $candidates = @(
+        "${env:ProgramFiles}\AutoHotkey\v2\AutoHotkey64.exe",
+        "${env:ProgramFiles(x86)}\AutoHotkey\v2\AutoHotkey64.exe",
+        "$env:LOCALAPPDATA\Programs\AutoHotkey\v2\AutoHotkey64.exe",
+        "$env:LOCALAPPDATA\Programs\AutoHotkey\AutoHotkey64.exe"
+    )
+    $exe = $candidates | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
+    if (-not $exe) {
+        $cmd = Get-Command AutoHotkey64.exe, AutoHotkey.exe -ErrorAction SilentlyContinue | Select-Object -First 1
+        if ($cmd -and $cmd.Source -notmatch '\\WindowsApps\\') { $exe = $cmd.Source }
+    }
+    $exe
+}

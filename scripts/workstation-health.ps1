@@ -201,7 +201,7 @@ foreach ($jx in @(
 
 Step "Checking core tools on PATH"
 
-$commands = @("git", "winget", "code", "pwsh", "AutoHotkey.exe", "claude")
+$commands = @("git", "winget", "code", "pwsh", "claude")
 foreach ($c in $commands) {
     if (Get-Command $c -ErrorAction SilentlyContinue) {
         OK "$c found"
@@ -211,6 +211,20 @@ foreach ($c in $commands) {
             $errors += "Missing:$c"
         }
     }
+}
+
+# AutoHotkey: the winget user-scope install is not on PATH — probe known locations
+$ahkExe = Get-AutoHotkeyExe
+if ($ahkExe) {
+    OK "AutoHotkey found ($ahkExe)"
+    $ahkRun = (Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -ErrorAction SilentlyContinue).AutoHotkey
+    if ($ahkRun) {
+        OK "AutoHotkey registered for startup"
+    } else {
+        Warn "AutoHotkey not registered for startup (run install.ps1)"
+    }
+} else {
+    Warn "AutoHotkey not found"
 }
 
 Step "Dry-run: dotfiles/install.ps1"
