@@ -37,9 +37,9 @@
     "duf",          // better df - disk usage
     "exiftool",     // media metadata read/write (pairs with media-organizer / yt-dlp)
     "eza",          // modern ls
-    "fastfetch",    // system info banner
     "gsudo",        // sudo for Windows
     "hyperfine",    // command benchmarking
+    "neofetch",     // system info banner with cyberpunk neon theme
     "openssh",      // SSH client
     "rclone",       // cloud storage sync
     "tree",         // directory tree listing

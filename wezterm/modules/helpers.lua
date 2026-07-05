@@ -149,7 +149,7 @@ Clear-Host
   Write-Host 'System & files' -ForegroundColor Cyan
   _cliRow 'btm / bottom' 'modern htop: CPU, mem, disk, network dashboard'
   _cliRow 'dust' 'disk usage tree, biggest first'
-  _cliRow 'fastfetch' 'system info banner'
+  _cliRow 'neofetch' 'system info banner with cyberpunk neon theme'
   _cliRow 'gsudo cmd' 'run one command elevated, same window'
   _cliRow 'hyperfine "cmd"' 'benchmark a command (warmup + stats)'
   _cliRow 'rclone ls remote:' 'cloud storage sync (rclone config first)'
