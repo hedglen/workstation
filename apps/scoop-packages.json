@@ -20,7 +20,7 @@
     "glow",         // markdown in the terminal
     "delta",        // rich git diffs
     "sd",           // simple find-and-replace
-    "less",         // plain pager (referenced by the coding-tab cheat sheet)
+    "less",         // plain pager (referenced by the toolbelt-tab cheat sheet)
 
     // ── Git & GitHub ─────────────────────────────────────────────────────────
     "gh",           // GitHub CLI

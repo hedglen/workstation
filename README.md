@@ -110,7 +110,7 @@ dotfiles/
 ├── oh-my-posh/
 │   └── hedglab.omp.json           ← custom OMP theme (Neon Dark–style segments)
 ├── wezterm/
-│   ├── wezterm.lua                ← gui-startup tabs: system, coding, git, wsl, claude, codex, grok
+│   ├── wezterm.lua                ← gui-startup tabs: system, toolbelt, git, wsl, claude, codex, grok
 │   └── wsl-helper.sh              ← right pane helper for the WezTerm wsl tab (quick jumps + gh notes)
 ├── wsl/
 │   ├── .zshrc                     ← WSL shell aliases, workstation helpers

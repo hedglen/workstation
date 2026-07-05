@@ -149,6 +149,9 @@ Clear-Host
   Write-Host 'System & files' -ForegroundColor Cyan
   _cliRow 'btm / bottom' 'modern htop: CPU, mem, disk, network dashboard'
   _cliRow 'dust' 'disk usage tree, biggest first'
+  _cliRow 'duf' 'disk free per drive (better df)'
+  _cliRow 'tree -L 2' 'directory tree listing, N levels deep'
+  _cliRow 'ssh user@host' 'OpenSSH client (keys in ~/.ssh)'
   _cliRow 'neofetch' 'system info banner with cyberpunk neon theme'
   _cliRow 'gsudo cmd' 'run one command elevated, same window'
   _cliRow 'hyperfine "cmd"' 'benchmark a command (warmup + stats)'
