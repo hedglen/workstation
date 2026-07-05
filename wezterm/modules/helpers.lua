@@ -1,3 +1,4 @@
+local distro = require 'modules.distro'
 local paths = require 'modules.paths'
 local spawn = require 'modules.spawn'
 
@@ -103,7 +104,8 @@ _u 'py-media-deps / py-ytdl-deps / py-transcribe-deps' 'one venv each'
 Write-Host ''
 ]]
 
-M.coding_helper_cmd = [[
+-- Mirrors the categories in apps/scoop-packages.json — every scoop tool gets a row.
+M.toolbelt_helper_cmd = [[
 Clear-Host
 & {
   function _cliRow($cmd, $desc) {
@@ -111,49 +113,56 @@ Clear-Host
     Write-Host $cmd -NoNewline -ForegroundColor Yellow
     Write-Host ('  ' + $desc) -ForegroundColor DarkGray
   }
-  Write-Host 'Coding - CLI quick reference' -ForegroundColor Magenta
-  Write-Host 'Most tools from Scoop. Git tab for repo status; WSL right pane for gh cheat sheet.' -ForegroundColor DarkGray
+  Write-Host 'Toolbelt - Scoop CLI cheat sheet' -ForegroundColor Magenta
+  Write-Host 'Everything below installs from apps/scoop-packages.json.' -ForegroundColor DarkGray
   Write-Host ''
 
-  Write-Host 'Listing' -ForegroundColor Cyan
-  _cliRow 'll / la' 'Get-ChildItem (pwsh profile aliases)'
-  _cliRow 'eza -la' 'colorized long listing'
-  _cliRow 'eza -la --git' 'git column when cwd is inside one repo'
+  Write-Host 'Search & navigate' -ForegroundColor Cyan
+  _cliRow 'rg pattern' 'search file contents (-l = filenames only)'
+  _cliRow 'fd name' 'find files by name (respects .gitignore)'
+  _cliRow 'fzf' 'fuzzy picker; pipe lines in (fd | fzf)'
+  _cliRow 'z / zi' 'zoxide: jump to visited dirs (zi = interactive)'
+  _cliRow 'scoop-search term' 'find installable scoop packages'
   Write-Host ''
 
-  Write-Host 'Find and pick' -ForegroundColor Cyan
-  _cliRow 'rg pattern' 'ripgrep: search file contents'
-  _cliRow 'rg -l pattern' 'only filenames with matches'
-  _cliRow 'fd name' 'find files by path pattern (respects .gitignore)'
-  _cliRow 'fzf' 'fuzzy picker; pipe lines in (e.g. fd | fzf)'
+  Write-Host 'View & edit' -ForegroundColor Cyan
+  _cliRow 'bat file' 'cat with syntax highlighting + line numbers'
+  _cliRow 'glow file.md' 'render markdown in the terminal (glow . = browse)'
+  _cliRow 'less file' 'plain pager (q quits, / searches)'
+  _cliRow 'sd "old" "new" file' 'find & replace without sed syntax'
   Write-Host ''
 
-  Write-Host 'View and diffs' -ForegroundColor Cyan
-  _cliRow 'bat file' 'syntax-highlighted file view'
-  _cliRow 'less file' 'plain pager'
-  _cliRow 'git diff' 'delta pager (configured in gitconfig); n/N jump files, q quits'
+  Write-Host 'Git & GitHub' -ForegroundColor Cyan
+  _cliRow 'lazygit' 'full-screen git TUI'
+  _cliRow 'git diff' 'delta pager via gitconfig; n/N jump files, q quits'
+  _cliRow 'gh' 'GitHub CLI: pr, issue, repo (gh auth login once)'
+  _cliRow 'git lfs status' 'large-file storage (git-lfs)'
   Write-Host ''
 
-  Write-Host 'Data and media' -ForegroundColor Cyan
-  _cliRow 'jq' 'query JSON (.key, map, select; stdin = JSON text)'
+  Write-Host 'Data & media' -ForegroundColor Cyan
+  _cliRow 'jq ".key" file.json' 'query/transform JSON'
+  _cliRow 'yq ".key" file.yaml' 'same idea for YAML/XML/CSV'
   _cliRow 'exiftool file' 'read/write media metadata (dates, tags, codecs)'
   Write-Host ''
 
-  Write-Host 'Learn' -ForegroundColor Cyan
-  _cliRow 'tldr cmd' 'practical examples for any CLI tool'
+  Write-Host 'System & files' -ForegroundColor Cyan
+  _cliRow 'eza -la --git' 'modern ls (git column inside a repo)'
+  _cliRow 'dust' 'disk usage tree, biggest first'
+  _cliRow 'fastfetch' 'system info banner'
+  _cliRow 'gsudo cmd' 'run one command elevated, same window'
+  _cliRow 'hyperfine "cmd"' 'benchmark a command (warmup + stats)'
+  _cliRow 'rclone ls remote:' 'cloud storage sync (rclone config first)'
+  _cliRow 'wget url' 'plain downloader for scripts'
   Write-Host ''
 
-  Write-Host 'Navigate' -ForegroundColor Cyan
-  _cliRow 'z / zi' 'zoxide jump (zi = interactive); pwsh and bash'
-  Write-Host ''
-
-  Write-Host 'Git and GitHub' -ForegroundColor Cyan
-  _cliRow 'lazygit' 'full-screen git TUI'
-  _cliRow 'gh' 'GitHub CLI (pr, issue, repo; gh auth login once)'
-  _cliRow 'git status -sb' 'short branch + change list'
+  Write-Host 'Docs & task running' -ForegroundColor Cyan
+  _cliRow 'pandoc in.md -o out.docx' 'convert between document formats'
+  _cliRow 'just' 'run recipes from a justfile'
+  _cliRow 'tldr cmd' 'example-first help for any CLI (tealdeer)'
   Write-Host ''
 
   Write-Host 'PowerShell profile' -ForegroundColor Cyan
+  _cliRow 'll / la' 'Get-ChildItem'
   _cliRow 'reload' 're-source profile.ps1'
   _cliRow 'which name' 'resolve a command to its path'
   _cliRow 'grep pat' 'pipeline: ... | grep pat (Select-String)'
@@ -161,7 +170,7 @@ Clear-Host
   _cliRow 'dots / tools / home' 'cd shortcuts (see profile.ps1)'
   Write-Host ''
 
-  Write-Host 'Docs: dotfiles/docs/workstation-tools.md (full tool map)' -ForegroundColor DarkCyan
+  Write-Host 'Per-tool notes: apps/scoop-packages.md | full map: docs/workstation-tools.md' -ForegroundColor DarkCyan
   Write-Host ''
 }
 ]]
@@ -174,23 +183,90 @@ Clear-Host
     Write-Host $cmd -NoNewline -ForegroundColor Yellow
     Write-Host ('  ' + $desc) -ForegroundColor DarkGray
   }
-  Write-Host 'Claude - quick use cases' -ForegroundColor Magenta
-  Write-Host 'Best for planning, architecture, and long-form reasoning.' -ForegroundColor DarkGray
+  $wslDistro = ']]
+  .. distro.wsl_distro
+  .. [['
+  $claudeVer = (wsl.exe -d $wslDistro bash -lc 'claude --version 2>/dev/null' 2>$null)
+  if ($claudeVer) { $claudeVer = $claudeVer.Trim() } else { $claudeVer = '' }
+  $authStatus = (wsl.exe -d $wslDistro bash -lc 'claude auth status --text 2>/dev/null || claude auth status 2>/dev/null' 2>$null)
+  if ($authStatus) { $authStatus = ($authStatus -join ' ').Trim() } else { $authStatus = '' }
+
+  Write-Host 'Claude - WSL quick sheet' -ForegroundColor Magenta
+  Write-Host 'Planning, architecture, implementation, and long-form reasoning.' -ForegroundColor DarkGray
+  Write-Host ''
+  Write-Host ' Status' -ForegroundColor Cyan
+  Write-Host '  Version: ' -NoNewline -ForegroundColor White
+  if ($claudeVer) {
+    Write-Host $claudeVer -ForegroundColor Green
+  } else {
+    Write-Host 'not installed' -ForegroundColor DarkGray
+  }
+  Write-Host '  Auth:    ' -NoNewline -ForegroundColor White
+  if ($authStatus -match 'loggedIn|Logged in|authenticated|subscriptionType') {
+    Write-Host 'ok' -ForegroundColor Green
+  } elseif ($authStatus) {
+    Write-Host $authStatus -ForegroundColor Yellow
+  } else {
+    Write-Host 'unavailable' -ForegroundColor DarkGray
+  }
   Write-Host ''
 
   Write-Host 'When to start here' -ForegroundColor Cyan
   _row 'Plan a refactor' 'ask for options + tradeoffs before editing'
   _row 'Review a PR' 'focus on bugs, regressions, and test gaps'
   _row 'Write docs' 'draft README/runbook/checklist content'
+  _row 'Implement a change' 'edit files, run checks, and verify behavior'
   Write-Host ''
 
-  Write-Host 'Prompt patterns' -ForegroundColor Cyan
-  _row 'Goal + constraints + files' 'include paths and acceptance criteria'
-  _row 'Ask for phased rollout' 'request step-by-step plan before code'
-  _row 'Ask for risk checks' 'compatibility, migration, rollback guidance'
+  Write-Host 'In-session' -ForegroundColor Cyan
+  _row '/plan' 'switch to planning before implementation'
+  _row '/review' 'review a pull request or local changes'
+  _row '/compact' 'shrink long conversation history'
+  _row '/resume' 'pick up a previous session'
+  _row '/model' 'change the active model'
+  _row '/permissions' 'inspect or change tool permissions'
+  _row '/context' 'inspect context window usage'
+  _row '/help' 'show all available commands'
   Write-Host ''
 
-  Write-Host 'Hand off to Codex tab when ready to execute edits/tests.' -ForegroundColor DarkCyan
+  Write-Host 'Headless / scripting' -ForegroundColor Cyan
+  _row 'claude -p "..."' 'run one task non-interactively'
+  _row 'claude -c' 'continue the latest conversation in this directory'
+  _row 'claude -r' 'select and resume a previous conversation'
+  _row 'claude --model name' 'choose a model for the session'
+  _row 'claude --permission-mode plan' 'start read-only in plan mode'
+  _row 'claude update' 'upgrade the CLI'
+  Write-Host ''
+
+  Write-Host 'Prompt pattern' -ForegroundColor Cyan
+  _row 'Goal' 'state the outcome and intended behavior'
+  _row 'Constraints' 'compatibility, scope, and behavior to preserve'
+  _row 'Acceptance checks' 'tests, lint, build, or exact expected output'
+  _row 'Relevant paths / errors' 'include files and unedited command output'
+  Write-Host ''
+
+  Write-Host 'WSL paths' -ForegroundColor Cyan
+  _row '/mnt/c/Users/rjh/workstation' 'workstation root (left pane CWD)'
+  _row '.../dotfiles' 'configs, scripts, wezterm'
+  _row '~/.claude/settings.json' 'Claude Code settings'
+  _row '~/.claude/' 'sessions, projects, and local state'
+  Write-Host ''
+
+  Write-Host 'Auth & diagnostics' -ForegroundColor Cyan
+  _row 'claude auth status' 'show current authentication state'
+  _row 'claude auth login' 'authenticate or re-authenticate'
+  _row 'claude doctor' 'diagnose configuration and runtime issues'
+  _row '/doctor' 'run health checks inside a session'
+  Write-Host ''
+
+  Write-Host 'Tab workflow' -ForegroundColor Cyan
+  Write-Host '  Claude tab  -> plan, reason, implement, review' -ForegroundColor DarkGray
+  Write-Host '  Grok tab    -> research and second opinions' -ForegroundColor DarkGray
+  Write-Host '  Codex tab   -> implement, test, review' -ForegroundColor DarkGray
+  Write-Host '  Vibe tab    -> Mistral agent, agents, skills' -ForegroundColor DarkGray
+  Write-Host '  Git tab     -> inspect, commit, push' -ForegroundColor DarkGray
+  Write-Host ''
+  Write-Host 'CLI help: claude --help | in-session help: /help' -ForegroundColor DarkCyan
   Write-Host ''
 }
 ]]
@@ -203,23 +279,91 @@ Clear-Host
     Write-Host $cmd -NoNewline -ForegroundColor Yellow
     Write-Host ('  ' + $desc) -ForegroundColor DarkGray
   }
-  Write-Host 'Codex - execution quick sheet' -ForegroundColor Magenta
-  Write-Host 'Best for implementing edits, running checks, and iterating fast.' -ForegroundColor DarkGray
+  $wslDistro = ']]
+  .. distro.wsl_distro
+  .. [['
+  $codexVer = (wsl.exe -d $wslDistro bash -lc 'codex --version 2>/dev/null' 2>$null)
+  if ($codexVer) { $codexVer = $codexVer.Trim() } else { $codexVer = '' }
+  # Codex writes login status to stderr, so merge both streams before matching it.
+  $authStatus = (wsl.exe -d $wslDistro bash -lc 'codex login status 2>&1' 2>$null)
+  if ($authStatus) { $authStatus = ($authStatus -join ' ').Trim() } else { $authStatus = '' }
+
+  Write-Host 'Codex - WSL quick sheet' -ForegroundColor Magenta
+  Write-Host 'Implementation agent; edits, tests, reviews, and automation.' -ForegroundColor DarkGray
+  Write-Host ''
+  Write-Host ' Status' -ForegroundColor Cyan
+  Write-Host '  Version: ' -NoNewline -ForegroundColor White
+  if ($codexVer) {
+    Write-Host $codexVer -ForegroundColor Green
+  } else {
+    Write-Host 'not installed' -ForegroundColor DarkGray
+  }
+  Write-Host '  Auth:    ' -NoNewline -ForegroundColor White
+  if ($authStatus -match 'Logged in') {
+    Write-Host 'ok' -ForegroundColor Green
+  } elseif ($authStatus) {
+    Write-Host $authStatus -ForegroundColor Yellow
+  } else {
+    Write-Host 'unavailable' -ForegroundColor DarkGray
+  }
   Write-Host ''
 
-  Write-Host 'Common flow' -ForegroundColor Cyan
-  _row 'Implement <task>' 'apply targeted code changes'
-  _row 'Run tests/lint for changed files' 'confirm behavior before commit'
-  _row 'Show diff + summarize' 'verify what changed and why'
+  Write-Host 'When to start here' -ForegroundColor Cyan
+  _row 'Implement a scoped change' 'edit files, run checks, verify the diff'
+  _row 'Diagnose a failure' 'trace logs, tests, and configuration'
+  _row 'Review a change' 'find bugs, regressions, and missing tests'
+  _row 'Automate a task' 'scripts, migrations, and repeatable workflows'
   Write-Host ''
 
-  Write-Host 'Helpful asks' -ForegroundColor Cyan
-  _row 'Fix this error' 'paste exact stack trace or command output'
-  _row 'Refactor this file safely' 'ask for minimal behavior-preserving edits'
-  _row 'Prepare commit message' 'request conventional commit style summary'
+  Write-Host 'In-session' -ForegroundColor Cyan
+  _row '/plan' 'switch to planning before implementation'
+  _row '/review' 'review the current changes'
+  _row '/diff' 'show the working-tree diff'
+  _row '/status' 'show session and context details'
+  _row '/compact' 'shrink long conversation history'
+  _row '/resume' 'pick up a previous session'
+  _row '/model' 'change model or reasoning level'
+  _row '/permissions' 'change approval and sandbox policy'
   Write-Host ''
 
-  Write-Host 'Use Claude tab for deep planning; use this tab to ship changes.' -ForegroundColor DarkCyan
+  Write-Host 'Headless / scripting' -ForegroundColor Cyan
+  _row 'codex exec "..."' 'run one task non-interactively'
+  _row 'codex review' 'review local changes non-interactively'
+  _row 'codex resume --last' 'continue the most recent session'
+  _row 'codex -C path' 'set the working root'
+  _row 'codex --search' 'enable live web search for a session'
+  _row 'codex update' 'upgrade the CLI'
+  Write-Host ''
+
+  Write-Host 'Prompt pattern' -ForegroundColor Cyan
+  _row 'Goal' 'state the outcome, not just the file to edit'
+  _row 'Constraints' 'compatibility, scope, and behavior to preserve'
+  _row 'Acceptance checks' 'tests, lint, build, or exact expected output'
+  _row 'Relevant paths / errors' 'include files and unedited command output'
+  Write-Host ''
+
+  Write-Host 'WSL paths' -ForegroundColor Cyan
+  _row '/mnt/c/Users/rjh/workstation' 'workstation root (left pane CWD)'
+  _row '.../dotfiles' 'configs, scripts, wezterm'
+  _row '~/.codex/config.toml' 'Codex configuration'
+  _row '~/.codex/skills/' 'installed personal skills'
+  Write-Host ''
+
+  Write-Host 'Auth & diagnostics' -ForegroundColor Cyan
+  _row 'codex login status' 'show current authentication state'
+  _row 'codex login' 'authenticate or re-authenticate'
+  _row 'codex doctor' 'diagnose configuration and runtime issues'
+  _row 'codex features list' 'inspect feature flags'
+  Write-Host ''
+
+  Write-Host 'Tab workflow' -ForegroundColor Cyan
+  Write-Host '  Claude tab  -> deep planning' -ForegroundColor DarkGray
+  Write-Host '  Grok tab    -> research and second opinions' -ForegroundColor DarkGray
+  Write-Host '  Codex tab   -> implement, test, review' -ForegroundColor DarkGray
+  Write-Host '  Vibe tab    -> Mistral agent, agents, skills' -ForegroundColor DarkGray
+  Write-Host '  Git tab     -> inspect, commit, push' -ForegroundColor DarkGray
+  Write-Host ''
+  Write-Host 'CLI help: codex --help | command help: codex <command> --help' -ForegroundColor DarkCyan
   Write-Host ''
 }
 ]]
@@ -232,23 +376,232 @@ Clear-Host
     Write-Host $cmd -NoNewline -ForegroundColor Yellow
     Write-Host ('  ' + $desc) -ForegroundColor DarkGray
   }
-  Write-Host 'Grok - quick use cases' -ForegroundColor Magenta
-  Write-Host 'Best for real-time info (X/web search) and fast second opinions.' -ForegroundColor DarkGray
+  $wslDistro = ']]
+  .. distro.wsl_distro
+  .. [['
+  $grokVer = (wsl.exe -d $wslDistro bash -lc 'grok --version 2>/dev/null' 2>$null)
+  if ($grokVer) { $grokVer = $grokVer.Trim() } else { $grokVer = '' }
+  $authOk = (wsl.exe -d $wslDistro bash -lc 'test -f ~/.grok/auth.json && echo ok || echo missing' 2>$null)
+  if ($authOk) { $authOk = $authOk.Trim() } else { $authOk = 'unavailable' }
+
+  Write-Host 'Grok - WSL quick sheet' -ForegroundColor Magenta
+  Write-Host 'Agent + web research; fast second opinions.' -ForegroundColor DarkGray
+  Write-Host ''
+  Write-Host ' Status' -ForegroundColor Cyan
+  Write-Host '  Version: ' -NoNewline -ForegroundColor White
+  if ($grokVer) {
+    Write-Host $grokVer -ForegroundColor Green
+  } else {
+    Write-Host 'not installed' -ForegroundColor DarkGray
+  }
+  Write-Host '  Auth:    ' -NoNewline -ForegroundColor White
+  if ($authOk -eq 'ok') {
+    Write-Host 'ok' -ForegroundColor Green
+  } elseif ($authOk -eq 'missing') {
+    Write-Host 'missing (browser login on first grok run)' -ForegroundColor Yellow
+  } else {
+    Write-Host 'unavailable' -ForegroundColor DarkGray
+  }
   Write-Host ''
 
   Write-Host 'When to start here' -ForegroundColor Cyan
-  _row 'Current-events lookups' 'library releases, breaking changes, outages'
-  _row 'Second opinion' 'sanity-check a plan from the Claude tab'
-  _row 'Quick one-shot questions' 'no long session context needed'
+  _row 'Research before you build' 'API changes, lib picks, breaking changes'
+  _row 'Second opinion' 'sanity-check output from Claude tab'
+  _row 'One-shot from shell' 'grok -p "..." without a full session'
+  _row 'Office / docs tasks' 'docx, pptx, xlsx skills in ~/.grok/skills/'
   Write-Host ''
 
-  Write-Host 'CLI basics' -ForegroundColor Cyan
-  _row 'grok' 'interactive session (login on first run)'
-  _row 'grok upgrade' 'update the CLI in place'
-  _row '/help in session' 'commands, model switching, settings'
+  Write-Host 'In-session' -ForegroundColor Cyan
+  _row '/plan' 'design before code'
+  _row '/compact' 'shrink long history'
+  _row '/resume' 'pick up a previous session'
+  _row '/skills' 'browse installed skills'
+  _row '/context' 'context window usage'
+  _row 'Shift+Tab' 'cycle Normal -> Plan -> YOLO'
   Write-Host ''
 
-  Write-Host 'Claude tab for deep planning; Codex tab to ship changes.' -ForegroundColor DarkCyan
+  Write-Host 'Keys worth knowing' -ForegroundColor Cyan
+  _row 'Ctrl+C' 'cancel running tool'
+  _row 'y' 'copy selected block (vim mode)'
+  _row 'Shift+L / Shift+H' 'jump between turns'
+  _row '/vim-mode' 'toggle vim scrollback bindings'
+  Write-Host ''
+
+  Write-Host 'Headless / scripting' -ForegroundColor Cyan
+  _row 'grok -p "..."' 'one-shot; exits when done'
+  _row 'grok -c' 'continue last session in this dir'
+  _row 'grok -p "..." --cwd path' 'run against a specific directory'
+  _row 'grok -p "..." --yolo' 'auto-approve tool runs'
+  _row 'grok update' 'upgrade the CLI'
+  Write-Host ''
+
+  Write-Host 'WSL paths' -ForegroundColor Cyan
+  _row '/mnt/c/Users/rjh/workstation' 'workstation root (left pane CWD)'
+  _row '.../dotfiles' 'configs, scripts, wezterm'
+  _row '~/.grok/config.toml' 'Grok config'
+  _row '~/.grok/docs/user-guide/' 'full docs'
+  Write-Host ''
+
+  Write-Host 'Auth & fixes' -ForegroundColor Cyan
+  _row 'First run' 'browser login -> ~/.grok/auth.json'
+  _row 'Re-auth' 'delete auth.json, run grok again'
+  _row '/terminal-setup' 'clipboard / terminal quirks in session'
+  Write-Host ''
+
+  Write-Host 'Tab workflow' -ForegroundColor Cyan
+  Write-Host '  Claude tab  -> deep planning' -ForegroundColor DarkGray
+  Write-Host '  Grok tab    -> research, /plan, one-shots' -ForegroundColor DarkGray
+  Write-Host '  Codex tab   -> implement + test' -ForegroundColor DarkGray
+  Write-Host '  Vibe tab    -> Mistral agent, agents, skills' -ForegroundColor DarkGray
+  Write-Host '  Git tab     -> commit checklist' -ForegroundColor DarkGray
+  Write-Host ''
+  Write-Host 'Full slash commands: ~/.grok/docs/user-guide/04-slash-commands.md' -ForegroundColor DarkCyan
+  Write-Host ''
+}
+]]
+
+M.vibe_helper_cmd = [[
+Clear-Host
+& {
+  function _row($cmd, $desc) {
+    Write-Host '  ' -NoNewline
+    Write-Host $cmd -NoNewline -ForegroundColor Yellow
+    Write-Host ('  ' + $desc) -ForegroundColor DarkGray
+  }
+  $wslDistro = ']]
+  .. distro.wsl_distro
+  .. [['
+  $vibeVer = (wsl.exe -d $wslDistro bash -lc 'vibe --version 2>/dev/null' 2>$null)
+  if ($vibeVer) { $vibeVer = $vibeVer.Trim() } else { $vibeVer = '' }
+  $authOk = (wsl.exe -d $wslDistro bash -lc 'test -f ~/.vibe/.env && grep -q "^MISTRAL_API_KEY=" ~/.vibe/.env && echo ok || echo missing' 2>$null)
+  if ($authOk) { $authOk = $authOk.Trim() } else { $authOk = 'unavailable' }
+
+  Write-Host 'Vibe - WSL quick sheet' -ForegroundColor Magenta
+  Write-Host 'Mistral coding agent; tools, agents, skills, MCP, and connectors.' -ForegroundColor DarkGray
+  Write-Host ''
+  Write-Host ' Status' -ForegroundColor Cyan
+  Write-Host '  Version: ' -NoNewline -ForegroundColor White
+  if ($vibeVer) {
+    Write-Host $vibeVer -ForegroundColor Green
+  } else {
+    Write-Host 'not installed' -ForegroundColor DarkGray
+  }
+  Write-Host '  Auth:    ' -NoNewline -ForegroundColor White
+  if ($authOk -eq 'ok') {
+    Write-Host 'ok' -ForegroundColor Green
+  } elseif ($authOk -eq 'missing') {
+    Write-Host 'missing (run vibe --setup in left pane)' -ForegroundColor Yellow
+  } else {
+    Write-Host 'unavailable' -ForegroundColor DarkGray
+  }
+  Write-Host ''
+
+  Write-Host 'When to start here' -ForegroundColor Cyan
+  _row 'Implementation tasks' 'edit files, run commands, verify diffs'
+  _row 'Explore & plan first' 'start with --agent plan for read-only analysis'
+  _row 'Refactor with guardrails' 'use accept-edits to auto-approve safe changes'
+  _row 'Delegate exploration' 'task tool spawns explore subagent'
+  _row 'Multi-file changes' 'auto-approve for bulk edits you will review'
+  Write-Host ''
+
+  Write-Host 'Agent profiles (Shift+Tab in session)' -ForegroundColor Cyan
+  _row 'default' 'approve each tool run before execution (safest)'
+  _row 'plan' 'read-only exploration and planning (no file changes)'
+  _row 'accept-edits' 'auto-approve write_file and edit only'
+  _row 'auto-approve' 'approve ALL tools automatically (use with caution)'
+  Write-Host '  User agents: ~/.vibe/agents/*.toml | Subagents: delegation-only' -ForegroundColor DarkGray
+  Write-Host ''
+
+  Write-Host 'In-session slash commands (type / to see picker)' -ForegroundColor Cyan
+  _row '/help' 'show help for current session'
+  _row '/config' 'edit config settings interactively'
+  _row '/model' 'select active model'
+  _row '/thinking' 'select thinking level'
+  _row '/reload' 'reload config, agents, skills from disk'
+  _row '/clear' 'clear conversation history'
+  _row '/copy' 'copy last agent message to clipboard'
+  _row '/log' 'show path to current interaction log'
+  _row '/debug' 'toggle debug console'
+  _row '/compact' 'summarize conversation history'
+  _row '/status' 'display agent statistics'
+  _row '/resume /continue' 'browse and resume past sessions'
+  _row '/rename' 'rename current session'
+  _row '/mcp /connectors' 'list available MCP servers and their tools'
+  _row '/sessions' 'resume or manage past sessions'
+  _row '/exit' 'leave the session'
+  Write-Host ''
+
+  Write-Host 'Special inputs' -ForegroundColor Cyan
+  _row '@path/to/file' 'attach files; images work on vision models'
+  _row '@dir/' 'attach entire directory'
+  _row '!cmd' 'run shell command directly, bypass agent'
+  Write-Host ''
+
+  Write-Host 'Keyboard shortcuts' -ForegroundColor Cyan
+  _row 'Shift+Tab' 'cycle agent profiles'
+  _row 'Ctrl+J / Shift+Enter' 'multi-line input'
+  _row 'Ctrl+G' 'edit current plan in external editor'
+  _row 'Ctrl+O' 'toggle tool output view'
+  _row 'Ctrl+T' 'toggle todo list view'
+  _row 'Ctrl+C' 'interrupt or clear input; with selection, copy'
+  _row 'Ctrl+Y / Ctrl+Shift+C' 'copy current selection'
+  _row 'Escape' 'interrupt current operation'
+  _row 'Shift+Up / Shift+Down' 'scroll chat up/down'
+  _row 'Ctrl+\' 'toggle debug console'
+  _row 'Alt+Up / Ctrl+P' 'rewind to previous message'
+  _row 'Alt+Down / Ctrl+N' 'move to next rewound message'
+  Write-Host ''
+
+  Write-Host 'Headless / scripting' -ForegroundColor Cyan
+  _row 'vibe -p "..."' 'one-shot; exits when done'
+  _row 'vibe -p "..." --auto-approve' 'approve all tool calls'
+  _row 'vibe -p "..." --agent plan' 'read-only planning run'
+  _row 'vibe -p "..." --agent <name>' 'use custom agent profile'
+  _row 'vibe -p "..." --max-turns N' 'limit conversation turns'
+  _row 'vibe -p "..." --max-price X' 'limit spend to X dollars'
+  _row 'vibe -c' 'continue latest session in this dir'
+  _row 'vibe --resume' 'pick a previous session'
+  _row 'vibe --check-upgrade' 'check for CLI updates'
+  _row 'vibe --setup' 're-run setup wizard'
+  Write-Host ''
+
+  Write-Host 'Skills & customization' -ForegroundColor Cyan
+  _row '/skills' 'browse and toggle installed skills'
+  _row '~/.vibe/skills/' 'user-level skills (markdown + YAML)'
+  _row './.vibe/skills/' 'project-level skills'
+  _row 'user-invocable: true' 'expose skill as /skill-name command'
+  Write-Host ''
+
+  Write-Host 'MCP & Connectors' -ForegroundColor Cyan
+  _row '/mcp' 'list available MCP servers'
+  _row '/connectors' 'list connectors and their tools'
+  _row '~/.vibe/mcp/' 'MCP server configurations'
+  Write-Host ''
+
+  Write-Host 'WSL paths' -ForegroundColor Cyan
+  _row '/mnt/c/Users/rjh/workstation' 'workstation root (left pane CWD)'
+  _row '.../dotfiles' 'configs, scripts, wezterm'
+  _row '~/.vibe/config.toml' 'Vibe configuration'
+  _row '~/.vibe/.env' 'Mistral API key (from vibe --setup)'
+  _row '~/.vibe/agents/' 'custom agent profiles'
+  _row '~/.vibe/skills/' 'personal skills'
+  _row '~/.vibe/mcp/' 'MCP server configs'
+  Write-Host ''
+
+  Write-Host 'Auth & install' -ForegroundColor Cyan
+  _row 'vibe --setup' 'configure API key and exit'
+  _row 'curl -LsSf https://mistral.ai/vibe/install.sh | bash' 'install or upgrade CLI'
+  _row 'uv tool upgrade mistral-vibe' 'upgrade via uv directly'
+  Write-Host ''
+
+  Write-Host 'Tab workflow' -ForegroundColor Cyan
+  Write-Host '  Claude tab  -> deep planning, complex reasoning' -ForegroundColor DarkGray
+  Write-Host '  Grok tab    -> research, web search, second opinions' -ForegroundColor DarkGray
+  Write-Host '  Codex tab   -> implement, test, review code' -ForegroundColor DarkGray
+  Write-Host '  Vibe tab    -> Mistral agent: agents, skills, MCP' -ForegroundColor DarkGray
+  Write-Host '  Git tab     -> inspect, commit, push' -ForegroundColor DarkGray
+  Write-Host ''
+  Write-Host 'CLI help: vibe --help | Full docs: https://docs.mistral.ai/vibe/' -ForegroundColor DarkCyan
   Write-Host ''
 }
 ]]

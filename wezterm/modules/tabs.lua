@@ -22,41 +22,6 @@ wezterm.on('gui-startup', function(cmd)
     args = spawn.pwsh_spawn(paths.home, helpers.system_helper_cmd).args,
   }
 
-  local coding_tab, coding_pane = window:spawn_tab(spawn.pwsh_spawn(paths.workstation))
-  coding_pane = spawn.mux_tab_primary_pane(coding_tab, coding_pane)
-  coding_tab:set_title 'coding'
-  if coding_pane then
-    coding_pane:split {
-      direction = 'Right',
-      size = 0.34,
-      cwd = paths.workstation,
-      args = spawn.pwsh_spawn(paths.workstation, helpers.coding_helper_cmd).args,
-    }
-  end
-
-  local git_tab, git_pane = window:spawn_tab(spawn.git_bash_spawn(paths.dotfiles, helpers.git_top_helper_cmd))
-  git_pane = spawn.mux_tab_primary_pane(git_tab, git_pane)
-  git_tab:set_title 'git'
-  if git_pane then
-    git_pane:split {
-      direction = 'Right',
-      size = 0.37,
-      cwd = paths.dotfiles,
-      args = spawn.pwsh_spawn(paths.dotfiles, helpers.git_right_panel_cmd).args,
-    }
-    local git_live_pane = git_pane:split {
-      direction = 'Bottom',
-      size = 0.35,
-      cwd = paths.dotfiles,
-      args = spawn.git_bash_spawn(paths.dotfiles).args,
-    }
-    if git_live_pane then
-      pcall(function()
-        git_live_pane:send_text(helpers.git_live_view_cmd .. '\n')
-      end)
-    end
-  end
-
   local wsl_tab, wsl_pane, wsl_fb = spawn.spawn_tab_or_fallback(
     window,
     spawn.wsl_spawn(paths.workstation),
@@ -73,6 +38,26 @@ wezterm.on('gui-startup', function(cmd)
     end)
     if not ok_wsl_split then
       wezterm.log_error('WSL helper pane split failed: ' .. tostring(split_err))
+    end
+  end
+
+  local grok_tab, grok_pane, grok_fb = spawn.spawn_tab_or_fallback(
+    window,
+    spawn.wsl_command_spawn(paths.workstation, 'grok'),
+    'grok',
+    'Install WSL to use Grok CLI in this tab.'
+  )
+  if grok_tab and grok_pane and not grok_fb then
+    local ok_grok_split, grok_split_err = pcall(function()
+      grok_pane:split {
+        direction = 'Right',
+        size = 0.32,
+        cwd = paths.workstation,
+        args = spawn.pwsh_spawn(paths.workstation, helpers.grok_helper_cmd).args,
+      }
+    end)
+    if not ok_grok_split then
+      wezterm.log_error('Grok helper pane split failed: ' .. tostring(grok_split_err))
     end
   end
 
@@ -116,24 +101,59 @@ wezterm.on('gui-startup', function(cmd)
     end
   end
 
-  local grok_tab, grok_pane, grok_fb = spawn.spawn_tab_or_fallback(
+  local vibe_tab, vibe_pane, vibe_fb = spawn.spawn_tab_or_fallback(
     window,
-    spawn.wsl_command_spawn(paths.workstation, 'grok'),
-    'grok',
-    'Install WSL to use Grok CLI in this tab.'
+    spawn.wsl_command_spawn(paths.workstation, 'vibe'),
+    'vibe',
+    'Install WSL to use Mistral Vibe CLI in this tab.'
   )
-  if grok_tab and grok_pane and not grok_fb then
-    local ok_grok_split, grok_split_err = pcall(function()
-      grok_pane:split {
+  if vibe_tab and vibe_pane and not vibe_fb then
+    local ok_vibe_split, vibe_split_err = pcall(function()
+      vibe_pane:split {
         direction = 'Right',
         size = 0.32,
         cwd = paths.workstation,
-        args = spawn.pwsh_spawn(paths.workstation, helpers.grok_helper_cmd).args,
+        args = spawn.pwsh_spawn(paths.workstation, helpers.vibe_helper_cmd).args,
       }
     end)
-    if not ok_grok_split then
-      wezterm.log_error('Grok helper pane split failed: ' .. tostring(grok_split_err))
+    if not ok_vibe_split then
+      wezterm.log_error('Vibe helper pane split failed: ' .. tostring(vibe_split_err))
     end
+  end
+
+  local git_tab, git_pane = window:spawn_tab(spawn.git_bash_spawn(paths.dotfiles, helpers.git_top_helper_cmd))
+  git_pane = spawn.mux_tab_primary_pane(git_tab, git_pane)
+  git_tab:set_title 'git'
+  if git_pane then
+    git_pane:split {
+      direction = 'Right',
+      size = 0.37,
+      cwd = paths.dotfiles,
+      args = spawn.pwsh_spawn(paths.dotfiles, helpers.git_right_panel_cmd).args,
+    }
+    local git_live_pane = git_pane:split {
+      direction = 'Bottom',
+      size = 0.35,
+      cwd = paths.dotfiles,
+      args = spawn.git_bash_spawn(paths.dotfiles).args,
+    }
+    if git_live_pane then
+      pcall(function()
+        git_live_pane:send_text(helpers.git_live_view_cmd .. '\n')
+      end)
+    end
+  end
+
+  local toolbelt_tab, toolbelt_pane = window:spawn_tab(spawn.pwsh_spawn(paths.workstation))
+  toolbelt_pane = spawn.mux_tab_primary_pane(toolbelt_tab, toolbelt_pane)
+  toolbelt_tab:set_title 'toolbelt'
+  if toolbelt_pane then
+    toolbelt_pane:split {
+      direction = 'Right',
+      size = 0.34,
+      cwd = paths.workstation,
+      args = spawn.pwsh_spawn(paths.workstation, helpers.toolbelt_helper_cmd).args,
+    }
   end
 
   system_tab:activate()
