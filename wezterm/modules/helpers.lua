@@ -120,6 +120,7 @@ Clear-Host
   Write-Host 'Search & navigate' -ForegroundColor Cyan
   _cliRow 'rg pattern' 'search file contents (-l = filenames only)'
   _cliRow 'fd name' 'find files by name (respects .gitignore)'
+  _cliRow 'eza -la --git' 'modern ls (git column inside a repo)'
   _cliRow 'fzf' 'fuzzy picker; pipe lines in (fd | fzf)'
   _cliRow 'z / zi' 'zoxide: jump to visited dirs (zi = interactive)'
   _cliRow 'scoop-search term' 'find installable scoop packages'
@@ -146,7 +147,6 @@ Clear-Host
   Write-Host ''
 
   Write-Host 'System & files' -ForegroundColor Cyan
-  _cliRow 'eza -la --git' 'modern ls (git column inside a repo)'
   _cliRow 'dust' 'disk usage tree, biggest first'
   _cliRow 'fastfetch' 'system info banner'
   _cliRow 'gsudo cmd' 'run one command elevated, same window'
