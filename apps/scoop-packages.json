@@ -32,6 +32,7 @@
     "yq",           // YAML/XML/CSV
 
     // ── System & files ───────────────────────────────────────────────────────
+    "bottom",       // modern htop alternative with dashboards
     "dust",         // disk usage tree
     "duf",          // better df - disk usage
     "exiftool",     // media metadata read/write (pairs with media-organizer / yt-dlp)

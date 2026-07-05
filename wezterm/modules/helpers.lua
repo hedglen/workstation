@@ -147,6 +147,7 @@ Clear-Host
   Write-Host ''
 
   Write-Host 'System & files' -ForegroundColor Cyan
+  _cliRow 'btm / bottom' 'modern htop: CPU, mem, disk, network dashboard'
   _cliRow 'dust' 'disk usage tree, biggest first'
   _cliRow 'fastfetch' 'system info banner'
   _cliRow 'gsudo cmd' 'run one command elevated, same window'
