@@ -18,6 +18,11 @@ function Fail  { param([string]$Msg) Write-Host "   XX  $Msg" -ForegroundColor R
 $root   = Join-Path $HOME "workstation"
 $errors = @()
 
+# Shared config map — spot-checks below stay in lockstep with the installers
+$dotfilesLib = Join-Path $root "dotfiles\lib"
+. (Join-Path $dotfilesLib "common.ps1")
+. (Join-Path $dotfilesLib "config-links.ps1")
+
 Write-Host ""
 Write-Host "============================================" -ForegroundColor Magenta
 Write-Host "   hedglen workstation — health check" -ForegroundColor Magenta
@@ -79,6 +84,13 @@ if (Test-Path $yt) {
     if (Test-Path $ytPy) { OK "ytdl .venv present" } else { Warn "ytdl .venv missing (run install.ps1 without -NoPythonProjects)" }
 } else {
     Warn "dotfiles/projects/ytdl missing"
+}
+
+$transPy = Join-Path $root "tools\transcribe-env\Scripts\python.exe"
+if (Test-Path $transPy) {
+    OK "tools/transcribe-env venv present"
+} else {
+    Warn "tools/transcribe-env venv missing (run install.ps1 without -NoPythonProjects; Whisper deps are a large download)"
 }
 
 $mpvBundled = Join-Path $dotfilesDirForLayout "mpv-config"
@@ -189,7 +201,7 @@ foreach ($jx in @(
 
 Step "Checking core tools on PATH"
 
-$commands = @("git", "winget", "code", "pwsh", "AutoHotkey.exe")
+$commands = @("git", "winget", "code", "pwsh", "AutoHotkey.exe", "claude")
 foreach ($c in $commands) {
     if (Get-Command $c -ErrorAction SilentlyContinue) {
         OK "$c found"
@@ -209,9 +221,9 @@ if (Test-Path $dotfilesScript) {
     try {
         Push-Location $dotfilesDir
         if ($Verbose) {
-            .\install.ps1 -DryRun
+            .\install.ps1 -DryRun -NoElevate
         } else {
-            .\install.ps1 -DryRun | Out-Null
+            .\install.ps1 -DryRun -NoElevate | Out-Null
         }
         OK "dotfiles/install.ps1 -DryRun completed"
     } catch {
@@ -250,61 +262,70 @@ if (Test-Path $mpvConfigScript) {
     Warn "dotfiles/mpv-config/install.ps1 not found at $mpvConfigScript"
 }
 
-Step "Spot-check key configs"
+Step "Spot-check key configs (from lib/config-links.ps1 map)"
 
-$checks = @(
-    @{
-        desc = "PowerShell profile"
-        path = "$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"
-    },
-    @{
-        desc = "VS Code settings"
-        path = "$HOME\AppData\Roaming\Code\User\settings.json"
-    },
-    @{
-        desc = "Cursor settings"
-        path = "$HOME\AppData\Roaming\Cursor\User\settings.json"
-    },
-    @{
-        desc = "Windows Terminal settings"
-        path = "$HOME\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
-    },
-    @{
-        desc = "WezTerm config"
-        path = "$HOME\.wezterm.lua"
+foreach ($link in (Get-ConfigLinks -DotfilesDir (Join-Path $root "dotfiles"))) {
+    $src  = Join-Path (Join-Path $root "dotfiles") $link.src
+    $dst  = $link.dst
+    $desc = $link.desc
+
+    if (-not (Test-Path -LiteralPath $dst)) {
+        Warn "${desc}: not found ($dst)"
+        continue
     }
-)
 
-foreach ($c in $checks) {
-    if (Test-Path $c.path) {
-        $item = Get-Item $c.path
+    $item = Get-Item -LiteralPath $dst -Force
+    if ($link.loader) {
+        # Must be a REAL file (a symlink here breaks profile loading — see the map)
         if ($item.Attributes -band [IO.FileAttributes]::ReparsePoint) {
-            OK "$($c.desc): present (symlink)"
-            if ($c.desc -eq "WezTerm config") {
-                $expected = [System.IO.Path]::GetFullPath((Join-Path $root "dotfiles\wezterm\wezterm.lua"))
-                $target = $item.Target
-                if ($target -is [array] -and $target.Count -gt 0) { $target = $target[0] }
-                if ($target) {
-                    try {
-                        $resolved = [System.IO.Path]::GetFullPath($target.TrimEnd('\', '/'))
-                        if ($resolved -ieq $expected) {
-                            OK "WezTerm config symlink target matches dotfiles"
-                        } else {
-                            Warn "WezTerm config points to '$resolved' (expected '$expected')"
-                        }
-                    } catch {
-                        Warn "Could not resolve WezTerm config symlink target: $_"
-                    }
-                } else {
-                    Warn "WezTerm config symlink target unavailable"
-                }
-            }
+            Warn "${desc}: is a symlink — should be a loader stub (run install.ps1 or sync-dots)"
+        } elseif ((Get-Content -LiteralPath $dst -Raw -ErrorAction SilentlyContinue).Trim() -eq ". `"$src`"") {
+            OK "${desc}: loader stub in place"
         } else {
-            OK "$($c.desc): present"
+            Warn "${desc}: present but does not dot-source dotfiles profile"
+        }
+        continue
+    }
+
+    if ($item.Attributes -band [IO.FileAttributes]::ReparsePoint) {
+        $target = $item.Target
+        if ($target -is [array] -and $target.Count -gt 0) { $target = $target[0] }
+        try {
+            $resolved = [System.IO.Path]::GetFullPath($target.TrimEnd('\', '/'))
+            $expected = [System.IO.Path]::GetFullPath($src)
+            if ($resolved -ieq $expected) {
+                OK "${desc}: linked -> dotfiles"
+            } else {
+                Warn "${desc}: points to '$resolved' (expected '$expected')"
+            }
+        } catch {
+            Warn "${desc}: could not resolve link target: $_"
         }
     } else {
-        Warn "$($c.desc): not found"
+        Warn "${desc}: present but not a link (copy fallback? re-run install.ps1 as admin)"
     }
+}
+
+# Superseded by the ~/.config/wezterm junction — installers remove this file
+if (Test-Path -LiteralPath "$HOME\.wezterm.lua") {
+    Warn "legacy ~/.wezterm.lua still present (run sync-dots to remove)"
+} else {
+    OK "no legacy ~/.wezterm.lua"
+}
+
+Step "Workstation root docs"
+
+$claudeMd = Join-Path $root "CLAUDE.md"
+if (Test-Path -LiteralPath $claudeMd) {
+    $claudeMdSrc = Join-Path $root "dotfiles\claude\CLAUDE.md"
+    if ((Test-Path -LiteralPath $claudeMdSrc) -and
+        ((Get-Content $claudeMd -Raw) -ne (Get-Content $claudeMdSrc -Raw))) {
+        Warn "workstation\CLAUDE.md differs from dotfiles claude\CLAUDE.md"
+    } else {
+        OK "workstation\CLAUDE.md present"
+    }
+} else {
+    Warn "workstation\CLAUDE.md missing (run install.ps1 to restore from dotfiles)"
 }
 
 Step "Checking git repo health"

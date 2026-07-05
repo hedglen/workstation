@@ -22,58 +22,12 @@ param(
 $ErrorActionPreference = "Stop"
 $DotfilesDir = Split-Path $PSScriptRoot -Parent
 
-function Write-Step { param([string]$Msg) Write-Host "`n>> $Msg" -ForegroundColor Cyan }
-function Write-OK   { param([string]$Msg) Write-Host "   OK  $Msg" -ForegroundColor Green }
-function Write-Skip { param([string]$Msg) Write-Host "   --  $Msg" -ForegroundColor DarkGray }
-function Write-Warn { param([string]$Msg) Write-Host "   !!  $Msg" -ForegroundColor Yellow }
-
-function Invoke-StartupCleanupPolicy {
-    param([switch]$DryRun)
-
-    $runPath = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
-    $runValues = @(
-        'AdobeBridge',
-        'Adobe Acrobat Synchronizer',
-        'GoogleChromeAutoLaunch_2B79721E5FCF3159A6E77C5981E57BF6',
-        'Discord',
-        'org.whispersystems.signal-desktop',
-        'WingetUI',
-        'IDMan',
-        'LGHUB'
-    )
-    $startupShortcut = Join-Path $env:APPDATA 'Microsoft\Windows\Start Menu\Programs\Startup\Send to OneNote.lnk'
-
-    foreach ($name in $runValues) {
-        $exists = [bool](Get-ItemProperty -Path $runPath -Name $name -ErrorAction SilentlyContinue)
-        if (-not $exists) {
-            Write-Skip "Startup cleanup: $name not present"
-            continue
-        }
-        if ($DryRun) {
-            Write-Skip "Startup cleanup: would remove HKCU Run '$name'"
-            continue
-        }
-        try {
-            Remove-ItemProperty -Path $runPath -Name $name -ErrorAction Stop
-            Write-OK "Startup cleanup: removed HKCU Run '$name'"
-        } catch {
-            Write-Warn "Startup cleanup: failed to remove '$name' — $_"
-        }
-    }
-
-    if (-not (Test-Path -LiteralPath $startupShortcut)) {
-        Write-Skip "Startup cleanup: Send to OneNote startup shortcut not present"
-    } elseif ($DryRun) {
-        Write-Skip "Startup cleanup: would remove Send to OneNote startup shortcut"
-    } else {
-        try {
-            Remove-Item -LiteralPath $startupShortcut -Force -ErrorAction Stop
-            Write-OK "Startup cleanup: removed Send to OneNote startup shortcut"
-        } catch {
-            Write-Warn "Startup cleanup: failed to remove Send to OneNote startup shortcut — $_"
-        }
-    }
-}
+# Shared helpers (loggers, config map + linker, startup policy, fonts, extensions)
+. (Join-Path $DotfilesDir "lib\common.ps1")
+. (Join-Path $DotfilesDir "lib\config-links.ps1")
+. (Join-Path $DotfilesDir "lib\startup-policy.ps1")
+. (Join-Path $DotfilesDir "lib\fonts.ps1")
+. (Join-Path $DotfilesDir "lib\extensions.ps1")
 
 function Test-WingetPackageInstalled {
     param([Parameter(Mandatory)][string]$Id)
@@ -154,197 +108,43 @@ if (Test-Path -LiteralPath $wslHelper) {
 }
 
 # =============================================================================
-#   2. Re-link configs (non-destructive -- skips valid existing symlinks)
+#   2. Re-link configs (non-destructive -- skips valid existing links/loaders)
 # =============================================================================
 Write-Step "Config symlinks"
 
-$configs = @(
-    @{
-        src  = "powershell\profile.ps1"
-        dst  = "$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"
-        desc = "PowerShell profile"
-    },
-    @{
-        src  = "git\.gitconfig"
-        dst  = "$HOME\.gitconfig"
-        desc = "Git config"
-    },
-    @{
-        src  = "windows-terminal\settings.json"
-        dst  = "$HOME\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
-        desc = "Windows Terminal"
-    },
-    @{
-        src  = "vscode\settings.json"
-        dst  = "$HOME\AppData\Roaming\Code\User\settings.json"
-        desc = "VS Code settings"
-    },
-    @{
-        src  = "vscode\settings.json"
-        dst  = "$HOME\AppData\Roaming\Cursor\User\settings.json"
-        desc = "Cursor settings"
-    },
-    @{
-        src  = "projects\ytdl\appdata-config"
-        dst  = "$env:APPDATA\yt-dlp\config"
-        desc = "yt-dlp global config (from projects/ytdl)"
-    },
-    @{
-        src  = "wezterm"
-        dst  = "$HOME\.config\wezterm"
-        desc = "WezTerm (directory)"
-    }
-)
-
-foreach ($c in $configs) {
-    $src = Join-Path $DotfilesDir $c.src
-    $dst = $c.dst
-
-    if (-not (Test-Path $src)) {
-        Write-Warn "$($c.desc): source not found ($src)"
-        continue
-    }
-
-    # Check if link already points to the right place (full paths; Target may be string[])
-    if (Test-Path -LiteralPath $dst -ErrorAction SilentlyContinue) {
-        $item = Get-Item -LiteralPath $dst -Force -ErrorAction SilentlyContinue
-        if ($item -and $item.LinkType -in 'SymbolicLink', 'Junction') {
-            $t = $item.Target
-            if ($t -is [System.Array]) { $t = $t[0] }
-            try {
-                if ([IO.Path]::GetFullPath($t) -eq [IO.Path]::GetFullPath($src)) {
-                    Write-Skip "$($c.desc): already linked"
-                    continue
-                }
-            } catch { }
-        }
-    }
-
-    if ($DryRun) {
-        Write-Skip "$($c.desc): would link $src -> $dst"
-        continue
-    }
-
-    $dstDir = Split-Path $dst -Parent
-    New-Item -ItemType Directory -Path $dstDir -Force | Out-Null
-
-    $existing = Get-Item -LiteralPath $dst -Force -ErrorAction SilentlyContinue
-    if ($existing) {
-        if ($existing.LinkType -in 'SymbolicLink', 'Junction') {
-            Remove-Item -LiteralPath $dst -Force
-        } elseif ($existing.PSIsContainer) {
-            Copy-Item -LiteralPath $dst -Destination "$dst.backup" -Recurse -Force
-            Remove-Item -LiteralPath $dst -Recurse -Force
-            Write-Host "   Backed up existing to $dst.backup" -ForegroundColor DarkGray
-        } else {
-            Copy-Item -LiteralPath $dst -Destination "$dst.backup" -Force
-            Remove-Item -LiteralPath $dst -Force
-            Write-Host "   Backed up existing to $dst.backup" -ForegroundColor DarkGray
-        }
-    }
-
-    try {
-        # Junction for directories (no admin needed), symlink for files
-        $linkType = if ((Get-Item -LiteralPath $src).PSIsContainer) { 'Junction' } else { 'SymbolicLink' }
-        New-Item -ItemType $linkType -Path $dst -Target $src -Force | Out-Null
-        Write-OK "$($c.desc) ($($linkType.ToLower()))"
-    } catch {
-        Copy-Item $src $dst -Force -Recurse
-        Write-Warn "$($c.desc) (copied -- run as admin for symlinks)"
-    }
+Remove-LegacyWeztermConfig -DryRun:$DryRun
+foreach ($link in (Get-ConfigLinks -DotfilesDir $DotfilesDir)) {
+    Sync-ConfigLink -Link $link -DotfilesDir $DotfilesDir -DryRun:$DryRun
 }
 
-# Legacy WezTerm config file superseded by the ~/.config/wezterm directory junction
-$legacyWezterm = "$HOME\.wezterm.lua"
-if (Test-Path -LiteralPath $legacyWezterm) {
-    if ($DryRun) {
-        Write-Skip "Would remove legacy ~/.wezterm.lua (config lives in ~/.config/wezterm)"
-    } else {
-        Remove-Item -LiteralPath $legacyWezterm -Force -ErrorAction SilentlyContinue
-        Write-OK "Removed legacy ~/.wezterm.lua"
-    }
+# Workstation-root CLAUDE.md is a copy (workstation\ is not a repo) — flag drift
+$claudeMdSrc = Join-Path $DotfilesDir "claude\CLAUDE.md"
+$claudeMdDst = Join-Path $HOME "workstation\CLAUDE.md"
+if ((Test-Path $claudeMdSrc) -and (Test-Path $claudeMdDst) -and
+    ((Get-Content $claudeMdSrc -Raw) -ne (Get-Content $claudeMdDst -Raw))) {
+    Write-Warn "workstation\CLAUDE.md differs from dotfiles claude\CLAUDE.md — reconcile and commit"
 }
 
 # =============================================================================
-#   3. VS Code extensions -- install only new ones
+#   3. Editor extensions -- install only new ones (VS Code + Cursor)
 # =============================================================================
+$extFile = Join-Path $DotfilesDir "vscode\extensions.txt"
+
 Write-Step "VS Code extensions"
+Sync-EditorExtensions -DisplayName "VS Code" `
+    -CommandCandidates @("$env:ProgramFiles\Microsoft VS Code\bin\code.cmd", "code") `
+    -ExtensionsFile $extFile -DryRun:$DryRun
 
-$codeCmd = "$env:ProgramFiles\Microsoft VS Code\bin\code.cmd"
-if (-not (Test-Path $codeCmd)) { $codeCmd = "code" }
-if (Get-Command $codeCmd -ErrorAction SilentlyContinue) {
-    $extFile = Join-Path $DotfilesDir "vscode\extensions.txt"
-    if (Test-Path $extFile) {
-        $installed = & $codeCmd --list-extensions 2>$null | ForEach-Object { $_.ToLower() }
-        $wanted = Get-Content $extFile |
-            Where-Object { $_.Trim() -ne '' -and $_ -notmatch '^\s*#' } |
-            ForEach-Object { $_.Trim() }
-
-        $toInstall = $wanted | Where-Object { $installed -notcontains $_.ToLower() }
-
-        if (-not $toInstall) {
-            Write-Skip "All extensions already installed"
-        } else {
-            foreach ($ext in $toInstall) {
-                if ($DryRun) {
-                    Write-Skip "Would install: $ext"
-                } else {
-                    & $codeCmd --install-extension $ext --force 2>&1 | Out-Null
-                    Write-OK $ext
-                }
-            }
-        }
-    }
-} else {
-    Write-Warn "VS Code (code) not on PATH -- skipping"
-}
+Write-Step "Cursor extensions"
+Sync-EditorExtensions -DisplayName "Cursor" `
+    -CommandCandidates @("$env:LOCALAPPDATA\Programs\cursor\resources\app\bin\cursor.cmd", "cursor") `
+    -ExtensionsFile $extFile -DryRun:$DryRun
 
 # =============================================================================
 #   4. Fonts -- install if missing
 # =============================================================================
 Write-Step "Fonts"
-
-$fontsDir  = "$env:LOCALAPPDATA\Microsoft\Windows\Fonts"
-$regPath   = 'HKCU:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts'
-$checkFont = 'CaskaydiaCove Nerd Font Regular (TrueType)'
-
-# Check HKCU first, then HKLM (system-wide install), then fallback to file presence
-$installed = (Get-ItemProperty $regPath -ErrorAction SilentlyContinue).$checkFont
-if (-not $installed) {
-    $installed = (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts' -ErrorAction SilentlyContinue).$checkFont
-}
-if (-not $installed) {
-    $fontFile = Get-ChildItem "$fontsDir\CaskaydiaCove*" -ErrorAction SilentlyContinue | Select-Object -First 1
-    if ($fontFile) { $installed = $fontFile.FullName }
-}
-
-if ($installed) {
-    Write-Skip "CaskaydiaCove Nerd Font already installed"
-} elseif ($DryRun) {
-    Write-Skip "Would download and install CaskaydiaCove Nerd Font"
-} else {
-    $tmpZip     = "$env:TEMP\CascadiaCode.zip"
-    $tmpExtract = "$env:TEMP\CascadiaCode-nf"
-    $fontUrl    = "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/CascadiaCode.zip"
-
-    Write-Host "   Downloading CaskaydiaCove Nerd Font..." -ForegroundColor DarkGray
-    Invoke-WebRequest -Uri $fontUrl -OutFile $tmpZip -UseBasicParsing
-    Expand-Archive -Path $tmpZip -DestinationPath $tmpExtract -Force
-
-    if (-not (Test-Path $fontsDir)) { New-Item -ItemType Directory -Path $fontsDir -Force | Out-Null }
-
-    $count = 0
-    Get-ChildItem $tmpExtract -Filter "*.ttf" | ForEach-Object {
-        $dst = Join-Path $fontsDir $_.Name
-        Copy-Item $_.FullName $dst -Force
-        $fontName = [System.IO.Path]::GetFileNameWithoutExtension($_.Name) + " (TrueType)"
-        Set-ItemProperty -Path $regPath -Name $fontName -Value $dst -Force
-        $count++
-    }
-
-    Remove-Item $tmpZip, $tmpExtract -Recurse -Force -ErrorAction SilentlyContinue
-    Write-OK "Installed $count font files"
-}
+Install-NerdFontIfMissing -DryRun:$DryRun
 
 # =============================================================================
 #   5. Upgrade apps via winget (managed packages only)

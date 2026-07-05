@@ -1,9 +1,10 @@
 # =============================================================================
 #   AI
 # =============================================================================
+# github.copilot / github.copilot-chat removed 2026-07: Copilot Chat ships
+# built into VS Code (install fails as a downgrade) and neither exists in
+# Cursor's marketplace.
 anthropic.claude-code
-github.copilot
-github.copilot-chat
 
 # =============================================================================
 #   Git

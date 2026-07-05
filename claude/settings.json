@@ -1,0 +1,18 @@
+{
+  "extraKnownMarketplaces": {
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
+    }
+  },
+  "autoUpdatesChannel": "latest",
+  "permissions": {
+    "additionalDirectories": [
+      "C:/Users/rjh"
+    ]
+  },
+  "effortLevel": "xhigh",
+  "model": "opus"
+}

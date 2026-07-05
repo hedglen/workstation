@@ -36,57 +36,20 @@ if ($bootstrapFromIex) {
     $DotfilesDir = "$HOME\workstation\dotfiles"
 }
 
-function Write-Step { param([string]$Msg) Write-Host "`n>> $Msg" -ForegroundColor Cyan }
-function Write-OK   { param([string]$Msg) Write-Host "   OK  $Msg" -ForegroundColor Green }
-function Write-Skip { param([string]$Msg) Write-Host "   --  $Msg" -ForegroundColor DarkGray }
-function Write-Warn { param([string]$Msg) Write-Host "   !!  $Msg" -ForegroundColor Yellow }
-
-function Invoke-StartupCleanupPolicy {
-    param([switch]$DryRun)
-
-    $runPath = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
-    $runValues = @(
-        'AdobeBridge',
-        'Adobe Acrobat Synchronizer',
-        'GoogleChromeAutoLaunch_2B79721E5FCF3159A6E77C5981E57BF6',
-        'Discord',
-        'org.whispersystems.signal-desktop',
-        'WingetUI',
-        'IDMan',
-        'LGHUB'
-    )
-    $startupShortcut = Join-Path $env:APPDATA 'Microsoft\Windows\Start Menu\Programs\Startup\Send to OneNote.lnk'
-
-    foreach ($name in $runValues) {
-        $exists = [bool](Get-ItemProperty -Path $runPath -Name $name -ErrorAction SilentlyContinue)
-        if (-not $exists) {
-            Write-Skip "Startup cleanup: $name not present"
-            continue
-        }
-        if ($DryRun) {
-            Write-Skip "Startup cleanup: would remove HKCU Run '$name'"
-            continue
-        }
-        try {
-            Remove-ItemProperty -Path $runPath -Name $name -ErrorAction Stop
-            Write-OK "Startup cleanup: removed HKCU Run '$name'"
-        } catch {
-            Write-Warn "Startup cleanup: failed to remove '$name' — $_"
-        }
-    }
-
-    if (-not (Test-Path -LiteralPath $startupShortcut)) {
-        Write-Skip "Startup cleanup: Send to OneNote startup shortcut not present"
-    } elseif ($DryRun) {
-        Write-Skip "Startup cleanup: would remove Send to OneNote startup shortcut"
-    } else {
-        try {
-            Remove-Item -LiteralPath $startupShortcut -Force -ErrorAction Stop
-            Write-OK "Startup cleanup: removed Send to OneNote startup shortcut"
-        } catch {
-            Write-Warn "Startup cleanup: failed to remove Send to OneNote startup shortcut — $_"
-        }
-    }
+# Shared helpers live in lib\. During an irm|iex bootstrap the repo is not
+# cloned yet, so fall back to inline loggers until the local re-invoke.
+if (Test-Path (Join-Path $DotfilesDir "lib\common.ps1")) {
+    . (Join-Path $DotfilesDir "lib\common.ps1")
+    . (Join-Path $DotfilesDir "lib\config-links.ps1")
+    . (Join-Path $DotfilesDir "lib\startup-policy.ps1")
+    . (Join-Path $DotfilesDir "lib\fonts.ps1")
+    . (Join-Path $DotfilesDir "lib\extensions.ps1")
+    . (Join-Path $DotfilesDir "lib\python-projects.ps1")
+} else {
+    function Write-Step { param([string]$Msg) Write-Host "`n>> $Msg" -ForegroundColor Cyan }
+    function Write-OK   { param([string]$Msg) Write-Host "   OK  $Msg" -ForegroundColor Green }
+    function Write-Skip { param([string]$Msg) Write-Host "   --  $Msg" -ForegroundColor DarkGray }
+    function Write-Warn { param([string]$Msg) Write-Host "   !!  $Msg" -ForegroundColor Yellow }
 }
 
 function Install-PCloudIfMissing {
@@ -187,9 +150,8 @@ function Restart-ElevatedIfNeeded {
         [switch] $NoElevate
     )
     if ($NoElevate) { return }
-    $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).
-        IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
-    if ($isAdmin) { return }
+    if ($DryRun) { return }   # a preview should never pop UAC
+    if (Test-IsAdmin) { return }
 
     $switches = @()
     if ($AppsOnly) { $switches += '-AppsOnly' }
@@ -218,66 +180,6 @@ if ($bootstrapFromIex) {
 
 Initialize-WorkstationLayout -DryRun:$DryRun
 Restart-ElevatedIfNeeded -ScriptPath (Join-Path $DotfilesDir 'install.ps1') -NoElevate:$NoElevate
-
-function Install-DotfilesPythonProject {
-    param(
-        [Parameter(Mandatory)]
-        [string] $RelativePath,
-        [Parameter(Mandatory)]
-        [string[]] $PipArgs,
-        [switch] $DryRun
-    )
-    $proj = Join-Path $DotfilesDir $RelativePath
-    if (-not (Test-Path $proj)) {
-        Write-Warn "Project not found — $RelativePath"
-        return
-    }
-    # uv is much faster and manifest-managed (astral-sh.uv); fall back to py + pip.
-    $uv = Get-Command uv -ErrorAction SilentlyContinue
-    $py = Get-Command py -ErrorAction SilentlyContinue
-    if (-not $uv -and -not $py) {
-        Write-Warn "Neither uv nor the Python launcher (py) is on PATH — skip venv for $RelativePath"
-        return
-    }
-    $venvPy = Join-Path $proj ".venv\Scripts\python.exe"
-    if ($DryRun) {
-        $tool = if ($uv) { "uv" } else { "pip" }
-        if (Test-Path $venvPy) {
-            Write-Skip "Would $tool install in $RelativePath (venv exists)"
-        } else {
-            Write-Skip "Would create .venv ($tool) and install deps in $RelativePath"
-        }
-        return
-    }
-    Push-Location $proj
-    try {
-        if (-not (Test-Path $venvPy)) {
-            if ($uv) { & uv venv .venv } else { & py -3 -m venv .venv }
-            if ($LASTEXITCODE -ne 0) {
-                Write-Warn "venv creation failed in $RelativePath"
-                return
-            }
-        }
-        $prevEA = $ErrorActionPreference
-        $ErrorActionPreference = 'Continue'
-        if ($uv) {
-            & uv pip install --python $venvPy @PipArgs
-        } else {
-            # uv-created venvs have no pip; python -m pip only works on stdlib venvs
-            & $venvPy -m pip install --upgrade pip 2>$null | Out-Null
-            & $venvPy -m pip install @PipArgs
-        }
-        $exit = $LASTEXITCODE
-        $ErrorActionPreference = $prevEA
-        if ($exit -eq 0) {
-            Write-OK "Python venv: $RelativePath"
-        } else {
-            Write-Warn "dependency install exited $exit for $RelativePath"
-        }
-    } finally {
-        Pop-Location
-    }
-}
 
 Write-Host ""
 Write-Host "============================================" -ForegroundColor Magenta
@@ -398,6 +300,46 @@ if (-not $AppsOnly -and -not $ConfigsOnly) {
             Write-Warn "Could not create junction at $legacyScripts — $_"
         }
     }
+
+    # Workstation-root docs — workstation\ itself is not a git repo, so these
+    # would be lost on a wipe without a tracked source.
+    Write-Step "Workstation root docs"
+    $wsRoot      = Join-Path $HOME "workstation"
+    $claudeMdSrc = Join-Path $DotfilesDir "claude\CLAUDE.md"
+    $claudeMdDst = Join-Path $wsRoot "CLAUDE.md"
+    if (-not (Test-Path $claudeMdSrc)) {
+        Write-Warn "claude\CLAUDE.md missing from dotfiles — git pull dotfiles"
+    } elseif (-not (Test-Path $claudeMdDst)) {
+        if ($DryRun) {
+            Write-Skip "Would copy claude\CLAUDE.md -> workstation\CLAUDE.md"
+        } else {
+            Copy-Item $claudeMdSrc $claudeMdDst
+            Write-OK "workstation\CLAUDE.md restored from dotfiles"
+        }
+    } elseif ((Get-Content $claudeMdSrc -Raw) -ne (Get-Content $claudeMdDst -Raw)) {
+        Write-Warn "workstation\CLAUDE.md differs from dotfiles claude\CLAUDE.md — reconcile and commit"
+    } else {
+        Write-Skip "workstation\CLAUDE.md up to date"
+    }
+
+    $stubPath = Join-Path $wsRoot "WORKSTATION-SETUP.md"
+    if (Test-Path -LiteralPath $stubPath) {
+        Write-Skip "WORKSTATION-SETUP.md stub already present"
+    } elseif ($DryRun) {
+        Write-Skip "Would create WORKSTATION-SETUP.md stub"
+    } else {
+        @'
+# WORKSTATION-SETUP.md (stub)
+
+Canonical guides live in **`dotfiles/docs/`** (tracked with dotfiles).
+
+- **Runbook**: `dotfiles/docs/workstation-setup.md`
+- **Layout overview**: `dotfiles/docs/workstation-layout.md`
+- **Apps & CLIs**: `dotfiles/apps/winget-packages.json` + `scoop-packages.json` (and the matching `*.md` companions) are the **only** manifests; do not keep copies under `%USERPROFILE%\Documents`. `install.ps1` / `maintenance/update.ps1` read those paths only.
+- **Python helpers**: `dotfiles/projects/media-organizer` and `dotfiles/projects/ytdl` (`.venv` from `install.ps1`). `workstation\projects` is a junction to `dotfiles\projects` when the installer could create it.
+'@ | Set-Content -LiteralPath $stubPath -Encoding UTF8
+        Write-OK "WORKSTATION-SETUP.md stub created"
+    }
 }
 
 # =============================================================================
@@ -497,6 +439,31 @@ if (-not $ConfigsOnly -and -not $NoApps) {
             }
         }
     }
+
+    # Native build (not winget): auto-updates in the background and avoids a
+    # dual-install conflict with an existing native claude.
+    Write-Step "Claude Code CLI"
+    if (Get-Command claude -ErrorAction SilentlyContinue) {
+        Write-Skip "claude already installed"
+    } elseif ($DryRun) {
+        Write-Skip "Would install Claude Code (irm https://claude.ai/install.ps1 | iex)"
+    } else {
+        try {
+            $prevEA = $ErrorActionPreference
+            $ErrorActionPreference = 'Continue'
+            Invoke-Expression (Invoke-RestMethod -Uri https://claude.ai/install.ps1 -UseBasicParsing)
+            $ErrorActionPreference = $prevEA
+            $env:Path = "$env:USERPROFILE\.local\bin;" + $env:Path
+            if (Get-Command claude -ErrorAction SilentlyContinue) {
+                Write-OK "Claude Code installed (run 'claude' to log in)"
+            } else {
+                Write-Warn "Claude Code installer finished but claude is not on PATH — open a new terminal"
+            }
+        } catch {
+            Write-Warn "Claude Code install failed — $_"
+            Write-Warn "  Install manually: irm https://claude.ai/install.ps1 | iex"
+        }
+    }
 }
 
 # =============================================================================
@@ -504,12 +471,19 @@ if (-not $ConfigsOnly -and -not $NoApps) {
 # =============================================================================
 if (-not $AppsOnly -and -not $ConfigsOnly) {
     Write-Step "WezTerm + WSL bootstrap"
-    $weztermExe = "$env:LOCALAPPDATA\Programs\WezTerm\wezterm-gui.exe"
+    $weztermCandidates = @(
+        "${env:ProgramFiles}\WezTerm\wezterm-gui.exe",
+        "$env:LOCALAPPDATA\Programs\WezTerm\wezterm-gui.exe"
+    )
+    $weztermExe = $weztermCandidates | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
+    if (-not $weztermExe -and (Get-Command wezterm-gui.exe -ErrorAction SilentlyContinue)) {
+        $weztermExe = (Get-Command wezterm-gui.exe).Source
+    }
     $wslHelper = Join-Path $DotfilesDir "wezterm\wsl-helper.sh"
-    if (Test-Path -LiteralPath $weztermExe) {
-        Write-OK "WezTerm installed"
+    if ($weztermExe) {
+        Write-OK "WezTerm installed ($weztermExe)"
     } else {
-        Write-Warn "WezTerm executable not found yet ($weztermExe)"
+        Write-Warn "WezTerm executable not found yet (looked in Program Files and LOCALAPPDATA)"
         Write-Warn "  Winget may still be finalizing. Re-run install.ps1 after app installs complete."
     }
     if (Test-Path -LiteralPath $wslHelper) {
@@ -568,9 +542,17 @@ if (-not $AppsOnly -and -not $ConfigsOnly) {
 
 # Python helpers: run even with -NoApps (ConfigsOnly skips everything substantive)
 if (-not $ConfigsOnly -and -not $NoPythonProjects) {
-    Write-Step "Python venvs (media-organizer, ytdl)"
-    Install-DotfilesPythonProject -RelativePath "projects\media-organizer" -PipArgs @("-r", "requirements.txt") -DryRun:$DryRun
-    Install-DotfilesPythonProject -RelativePath "projects\ytdl" -PipArgs @("-r", "requirements.txt") -DryRun:$DryRun
+    Write-Step "Python venvs (media-organizer, ytdl, transcribe)"
+    Install-PythonVenv -VenvDir (Join-Path $DotfilesDir "projects\media-organizer\.venv") `
+        -Requirements (Join-Path $DotfilesDir "projects\media-organizer\requirements.txt") `
+        -DisplayName "projects\media-organizer" -DryRun:$DryRun
+    Install-PythonVenv -VenvDir (Join-Path $DotfilesDir "projects\ytdl\.venv") `
+        -Requirements (Join-Path $DotfilesDir "projects\ytdl\requirements.txt") `
+        -DisplayName "projects\ytdl" -DryRun:$DryRun
+    # Whisper/torch deps — multi-GB download on first install
+    Install-PythonVenv -VenvDir "$HOME\workstation\tools\transcribe-env" `
+        -Requirements (Join-Path $DotfilesDir "scripts\requirements-transcribe.txt") `
+        -DisplayName "tools\transcribe-env (Whisper — large download)" -DryRun:$DryRun
 } elseif ($ConfigsOnly) {
     Write-Skip "Skipping Python project venvs (-ConfigsOnly)"
 } else {
@@ -583,9 +565,7 @@ if (-not $ConfigsOnly -and -not $NoPythonProjects) {
 if (-not $AppsOnly -and -not $ConfigsOnly) {
     Write-Step "Windows tweaks"
     $tweaksScript = Join-Path $DotfilesDir "windows\tweaks.ps1"
-    $isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
-        [Security.Principal.WindowsBuiltInRole]::Administrator)
-    if (-not $isAdmin) {
+    if (-not (Test-IsAdmin)) {
         Write-Warn "Not running as admin — skipping tweaks. Re-run install.ps1 as admin, or run windows\tweaks.ps1 manually."
     } elseif (Test-Path $tweaksScript) {
         if ($DryRun) {
@@ -602,204 +582,27 @@ if (-not $AppsOnly -and -not $ConfigsOnly) {
 # =============================================================================
 if (-not $AppsOnly) {
     Write-Step "Linking config files"
-
-    $configs = @(
-        @{
-            src    = "powershell\profile.ps1"
-            dst    = "$HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1"
-            desc   = "PowerShell profile"
-            # Materialize as a real loader file, NOT a symlink. Windows' Redirection
-            # Trust mitigation blocks dot-sourcing a symlinked profile with
-            # "untrusted mount point", which stops the profile from loading.
-            loader = $true
-        },
-        @{
-            src  = "git\.gitconfig"
-            dst  = "$HOME\.gitconfig"
-            desc = "Git config"
-        },
-        @{
-            src  = "windows-terminal\settings.json"
-            dst  = "$HOME\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
-            desc = "Windows Terminal"
-        },
-        @{
-            src  = "vscode\settings.json"
-            dst  = "$HOME\AppData\Roaming\Code\User\settings.json"
-            desc = "VS Code settings"
-        },
-        @{
-            src  = "vscode\settings.json"
-            dst  = "$HOME\AppData\Roaming\Cursor\User\settings.json"
-            desc = "Cursor settings"
-        },
-        @{
-            src  = "projects\ytdl\appdata-config"
-            dst  = "$env:APPDATA\yt-dlp\config"
-            desc = "yt-dlp global config (from projects/ytdl)"
-        },
-        @{
-            src  = "wezterm"
-            dst  = "$HOME\.config\wezterm"
-            desc = "WezTerm"
-        }
-    )
-
-    foreach ($c in $configs) {
-        $src    = Join-Path $DotfilesDir $c.src
-        $dst    = $c.dst
-        $dstDir = Split-Path $dst -Parent
-
-        if (-not (Test-Path $src)) {
-            Write-Warn "$($c.desc): source not found ($src)"
-            continue
-        }
-
-        if ($DryRun) {
-            Write-Skip "$($c.desc): $src -> $dst"
-            continue
-        }
-
-        # Loader stub: write a REAL file that dot-sources the canonical profile.
-        # A symlink here triggers Windows' Redirection Trust mitigation
-        # ("untrusted mount point"), which prevents the profile from loading.
-        if ($c.loader) {
-            New-Item -ItemType Directory -Path $dstDir -Force | Out-Null
-            $loaderLine = ". `"$src`""
-            $existingLoader = Get-Item -LiteralPath $dst -Force -ErrorAction SilentlyContinue
-            if ($existingLoader -and ($existingLoader.LinkType -eq 'SymbolicLink' -or $existingLoader.LinkType -eq 'Junction')) {
-                Remove-Item -LiteralPath $dst -Force
-            } elseif ($existingLoader -and ((Get-Content -LiteralPath $dst -Raw -ErrorAction SilentlyContinue).Trim() -eq $loaderLine)) {
-                Write-Skip "$($c.desc) loader already in place"
-                continue
-            }
-            Set-Content -LiteralPath $dst -Value $loaderLine -Encoding utf8
-            Write-OK "$($c.desc) (loader stub — avoids untrusted mount point)"
-            continue
-        }
-
-        if ($c.desc -eq "WezTerm" -and -not $DryRun) {
-            $oldWeztermLink = "$HOME\.wezterm.lua"
-            if (Test-Path -LiteralPath $oldWeztermLink -ErrorAction SilentlyContinue) {
-                Remove-Item -LiteralPath $oldWeztermLink -Force -ErrorAction SilentlyContinue
-                Write-OK "WezTerm legacy ~/.wezterm.lua removed"
-            }
-        }
-
-        # Skip if symlink already points to the right place (full paths; Target may be string[])
-        if (Test-Path -LiteralPath $dst -ErrorAction SilentlyContinue) {
-            $linkItem = Get-Item -LiteralPath $dst -Force -ErrorAction SilentlyContinue
-            if ($linkItem -and ($linkItem.LinkType -eq 'SymbolicLink' -or $linkItem.LinkType -eq 'Junction')) {
-                $t = $linkItem.Target
-                if ($t -is [System.Array]) { $t = $t[0] }
-                try {
-                    if ([IO.Path]::GetFullPath($t) -eq [IO.Path]::GetFullPath($src)) {
-                        Write-Skip "$($c.desc) already linked"
-                        continue
-                    }
-                } catch { }
-            }
-        }
-
-        # Ensure destination directory exists (-Force is idempotent; creates full path)
-        New-Item -ItemType Directory -Path $dstDir -Force | Out-Null
-
-        # Wrong symlink: remove (Copy-Item on links often fails). Plain file/dir: back up then remove.
-        $existing = Get-Item -LiteralPath $dst -Force -ErrorAction SilentlyContinue
-        if ($existing) {
-            if ($existing.LinkType -eq 'SymbolicLink' -or $existing.LinkType -eq 'Junction') {
-                Remove-Item -LiteralPath $dst -Force
-            } elseif ($existing.PSIsContainer) {
-                $backup = "$dst.backup"
-                Copy-Item -LiteralPath $dst -Destination $backup -Recurse -Force
-                Remove-Item -LiteralPath $dst -Recurse -Force
-                Write-Host "   Backed up existing to $backup" -ForegroundColor DarkGray
-            } else {
-                $backup = "$dst.backup"
-                Copy-Item -LiteralPath $dst -Destination $backup -Force
-                Remove-Item -LiteralPath $dst -Force
-                Write-Host "   Backed up existing to $backup" -ForegroundColor DarkGray
-            }
-        }
-
-        # Try junction for WezTerm directory, symlink otherwise; fall back to copy
-        try {
-            $linkType = if ($c.desc -eq "WezTerm") { "Junction" } else { "SymbolicLink" }
-            New-Item -ItemType $linkType -Path $dst -Target $src -Force | Out-Null
-            Write-OK "$($c.desc) (symlinked)"
-        } catch {
-            if (Test-Path -LiteralPath $src -PathType Container) {
-                Copy-Item $src $dst -Recurse -Force
-            } else {
-                Copy-Item $src $dst -Force
-            }
-            Write-Warn "$($c.desc) (copied — run as admin for symlinks)"
-        }
+    Remove-LegacyWeztermConfig -DryRun:$DryRun
+    foreach ($link in (Get-ConfigLinks -DotfilesDir $DotfilesDir)) {
+        Sync-ConfigLink -Link $link -DotfilesDir $DotfilesDir -DryRun:$DryRun
     }
 }
 
 # =============================================================================
-#   6. VS Code extensions
+#   6. Editor extensions (VS Code + Cursor share vscode/extensions.txt)
 # =============================================================================
 if (-not $AppsOnly) {
+    $extFile = Join-Path $DotfilesDir "vscode\extensions.txt"
+
     Write-Step "VS Code extensions"
-    $codeCmd = "$env:ProgramFiles\Microsoft VS Code\bin\code.cmd"
-    if (-not (Test-Path $codeCmd)) { $codeCmd = "code" }
-    if (Get-Command $codeCmd -ErrorAction SilentlyContinue) {
-        $extFile = Join-Path $DotfilesDir "vscode\extensions.txt"
-        if (Test-Path $extFile) {
-            Get-Content $extFile |
-            Where-Object { $_.Trim() -ne '' -and $_ -notmatch '^\s*#' } |
-            ForEach-Object {
-                $ext = $_.Trim()
-                if ($DryRun) {
-                    Write-Skip "Would install: $ext"
-                } else {
-                    $installOut = & $codeCmd --install-extension $ext --force 2>&1
-                    if ($LASTEXITCODE -ne 0) {
-                        Write-Warn "Failed to install extension: $ext"
-                        $installOut | ForEach-Object { Write-Warn "  $_" }
-                    } else {
-                        Write-OK $ext
-                    }
-                }
-            }
-        }
-    } else {
-        Write-Warn "VS Code (code) not on PATH -- skipping extensions"
-    }
-}
+    Sync-EditorExtensions -DisplayName "VS Code" `
+        -CommandCandidates @("$env:ProgramFiles\Microsoft VS Code\bin\code.cmd", "code") `
+        -ExtensionsFile $extFile -DryRun:$DryRun
 
-# =============================================================================
-#   7. Cursor extensions
-# =============================================================================
-if (-not $AppsOnly) {
     Write-Step "Cursor extensions"
-    $cursorCmd = "$env:LOCALAPPDATA\Programs\cursor\resources\app\bin\cursor.cmd"
-    if (-not (Test-Path $cursorCmd)) { $cursorCmd = "cursor" }
-    if (Get-Command $cursorCmd -ErrorAction SilentlyContinue) {
-        $extFile = Join-Path $DotfilesDir "vscode\extensions.txt"
-        if (Test-Path $extFile) {
-            Get-Content $extFile |
-            Where-Object { $_.Trim() -ne '' -and $_ -notmatch '^\s*#' } |
-            ForEach-Object {
-                $ext = $_.Trim()
-                if ($DryRun) {
-                    Write-Skip "Would install: $ext"
-                } else {
-                    $installOut = & $cursorCmd --install-extension $ext --force 2>&1
-                    if ($LASTEXITCODE -ne 0) {
-                        Write-Warn "Failed to install extension: $ext"
-                        $installOut | ForEach-Object { Write-Warn "  $_" }
-                    } else {
-                        Write-OK $ext
-                    }
-                }
-            }
-        }
-    } else {
-        Write-Warn "Cursor not on PATH — skipping extensions"
-    }
+    Sync-EditorExtensions -DisplayName "Cursor" `
+        -CommandCandidates @("$env:LOCALAPPDATA\Programs\cursor\resources\app\bin\cursor.cmd", "cursor") `
+        -ExtensionsFile $extFile -DryRun:$DryRun
 }
 
 # =============================================================================
@@ -807,48 +610,7 @@ if (-not $AppsOnly) {
 # =============================================================================
 if (-not $AppsOnly) {
     Write-Step "Fonts"
-
-    $fontsDir  = "$env:LOCALAPPDATA\Microsoft\Windows\Fonts"
-    $regPath   = 'HKCU:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts'
-    $checkFont = 'CaskaydiaCove Nerd Font Regular (TrueType)'
-
-    $installed = (Get-ItemProperty $regPath -ErrorAction SilentlyContinue).$checkFont
-    if (-not $installed) {
-        $installed = (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts' -ErrorAction SilentlyContinue).$checkFont
-    }
-    if (-not $installed) {
-        $fontFile = Get-ChildItem "$fontsDir\CaskaydiaCove*" -ErrorAction SilentlyContinue | Select-Object -First 1
-        if ($fontFile) { $installed = $fontFile.FullName }
-    }
-
-    if ($installed) {
-        Write-Skip "CaskaydiaCove Nerd Font already installed"
-    } elseif ($DryRun) {
-        Write-Skip "Would download and install CaskaydiaCove Nerd Font"
-    } else {
-        $tmpZip    = "$env:TEMP\CascadiaCode.zip"
-        $tmpExtract = "$env:TEMP\CascadiaCode-nf"
-        $fontUrl   = "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/CascadiaCode.zip"
-
-        Write-Host "   Downloading CaskaydiaCove Nerd Font..." -ForegroundColor DarkGray
-        Invoke-WebRequest -Uri $fontUrl -OutFile $tmpZip -UseBasicParsing
-
-        Expand-Archive -Path $tmpZip -DestinationPath $tmpExtract -Force
-
-        if (-not (Test-Path $fontsDir)) { New-Item -ItemType Directory -Path $fontsDir -Force | Out-Null }
-
-        $count = 0
-        Get-ChildItem $tmpExtract -Filter "*.ttf" | ForEach-Object {
-            $dst = Join-Path $fontsDir $_.Name
-            Copy-Item $_.FullName $dst -Force
-            $fontName = [System.IO.Path]::GetFileNameWithoutExtension($_.Name) + " (TrueType)"
-            Set-ItemProperty -Path $regPath -Name $fontName -Value $dst -Force
-            $count++
-        }
-
-        Remove-Item $tmpZip, $tmpExtract -Recurse -Force -ErrorAction SilentlyContinue
-        Write-OK "Installed $count font files to $fontsDir"
-    }
+    Install-NerdFontIfMissing -DryRun:$DryRun
 }
 
 # =============================================================================
@@ -1019,29 +781,44 @@ if (-not $AppsOnly) {
 }
 
 # =============================================================================
-#   WSL cron jobs
+#   WSL provisioning + cron jobs
 # =============================================================================
 if (-not $ConfigsOnly) {
-    Write-Step "WSL cron jobs"
+    Write-Step "WSL provisioning + cron jobs"
     $wslCmd = Get-Command wsl.exe -ErrorAction SilentlyContinue
-    $cronSetup = Join-Path $DotfilesDir "wsl\setup-crons.sh"
+    $wslScripts = @(
+        @{ path = Join-Path $DotfilesDir "wsl\setup.sh";       desc = "WSL provisioning (wsl/setup.sh)" },
+        @{ path = Join-Path $DotfilesDir "wsl\setup-crons.sh"; desc = "WSL cron jobs (wsl/setup-crons.sh)" }
+    )
     if (-not $wslCmd) {
-        Write-Warn "wsl.exe not found — skipping WSL cron setup"
-    } elseif (-not (Test-Path -LiteralPath $cronSetup)) {
-        Write-Warn "wsl\setup-crons.sh not found — skipping"
+        Write-Warn "wsl.exe not found — skipping WSL provisioning and cron setup"
     } elseif ($DryRun) {
+        Write-Skip "Would run: wsl.exe bash wsl/setup.sh (apt tools, zsh/omz/p10k, shell files, uv, claude/codex)"
         Write-Skip "Would run: wsl.exe bash wsl/setup-crons.sh (requires sudo inside WSL)"
     } else {
-        try {
-            $wslPath = (& wsl.exe wslpath -u $cronSetup).Trim()
-            & wsl.exe bash $wslPath
-            if ($LASTEXITCODE -eq 0) {
-                Write-OK "WSL cron jobs installed"
-            } else {
-                Write-Warn "WSL cron setup exited $LASTEXITCODE"
+        # A distro registered with --no-launch has no default user yet — the
+        # first launch of Ubuntu creates it. Probe before provisioning.
+        $probe = (& wsl.exe -e sh -c "echo ready" 2>$null) -join ""
+        if ($LASTEXITCODE -ne 0 -or $probe -notmatch 'ready') {
+            Write-Warn "WSL distro not initialized yet — launch Ubuntu once to create your user, then re-run install.ps1"
+        } else {
+            foreach ($s in $wslScripts) {
+                if (-not (Test-Path -LiteralPath $s.path)) {
+                    Write-Warn "$($s.desc): script not found — skipping"
+                    continue
+                }
+                try {
+                    $wslPath = (& wsl.exe wslpath -u $s.path).Trim()
+                    & wsl.exe bash $wslPath
+                    if ($LASTEXITCODE -eq 0) {
+                        Write-OK $s.desc
+                    } else {
+                        Write-Warn "$($s.desc) exited $LASTEXITCODE"
+                    }
+                } catch {
+                    Write-Warn "$($s.desc) failed — $_"
+                }
             }
-        } catch {
-            Write-Warn "WSL cron setup failed — $_"
         }
     }
 }
