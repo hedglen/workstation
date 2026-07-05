@@ -206,7 +206,7 @@ Clear-Host
     Write-Host 'not installed' -ForegroundColor DarkGray
   }
   Write-Host '  Auth:    ' -NoNewline -ForegroundColor White
-  if ($authStatus -match 'loggedIn|Logged in|authenticated|subscriptionType') {
+  if ($authStatus -match 'Login method|loggedIn|Logged in|authenticated|subscriptionType') {
     Write-Host 'ok' -ForegroundColor Green
   } elseif ($authStatus) {
     Write-Host $authStatus -ForegroundColor Yellow
@@ -286,10 +286,12 @@ Clear-Host
   $wslDistro = ']]
   .. distro.wsl_distro
   .. [['
-  $codexVer = (wsl.exe -d $wslDistro bash -lc 'codex --version 2>/dev/null' 2>$null)
+  # codex lives in ~/.npm-global/bin, which only the tracked .zshrc adds to
+  # PATH — bash login shells on a fresh machine will not find it unaided.
+  $codexVer = (wsl.exe -d $wslDistro bash -lc 'export PATH="$HOME/.npm-global/bin:$PATH"; codex --version 2>/dev/null' 2>$null)
   if ($codexVer) { $codexVer = $codexVer.Trim() } else { $codexVer = '' }
   # Codex writes login status to stderr, so merge both streams before matching it.
-  $authStatus = (wsl.exe -d $wslDistro bash -lc 'codex login status 2>&1' 2>$null)
+  $authStatus = (wsl.exe -d $wslDistro bash -lc 'export PATH="$HOME/.npm-global/bin:$PATH"; codex login status 2>&1' 2>$null)
   if ($authStatus) { $authStatus = ($authStatus -join ' ').Trim() } else { $authStatus = '' }
 
   Write-Host 'Codex - WSL quick sheet' -ForegroundColor Magenta
