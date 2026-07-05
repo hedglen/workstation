@@ -2,3 +2,21 @@
 *.sh text eol=lf
 *.bash text eol=lf
 *.zsh text eol=lf
+
+# Normalize source and docs to LF in the repo and on checkout — stops the
+# line-ending churn when different tools rewrite files (2026-07: an agent
+# commit flipped six .md files + a .ps1 to CRLF with no content change).
+*.md text eol=lf
+*.txt text eol=lf
+*.json text eol=lf
+*.jsonc text eol=lf
+*.toml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.lua text eol=lf
+*.py text eol=lf
+*.ps1 text eol=lf
+*.psm1 text eol=lf
+*.ahk text eol=lf
+*.conf text eol=lf
+*.glsl text eol=lf
