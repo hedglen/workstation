@@ -780,7 +780,7 @@ if (-not $ConfigsOnly) {
     if (-not $wslCmd) {
         Write-Warn "wsl.exe not found — skipping WSL provisioning and cron setup"
     } elseif ($DryRun) {
-        Write-Skip "Would run: wsl.exe bash wsl/setup.sh (apt tools, zsh/omz/p10k, shell files, uv, claude/codex)"
+        Write-Skip "Would run: wsl.exe bash wsl/setup.sh (apt tools, zsh/omz/p10k, shell files, uv, claude/codex/grok)"
         Write-Skip "Would run: wsl.exe bash wsl/setup-crons.sh (requires sudo inside WSL)"
     } else {
         # A distro registered with --no-launch has no default user yet — the

@@ -1,8 +1,8 @@
 ## WSL Shell Files
 
-This folder tracks the Linux-side shell setup used by the WezTerm `wsl`, `claude`, and `codex` tabs.
+This folder tracks the Linux-side shell setup used by the WezTerm `wsl`, `claude`, `codex`, and `grok` tabs.
 
-**Provisioning is automated:** `wsl/setup.sh` idempotently installs the apt tooling, zsh + oh-my-zsh + Powerlevel10k, copies the tracked shell files, and installs uv, yt-dlp, and the claude/codex CLIs. `dotfiles/install.ps1` runs it during bootstrap (after the distro's first launch has created your user); you can also run it any time from WSL:
+**Provisioning is automated:** `wsl/setup.sh` idempotently installs the apt tooling, zsh + oh-my-zsh + Powerlevel10k, copies the tracked shell files, and installs uv, yt-dlp, and the claude/codex/grok CLIs. `dotfiles/install.ps1` runs it during bootstrap (after the distro's first launch has created your user); you can also run it any time from WSL:
 
 ```bash
 bash "$WIN_HOME/workstation/dotfiles/wsl/setup.sh"

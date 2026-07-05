@@ -116,6 +116,26 @@ wezterm.on('gui-startup', function(cmd)
     end
   end
 
+  local grok_tab, grok_pane, grok_fb = spawn.spawn_tab_or_fallback(
+    window,
+    spawn.wsl_command_spawn(paths.workstation, 'grok'),
+    'grok',
+    'Install WSL to use Grok CLI in this tab.'
+  )
+  if grok_tab and grok_pane and not grok_fb then
+    local ok_grok_split, grok_split_err = pcall(function()
+      grok_pane:split {
+        direction = 'Right',
+        size = 0.32,
+        cwd = paths.workstation,
+        args = spawn.pwsh_spawn(paths.workstation, helpers.grok_helper_cmd).args,
+      }
+    end)
+    if not ok_grok_split then
+      wezterm.log_error('Grok helper pane split failed: ' .. tostring(grok_split_err))
+    end
+  end
+
   system_tab:activate()
   window:gui_window():maximize()
 end)

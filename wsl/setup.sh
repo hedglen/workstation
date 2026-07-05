@@ -2,7 +2,7 @@
 # wsl/setup.sh
 # Idempotently provisions the WSL side of this dotfiles setup: apt tooling,
 # zsh + oh-my-zsh + Powerlevel10k, the tracked shell files, uv, npm global
-# prefix, and the claude/codex CLIs the WezTerm tabs expect.
+# prefix, and the claude/codex/grok CLIs the WezTerm tabs expect.
 # Run as the normal WSL user (uses sudo only where needed).
 # Called by dotfiles/install.ps1 during machine bootstrap; safe to re-run.
 
@@ -120,7 +120,7 @@ export NPM_CONFIG_PREFIX="${NPM_CONFIG_PREFIX:-$HOME/.npm-global}"
 mkdir -p "$NPM_CONFIG_PREFIX/bin"
 ok "~/.npm-global ready"
 
-# ── claude + codex CLIs (WezTerm claude/codex tabs expect these) ──────────────
+# ── claude/codex/grok CLIs (the WezTerm AI tabs expect these) ─────────────────
 step "Claude Code CLI"
 if command -v claude &>/dev/null || [[ -x "$HOME/.local/bin/claude" ]]; then
   skip "claude already installed"
@@ -137,6 +137,16 @@ elif npm install -g @openai/codex; then
   ok "codex installed"
 else
   warn "codex install failed — run: npm install -g @openai/codex"
+fi
+
+step "Grok CLI"
+# Installs to ~/.grok/bin with a symlink in ~/.local/bin (already on PATH via .zshrc)
+if command -v grok &>/dev/null || [[ -x "$HOME/.local/bin/grok" ]]; then
+  skip "grok already installed"
+elif curl -fsSL https://x.ai/cli/install.sh | bash; then
+  ok "grok installed"
+else
+  warn "grok install failed — run: curl -fsSL https://x.ai/cli/install.sh | bash"
 fi
 
 # ── default shell ─────────────────────────────────────────────────────────────

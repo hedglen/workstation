@@ -224,6 +224,35 @@ Clear-Host
 }
 ]]
 
+M.grok_helper_cmd = [[
+Clear-Host
+& {
+  function _row($cmd, $desc) {
+    Write-Host '  ' -NoNewline
+    Write-Host $cmd -NoNewline -ForegroundColor Yellow
+    Write-Host ('  ' + $desc) -ForegroundColor DarkGray
+  }
+  Write-Host 'Grok - quick use cases' -ForegroundColor Magenta
+  Write-Host 'Best for real-time info (X/web search) and fast second opinions.' -ForegroundColor DarkGray
+  Write-Host ''
+
+  Write-Host 'When to start here' -ForegroundColor Cyan
+  _row 'Current-events lookups' 'library releases, breaking changes, outages'
+  _row 'Second opinion' 'sanity-check a plan from the Claude tab'
+  _row 'Quick one-shot questions' 'no long session context needed'
+  Write-Host ''
+
+  Write-Host 'CLI basics' -ForegroundColor Cyan
+  _row 'grok' 'interactive session (login on first run)'
+  _row 'grok upgrade' 'update the CLI in place'
+  _row '/help in session' 'commands, model switching, settings'
+  Write-Host ''
+
+  Write-Host 'Claude tab for deep planning; Codex tab to ship changes.' -ForegroundColor DarkCyan
+  Write-Host ''
+}
+]]
+
 M.git_top_helper_cmd = [[__wezterm_git_track_root(){ __wt_repo="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"; printf '%s\n' "$__wt_repo" > ~/.wezterm-git-current-repo; }; export -f __wezterm_git_track_root >/dev/null 2>&1 || true; __wt_repo="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"; printf '%s\n' "$__wt_repo" > ~/.wezterm-git-current-repo; case ":${PROMPT_COMMAND:-}:" in *"__wezterm_git_track_root"*) ;; *) export PROMPT_COMMAND="__wezterm_git_track_root${PROMPT_COMMAND:+;$PROMPT_COMMAND}" ;; esac; git status --short --branch; exec bash -il]]
 
 M.git_right_panel_cmd = [[

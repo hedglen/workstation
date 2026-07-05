@@ -80,7 +80,7 @@ This will:
 8. Install CaskaydiaCove Nerd Font
 9. Junction `tools\mpv\portable_config` to `dotfiles\mpv-config` for mpv (when the installer configures mpv)
 10. Register AutoHotkey on startup
-11. Provision WSL: **`wsl/setup.sh`** (apt tools, zsh + oh-my-zsh + Powerlevel10k, tracked `.zshrc`/`.p10k.zsh`, uv, claude/codex CLIs) and **`wsl/setup-crons.sh`** (cron jobs). Only remaining WSL manual step: `gh auth login`.
+11. Provision WSL: **`wsl/setup.sh`** (apt tools, zsh + oh-my-zsh + Powerlevel10k, tracked `.zshrc`/`.p10k.zsh`, uv, claude/codex/grok CLIs) and **`wsl/setup-crons.sh`** (cron jobs). Only remaining WSL manual step: `gh auth login`.
 
 **Guides and runbook:** start at **[`docs/README.md`](docs/README.md)** (workstation layout, setup, tools, Opus).
 
@@ -110,12 +110,12 @@ dotfiles/
 ├── oh-my-posh/
 │   └── hedglab.omp.json           ← custom OMP theme (Neon Dark–style segments)
 ├── wezterm/
-│   ├── wezterm.lua                ← gui-startup tabs: system, coding, git, wsl, claude, codex
+│   ├── wezterm.lua                ← gui-startup tabs: system, coding, git, wsl, claude, codex, grok
 │   └── wsl-helper.sh              ← right pane helper for the WezTerm wsl tab (quick jumps + gh notes)
 ├── wsl/
 │   ├── .zshrc                     ← WSL shell aliases, workstation helpers
 │   ├── .p10k.zsh                  ← WSL Powerlevel10k prompt
-│   ├── setup.sh                   ← idempotent WSL provisioning (apt, zsh/omz/p10k, uv, claude/codex)
+│   ├── setup.sh                   ← idempotent WSL provisioning (apt, zsh/omz/p10k, uv, claude/codex/grok)
 │   ├── setup-crons.sh             ← WSL cron jobs (run by install.ps1)
 │   └── README.md                  ← WSL setup notes + gh auth
 ├── vscode/
