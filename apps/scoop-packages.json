@@ -33,12 +33,15 @@
 
     // ── System & files ───────────────────────────────────────────────────────
     "dust",         // disk usage tree
+    "duf",          // better df - disk usage
     "exiftool",     // media metadata read/write (pairs with media-organizer / yt-dlp)
     "eza",          // modern ls
     "fastfetch",    // system info banner
     "gsudo",        // sudo for Windows
     "hyperfine",    // command benchmarking
+    "openssh",      // SSH client
     "rclone",       // cloud storage sync
+    "tree",         // directory tree listing
     "wget",         // downloads in scripts
 
     // ── Docs & task running ──────────────────────────────────────────────────
