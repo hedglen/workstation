@@ -1,6 +1,6 @@
 # Clean reinstall runbook
 
-Practical checklist for wiping Windows, reinstalling cleanly, and getting back to a working setup with `dotfiles/install.ps1`.
+Practical checklist for wiping Windows, reinstalling cleanly, and getting back to a working setup with `install.ps1`.
 
 ## Goal
 
@@ -10,8 +10,8 @@ Rebuild the workstation to a reliable baseline quickly, while avoiding data loss
 
 Do this before you erase the machine.
 
-- Verify latest dotfiles are pushed:
-  - `Set-Location "$HOME\workstation\dotfiles"`
+- Verify the workstation repo is pushed:
+  - `Set-Location "$HOME\workstation"`
   - `git status --short --branch`
   - `git push`
 - Confirm critical cloud/account access works:
@@ -23,7 +23,6 @@ Do this before you erase the machine.
   - app profiles not in this repo
   - license files/keys not stored in vault
   - `$HOME\.secrets.ps1` (sourced by the PowerShell profile; holds API keys for `ask` etc.) — store its contents in Proton Pass so you can recreate it
-- Reconcile workstation-root `CLAUDE.md` with `dotfiles/claude/CLAUDE.md` (the health check warns if they differ) and commit
 - Save optional hardware/device exports (if needed):
   - mouse/keyboard profiles
   - fan/RGB profiles
@@ -50,7 +49,7 @@ winget install -e --id Git.Git --accept-package-agreements --accept-source-agree
 1. Open a new PowerShell window and run bootstrap:
 
 ```powershell
-irm https://raw.githubusercontent.com/hedglen/dotfiles/master/install.ps1 | iex
+irm https://raw.githubusercontent.com/hedglen/workstation/master/install.ps1 | iex
 ```
 
 ## First-pass verification
@@ -61,7 +60,7 @@ After installer completes:
   - `dots-health`
   - `dots-update -DryRun`
 - Confirm workspace and key paths:
-  - `$HOME\workstation\dotfiles`
+  - `$HOME\workstation`
   - `$HOME\workstation\tools`
   - `$HOME\workstation\rjh-workspace.code-workspace`
 - Confirm WSL is usable:
@@ -78,7 +77,7 @@ These are expected post-wipe tasks.
 
 - Sign into apps and services (GitHub CLI, Steam, Adobe, Proton, etc.).
 - Recreate `$HOME\.secrets.ps1` from Proton Pass (the profile sources it when present).
-- Log into Claude Code: run `claude` and follow the browser prompt (the CLI itself is installed by `install.ps1`; settings come from the `dotfiles/claude/settings.json` symlink).
+- Log into Claude Code: run `claude` and follow the browser prompt (the CLI itself is installed by `install.ps1`; settings come from the `claude/settings.json` symlink).
 - Re-authorize claude.ai connectors (Gmail, Google Calendar MCP) from claude.ai connector settings.
 - `gh auth login` — once in PowerShell and once in WSL (see `wsl/README.md`).
 - Handle manual-only installs (for current setup, Battle.net).

@@ -1,6 +1,6 @@
-# dotfiles
+# workstation
 
-> Personal Windows dotfiles — configs, tools, and a one-command machine bootstrap.
+> Personal Windows workstation — configs, tools, and a one-command machine bootstrap. The `$HOME\workstation` folder **is** this repo.
 
 ---
 
@@ -21,7 +21,7 @@
 
 ## ⚡ Fresh Machine Setup
 
-Use this on a **brand-new Windows PC** before you do anything else. Order matters: Git must exist so the bootstrap can clone repos; `winget` must work so apps can install.
+Use this on a **brand-new Windows PC** before you do anything else. Order matters: Git must exist so the bootstrap can fetch the repo; `winget` must work so apps can install.
 
 **Username:** Nothing here is tied to the name `rjh`. The installer and profile use **`$HOME\workstation\...`** (same as **`%USERPROFILE%\workstation\...`** on disk). If your account is `alex`, you get `C:\Users\alex\workstation\...`. Forks and docs that still show `C:\Users\rjh\...` are just the author’s machine—substitute your profile path or use `$HOME` in PowerShell.
 
@@ -65,22 +65,23 @@ You should see something like `git version 2.x.x`.
 ### 4. Run the bootstrap (one command)
 
 ```powershell
-irm https://raw.githubusercontent.com/hedglen/dotfiles/master/install.ps1 | iex
+irm https://raw.githubusercontent.com/hedglen/workstation/master/install.ps1 | iex
 ```
 
 This will:
 
-1. Clone this repo to `$HOME\workstation\dotfiles` (i.e. `%USERPROFILE%\workstation\dotfiles`)
-2. Clone **`hedglen-profile`**. Create **`workstation\tools`** if missing. Ensure **`dotfiles\scripts`** and **`dotfiles\projects`** exist; add **junctions** **`workstation\scripts`** → **`dotfiles\scripts`** and **`workstation\projects`** → **`dotfiles\projects`** when those paths are not already taken (legacy-friendly paths). Personal notes: **`notes/`** in this repo. Restore workstation-root docs: **`CLAUDE.md`** (from **`claude/CLAUDE.md`**) and the **`WORKSTATION-SETUP.md`** stub.
-3. Install apps: **`winget install`** per package ID from **`apps/winget-packages.json`** (JSONC with category comments — no `winget import`); then **Scoop** via **get.scoop.sh** (unless **`-NoScoop`**), the **extras** bucket, and **`scoop install`** from **`apps/scoop-packages.json`** (see **`apps/winget-packages.md`** / **`apps/scoop-packages.md`**). Then the **Claude Code CLI** (native installer — auto-updates) when `claude` is not on PATH.
-4. Create Python **`.venv`**s for **`projects\media-organizer`**, **`projects\ytdl`**, and **`tools\transcribe-env`** (Whisper deps — large download) from their `requirements` files (uses **`uv`** when available, else **`py`** + pip; skipped by **`-NoPythonProjects`** or **`-ConfigsOnly`**).
-5. Apply Windows tweaks (requires admin)
-6. Symlink all configs to their correct locations (incl. **`claude/settings.json`** → `~/.claude/settings.json`)
-7. Install all VS Code + Cursor extensions
-8. Install CaskaydiaCove Nerd Font
-9. Junction `tools\mpv\portable_config` to `dotfiles\mpv-config` for mpv (when the installer configures mpv)
-10. Register AutoHotkey on startup
-11. Provision WSL: **`wsl/setup.sh`** (apt tools, zsh + oh-my-zsh + Powerlevel10k, tracked `.zshrc`/`.p10k.zsh`, uv, claude/codex/grok/vibe CLIs) and **`wsl/setup-crons.sh`** (cron jobs). Only remaining WSL manual step: `gh auth login`.
+1. Hydrate this repo **directly into** `$HOME\workstation` (i.e. `%USERPROFILE%\workstation` — `git init` + fetch + checkout, so a pre-existing folder is fine)
+2. Install apps: **`winget install`** per package ID from **`apps/winget-packages.json`** (JSONC with category comments — no `winget import`); then **Scoop** via **get.scoop.sh** (unless **`-NoScoop`**), the **extras** bucket, and **`scoop install`** from **`apps/scoop-packages.json`** (see **`apps/winget-packages.md`** / **`apps/scoop-packages.md`**). Then the **Claude Code CLI** (native installer — auto-updates) when `claude` is not on PATH.
+3. Create Python **`.venv`**s for **`projects\media-organizer`**, **`projects\ytdl`**, and **`tools\transcribe-env`** (Whisper deps — large download) from their `requirements` files (uses **`uv`** when available, else **`py`** + pip; skipped by **`-NoPythonProjects`** or **`-ConfigsOnly`**).
+4. Apply Windows tweaks (requires admin)
+5. Symlink all configs to their correct locations (incl. **`claude/settings.json`** → `~/.claude/settings.json`; the map lives in **`lib/config-links.ps1`**)
+6. Install all VS Code + Cursor extensions
+7. Install CaskaydiaCove Nerd Font
+8. Junction `tools\mpv\portable_config` to `mpv-config\` for mpv (when the installer configures mpv)
+9. Register AutoHotkey on startup
+10. Provision WSL: **`wsl/setup.sh`** (apt tools, zsh + oh-my-zsh + Powerlevel10k, tracked `.zshrc`/`.p10k.zsh`, uv, claude/codex/grok/vibe CLIs) and **`wsl/setup-crons.sh`** (cron jobs). Only remaining WSL manual step: `gh auth login`.
+
+Personal notes live in **`notes/`** (with `notes/personal/` gitignored — never pushed). `tools\` is gitignored — binaries only.
 
 **Guides and runbook:** start at **[`docs/README.md`](docs/README.md)** (workstation layout, setup, tools, Opus).
 
@@ -89,8 +90,10 @@ This will:
 ## 🗂️ What's In Here
 
 ```text
-dotfiles/
+workstation/                       ← this repo IS $HOME\workstation
 ├── install.ps1                    ← bootstrap script
+├── rjh-workspace.code-workspace   ← VS Code command center (tracked)
+├── CLAUDE.md                      ← Claude Code context (tracked)
 ├── lib/                           ← shared helpers for install/update/health
 │   ├── common.ps1                 ← loggers + Test-IsAdmin
 │   ├── config-links.ps1           ← THE config map + loader-aware linker
@@ -242,7 +245,7 @@ Format: `[USER/ADMIN] HH:MM PS path>`
 | `c` | `cd C:\` |
 | `d` | `cd D:\` |
 | `home` | `cd ~` |
-| `dots` | `cd $HOME\workstation\dotfiles` |
+| `dots` | `cd $HOME\workstation` |
 | `tools` | `cd $HOME\workstation\tools` |
 | `psh` | `cd $HOME\workstation\tools\powershell` |
 
@@ -508,7 +511,7 @@ Package-manager split, for deciding where a new tool goes:
 - **Scoop** — portable single-binary CLI tools (main/extras buckets)
 - **pip (venvs)** — Python libraries, pinned per project in `requirements` files; never installed globally
 
-For **how to use** installed apps and profile helpers (not just the install list), see **[`docs/workstation-tools.md`](docs/workstation-tools.md)** in this repo ([on GitHub](https://github.com/hedglen/dotfiles/blob/master/docs/workstation-tools.md)).
+For **how to use** installed apps and profile helpers (not just the install list), see **[`docs/workstation-tools.md`](docs/workstation-tools.md)** in this repo ([on GitHub](https://github.com/hedglen/workstation/blob/master/docs/workstation-tools.md)).
 
 | Category | Apps (from `apps/winget-packages.json`) |
 | --- | --- |
@@ -531,7 +534,7 @@ For **how to use** installed apps and profile helpers (not just the install list
 **`install.ps1`** installs [Scoop](https://github.com/ScoopInstaller/Install) from **get.scoop.sh** when needed, then `scoop install` for every entry in `apps/scoop-packages.json`. To install or refresh manually:
 
 ```powershell
-Set-Location "$HOME\workstation\dotfiles\apps"
+Set-Location "$HOME\workstation\apps"
 $pkgs = (Get-Content .\scoop-packages.json -Raw | ConvertFrom-Json).packages
 scoop install @pkgs
 ```
@@ -635,7 +638,7 @@ Theme: `oh-my-posh/hedglab.omp.json` — diamond **shell** chip, powerline **pat
 To activate it, add this to your profile (Oh My Posh is already installed via winget):
 
 ```powershell
-oh-my-posh init pwsh --config "$HOME\workstation\dotfiles\oh-my-posh\hedglab.omp.json" | Invoke-Expression
+oh-my-posh init pwsh --config "$HOME\workstation\oh-my-posh\hedglab.omp.json" | Invoke-Expression
 ```
 
 ---

@@ -4,7 +4,7 @@ Utility scripts for this workstation. The repo holds the small tools that do not
 
 ## Layout (this folder only)
 
-Everything below lives under **`dotfiles/scripts/`**. For **`autohotkey/`**, **`powershell/`**, **`vscode/`**, **`projects/`**, and the rest of the repo, see the tree in the root **[`README.md`](../README.md#-whats-in-here)**.
+Everything below lives under **`scripts/`**. For **`autohotkey/`**, **`powershell/`**, **`vscode/`**, **`projects/`**, and the rest of the repo, see the tree in the root **[`README.md`](../README.md#-whats-in-here)**.
 
 - **`python/`** — cross-platform CLI helpers
 - **`workstation-health.ps1`** — layout, tooling, and installer dry-runs
@@ -16,15 +16,15 @@ Everything below lives under **`dotfiles/scripts/`**. For **`autohotkey/`**, **`
 Run this from PowerShell:
 
 ```powershell
-pwsh -File "$HOME\workstation\dotfiles\scripts\workstation-health.ps1"
+pwsh -File "$HOME\workstation\scripts\workstation-health.ps1"
 ```
 
 What it checks:
 
 - canonical `$HOME\workstation` layout
 - key Windows tools on `PATH`
-- dry-run safety for `dotfiles/install.ps1`
-- dry-run safety for `dotfiles/mpv-config/install.ps1` when present
+- dry-run safety for `install.ps1`
+- dry-run safety for `mpv-config/install.ps1` when present
 - WezTerm helper scripts (`wezterm/wsl-helper.sh`)
 - presence of important linked config files
 - dirty git repos across the main workstation repos
@@ -32,7 +32,7 @@ What it checks:
 For more detail:
 
 ```powershell
-pwsh -File "$HOME\workstation\dotfiles\scripts\workstation-health.ps1" -Verbose
+pwsh -File "$HOME\workstation\scripts\workstation-health.ps1" -Verbose
 ```
 
 ## Repo Hygiene
@@ -42,5 +42,5 @@ Generated Python cache files are ignored through `.gitignore`.
 If you already have stale cache folders locally, remove them once:
 
 ```powershell
-Remove-Item -Recurse -Force "$HOME\workstation\dotfiles\scripts\python\__pycache__"
+Remove-Item -Recurse -Force "$HOME\workstation\scripts\python\__pycache__"
 ```

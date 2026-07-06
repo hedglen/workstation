@@ -94,7 +94,7 @@ function M.wsl_command_spawn(cwd, cmd)
 end
 
 function M.wsl_helper_spawn()
-  local helper_win = paths.dotfiles .. '\\wezterm\\wsl-helper.sh'
+  local helper_win = paths.workstation .. '\\wezterm\\wsl-helper.sh'
   local fh = io.open(helper_win, 'r')
   if fh then
     fh:close()
@@ -111,7 +111,7 @@ function M.wsl_helper_spawn()
       distro.wsl_distro,
       'bash',
       '-lc',
-      'echo "wsl-helper.sh missing in dotfiles/wezterm"; exec zsh -il',
+      'echo "wsl-helper.sh missing in wezterm/"; exec zsh -il',
     },
   }
 end

@@ -1,10 +1,10 @@
 # =============================================================================
-#   dotfiles/install.ps1
+#   workstation/install.ps1
 #   Bootstrap a fresh Windows machine from scratch.
-#   https://github.com/hedglen/dotfiles
+#   https://github.com/hedglen/workstation
 #
 #   Usage:
-#     irm https://raw.githubusercontent.com/hedglen/dotfiles/master/install.ps1 | iex
+#     irm https://raw.githubusercontent.com/hedglen/workstation/master/install.ps1 | iex
 #
 #   Flags:
 #     -AppsOnly     Skip most setup/config steps; still installs apps
@@ -29,22 +29,22 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$DotfilesDir = $PSScriptRoot
+$WorkstationDir = $PSScriptRoot
 # irm ... | iex has no script path; PSScriptRoot can be empty or whitespace.
-$bootstrapFromIex = [string]::IsNullOrWhiteSpace($DotfilesDir)
+$bootstrapFromIex = [string]::IsNullOrWhiteSpace($WorkstationDir)
 if ($bootstrapFromIex) {
-    $DotfilesDir = "$HOME\workstation\dotfiles"
+    $WorkstationDir = "$HOME\workstation"
 }
 
 # Shared helpers live in lib\. During an irm|iex bootstrap the repo is not
 # cloned yet, so fall back to inline loggers until the local re-invoke.
-if (Test-Path (Join-Path $DotfilesDir "lib\common.ps1")) {
-    . (Join-Path $DotfilesDir "lib\common.ps1")
-    . (Join-Path $DotfilesDir "lib\config-links.ps1")
-    . (Join-Path $DotfilesDir "lib\startup-policy.ps1")
-    . (Join-Path $DotfilesDir "lib\fonts.ps1")
-    . (Join-Path $DotfilesDir "lib\extensions.ps1")
-    . (Join-Path $DotfilesDir "lib\python-projects.ps1")
+if (Test-Path (Join-Path $WorkstationDir "lib\common.ps1")) {
+    . (Join-Path $WorkstationDir "lib\common.ps1")
+    . (Join-Path $WorkstationDir "lib\config-links.ps1")
+    . (Join-Path $WorkstationDir "lib\startup-policy.ps1")
+    . (Join-Path $WorkstationDir "lib\fonts.ps1")
+    . (Join-Path $WorkstationDir "lib\extensions.ps1")
+    . (Join-Path $WorkstationDir "lib\python-projects.ps1")
 } else {
     function Write-Step { param([string]$Msg) Write-Host "`n>> $Msg" -ForegroundColor Cyan }
     function Write-OK   { param([string]$Msg) Write-Host "   OK  $Msg" -ForegroundColor Green }
@@ -95,51 +95,16 @@ function Install-PCloudIfMissing {
     $installOut | ForEach-Object { Write-Warn "  $_" }
 }
 
-function New-WorkspaceFileIfMissing {
-    param(
-        [Parameter(Mandatory)]
-        [string] $WorkspaceRoot,
-        [switch] $DryRun
-    )
-    $wsPath = Join-Path $WorkspaceRoot "rjh-workspace.code-workspace"
-    if (Test-Path -LiteralPath $wsPath) {
-        Write-Skip "workspace file already present"
-        return
-    }
-    if ($DryRun) {
-        Write-Skip "Would create workspace file: $wsPath"
-        return
-    }
-    $wsObject = [ordered]@{
-        folders = @(
-            @{ name = "hedglen-profile"; path = "hedglen-profile" },
-            @{ name = "tools"; path = "tools" },
-            @{ name = "dotfiles"; path = "dotfiles" }
-        )
-        settings = @{
-            "files.exclude" = @{
-                "**/.git" = $true
-                "**/.DS_Store" = $true
-                "**/Thumbs.db" = $true
-            }
-        }
-    }
-    ($wsObject | ConvertTo-Json -Depth 6) | Set-Content -LiteralPath $wsPath -Encoding UTF8
-    Write-OK "workspace file created (rjh-workspace.code-workspace)"
-}
-
 function Initialize-WorkstationLayout {
     param([switch]$DryRun)
     Write-Step "Workstation layout"
     $wsRoot = Join-Path $HOME "workstation"
     if ($DryRun) {
-        Write-Skip "Would create $wsRoot, tools\, and rjh-workspace.code-workspace if missing"
+        Write-Skip "Would create $wsRoot if missing"
         return
     }
     New-Item -ItemType Directory -Path $wsRoot -Force | Out-Null
-    New-Item -ItemType Directory -Path (Join-Path $wsRoot "tools") -Force | Out-Null
-    New-WorkspaceFileIfMissing -WorkspaceRoot $wsRoot -DryRun:$false
-    Write-OK "workstation root, tools, and workspace file ready"
+    Write-OK "workstation root ready"
 }
 
 # Re-launch elevated once so installers that require admin don't repeatedly prompt.
@@ -170,20 +135,26 @@ function Restart-ElevatedIfNeeded {
 
 if ($bootstrapFromIex) {
     Initialize-WorkstationLayout -DryRun:$DryRun
-    if (-not (Test-Path -LiteralPath $DotfilesDir)) {
-        Write-Host "Cloning dotfiles repo..." -ForegroundColor Cyan
-        git clone https://github.com/hedglen/dotfiles.git $DotfilesDir
+    # workstation\ may already exist and be non-empty (tools\ is untracked),
+    # so hydrate in place instead of `git clone` into the directory.
+    if (-not (Test-Path -LiteralPath (Join-Path $WorkstationDir '.git'))) {
+        Write-Host "Fetching workstation repo..." -ForegroundColor Cyan
+        git -C $WorkstationDir init
+        git -C $WorkstationDir remote add origin https://github.com/hedglen/workstation.git
+        git -C $WorkstationDir fetch origin
+        git -C $WorkstationDir checkout -f -B master origin/master
+        git -C $WorkstationDir branch --set-upstream-to=origin/master master
     }
-    & "$DotfilesDir\install.ps1" @PSBoundParameters
+    & "$WorkstationDir\install.ps1" @PSBoundParameters
     exit
 }
 
 Initialize-WorkstationLayout -DryRun:$DryRun
-Restart-ElevatedIfNeeded -ScriptPath (Join-Path $DotfilesDir 'install.ps1') -NoElevate:$NoElevate
+Restart-ElevatedIfNeeded -ScriptPath (Join-Path $WorkstationDir 'install.ps1') -NoElevate:$NoElevate
 
 Write-Host ""
 Write-Host "============================================" -ForegroundColor Magenta
-Write-Host "   dotfiles installer — hedglen" -ForegroundColor Magenta
+Write-Host "   workstation installer — hedglen" -ForegroundColor Magenta
 Write-Host "============================================" -ForegroundColor Magenta
 if ($DryRun) { Write-Host "   DRY RUN — no changes will be made" -ForegroundColor Yellow }
 Write-Host ""
@@ -203,142 +174,31 @@ foreach ($cmd in $prereqs) {
 }
 
 # =============================================================================
-#   2. Clone workspace repos
+#   2. Repo layout sanity
 # =============================================================================
 if (-not $AppsOnly -and -not $ConfigsOnly) {
-    Write-Step "Cloning workspace repos"
-
-    $workspaceRepos = @(
-        @{ url = "https://github.com/hedglen/hedglen.git";  dst = "$HOME\workstation\hedglen-profile" }
-    )
-
-    foreach ($r in $workspaceRepos) {
-        $name = Split-Path $r.dst -Leaf
-        if (Test-Path $r.dst) {
-            Write-Skip "$name already present"
-        } elseif ($DryRun) {
-            Write-Skip "Would clone $($r.url) → $($r.dst)"
-        } else {
-            try {
-                git clone $r.url $r.dst
-                Write-OK "$name cloned"
-            } catch {
-                Write-Warn "Failed to clone $name — $_"
-            }
-        }
-    }
-
-    # Python helpers (media-organizer, ytdl) ship under dotfiles\projects\
-    Write-Step "Projects (dotfiles\projects)"
-    $projectsBundled = Join-Path $DotfilesDir "projects"
+    # Python helpers (media-organizer, ytdl) ship under projects\
+    Write-Step "Projects (projects\)"
+    $projectsBundled = Join-Path $WorkstationDir "projects"
     if (Test-Path $projectsBundled) {
-        Write-OK "projects directory present in dotfiles"
+        Write-OK "projects directory present"
     } elseif ($DryRun) {
         Write-Skip "Would create: $projectsBundled"
     } else {
         New-Item -ItemType Directory -Path $projectsBundled -Force | Out-Null
-        Write-Warn "Created empty projects\ — git pull dotfiles for media-organizer / ytdl"
+        Write-Warn "Created empty projects\ — git pull for media-organizer / ytdl"
     }
-
-    $legacyProjects = "$HOME\workstation\projects"
-    if (Test-Path $legacyProjects) {
-        try {
-            $item = Get-Item -LiteralPath $legacyProjects -ErrorAction Stop
-            if ($item.Attributes -band [IO.FileAttributes]::ReparsePoint) {
-                Write-Skip "workstation\projects already present (junction or symlink)"
-            } else {
-                Write-Skip "workstation\projects exists as a normal folder — not replaced (merge into dotfiles\projects if needed)"
-            }
-        } catch {
-            Write-Warn "Could not inspect workstation\projects: $_"
-        }
-    } elseif ($DryRun) {
-        Write-Skip "Would create junction: $legacyProjects → $projectsBundled"
-    } else {
-        try {
-            New-Item -ItemType Junction -Path $legacyProjects -Target $projectsBundled | Out-Null
-            Write-OK "junction workstation\projects → dotfiles\projects"
-        } catch {
-            Write-Warn "Could not create junction at $legacyProjects — $_"
-        }
-    }
-
-    # workstation\, tools\, rjh-workspace.code-workspace are created before elevation (see Initialize-WorkstationLayout).
 
     # Utility scripts ship inside this repo (not a separate clone).
-    Write-Step "Utility scripts (dotfiles\scripts)"
-    $scriptsDir = Join-Path $DotfilesDir "scripts"
+    Write-Step "Utility scripts (scripts\)"
+    $scriptsDir = Join-Path $WorkstationDir "scripts"
     if (Test-Path $scriptsDir) {
         Write-OK "scripts directory present"
     } elseif ($DryRun) {
         Write-Skip "Would create: $scriptsDir"
     } else {
         New-Item -ItemType Directory -Path $scriptsDir -Force | Out-Null
-        Write-Warn "Created empty scripts\ — git pull dotfiles for the full script tree"
-    }
-
-    # Legacy path: many docs/tools still say $HOME\workstation\scripts
-    $legacyScripts = "$HOME\workstation\scripts"
-    if (Test-Path $legacyScripts) {
-        try {
-            $item = Get-Item -LiteralPath $legacyScripts -ErrorAction Stop
-            if ($item.Attributes -band [IO.FileAttributes]::ReparsePoint) {
-                Write-Skip "workstation\scripts already present (junction or symlink)"
-            } else {
-                Write-Skip "workstation\scripts exists as a normal folder — not replaced (merge into dotfiles\scripts if needed)"
-            }
-        } catch {
-            Write-Warn "Could not inspect workstation\scripts: $_"
-        }
-    } elseif ($DryRun) {
-        Write-Skip "Would create junction: $legacyScripts → $scriptsDir"
-    } else {
-        try {
-            New-Item -ItemType Junction -Path $legacyScripts -Target $scriptsDir | Out-Null
-            Write-OK "junction workstation\scripts → dotfiles\scripts"
-        } catch {
-            Write-Warn "Could not create junction at $legacyScripts — $_"
-        }
-    }
-
-    # Workstation-root docs — workstation\ itself is not a git repo, so these
-    # would be lost on a wipe without a tracked source.
-    Write-Step "Workstation root docs"
-    $wsRoot      = Join-Path $HOME "workstation"
-    $claudeMdSrc = Join-Path $DotfilesDir "claude\CLAUDE.md"
-    $claudeMdDst = Join-Path $wsRoot "CLAUDE.md"
-    if (-not (Test-Path $claudeMdSrc)) {
-        Write-Warn "claude\CLAUDE.md missing from dotfiles — git pull dotfiles"
-    } elseif (-not (Test-Path $claudeMdDst)) {
-        if ($DryRun) {
-            Write-Skip "Would copy claude\CLAUDE.md -> workstation\CLAUDE.md"
-        } else {
-            Copy-Item $claudeMdSrc $claudeMdDst
-            Write-OK "workstation\CLAUDE.md restored from dotfiles"
-        }
-    } elseif ((Get-Content $claudeMdSrc -Raw) -ne (Get-Content $claudeMdDst -Raw)) {
-        Write-Warn "workstation\CLAUDE.md differs from dotfiles claude\CLAUDE.md — reconcile and commit"
-    } else {
-        Write-Skip "workstation\CLAUDE.md up to date"
-    }
-
-    $stubPath = Join-Path $wsRoot "WORKSTATION-SETUP.md"
-    if (Test-Path -LiteralPath $stubPath) {
-        Write-Skip "WORKSTATION-SETUP.md stub already present"
-    } elseif ($DryRun) {
-        Write-Skip "Would create WORKSTATION-SETUP.md stub"
-    } else {
-        @'
-# WORKSTATION-SETUP.md (stub)
-
-Canonical guides live in **`dotfiles/docs/`** (tracked with dotfiles).
-
-- **Runbook**: `dotfiles/docs/workstation-setup.md`
-- **Layout overview**: `dotfiles/docs/workstation-layout.md`
-- **Apps & CLIs**: `dotfiles/apps/winget-packages.json` + `scoop-packages.json` (and the matching `*.md` companions) are the **only** manifests; do not keep copies under `%USERPROFILE%\Documents`. `install.ps1` / `maintenance/update.ps1` read those paths only.
-- **Python helpers**: `dotfiles/projects/media-organizer` and `dotfiles/projects/ytdl` (`.venv` from `install.ps1`). `workstation\projects` is a junction to `dotfiles\projects` when the installer could create it.
-'@ | Set-Content -LiteralPath $stubPath -Encoding UTF8
-        Write-OK "WORKSTATION-SETUP.md stub created"
+        Write-Warn "Created empty scripts\ — git pull for the full script tree"
     }
 }
 
@@ -350,7 +210,7 @@ if (-not $ConfigsOnly -and -not $NoApps) {
 
     # Manifest is JSONC (// comments), so it is installed per-ID here rather than
     # via `winget import`, which requires strict schema JSON.
-    $pkgFile = Join-Path $DotfilesDir "apps\winget-packages.json"
+    $pkgFile = Join-Path $WorkstationDir "apps\winget-packages.json"
     if (Test-Path $pkgFile) {
         $wingetIds = @((Get-Content $pkgFile -Raw | ConvertFrom-Json).packages | Where-Object { $_ })
         if ($DryRun) {
@@ -379,7 +239,7 @@ if (-not $ConfigsOnly -and -not $NoApps) {
 
     Write-Step "Installing Scoop CLI packages"
 
-    $scoopFile = Join-Path $DotfilesDir "apps\scoop-packages.json"
+    $scoopFile = Join-Path $WorkstationDir "apps\scoop-packages.json"
     if ($NoScoop) {
         Write-Skip "Skipping Scoop (-NoScoop)"
     } elseif (-not (Test-Path $scoopFile)) {
@@ -479,7 +339,7 @@ if (-not $AppsOnly -and -not $ConfigsOnly) {
     if (-not $weztermExe -and (Get-Command wezterm-gui.exe -ErrorAction SilentlyContinue)) {
         $weztermExe = (Get-Command wezterm-gui.exe).Source
     }
-    $wslHelper = Join-Path $DotfilesDir "wezterm\wsl-helper.sh"
+    $wslHelper = Join-Path $WorkstationDir "wezterm\wsl-helper.sh"
     if ($weztermExe) {
         Write-OK "WezTerm installed ($weztermExe)"
     } else {
@@ -543,15 +403,15 @@ if (-not $AppsOnly -and -not $ConfigsOnly) {
 # Python helpers: run even with -NoApps (ConfigsOnly skips everything substantive)
 if (-not $ConfigsOnly -and -not $NoPythonProjects) {
     Write-Step "Python venvs (media-organizer, ytdl, transcribe)"
-    Install-PythonVenv -VenvDir (Join-Path $DotfilesDir "projects\media-organizer\.venv") `
-        -Requirements (Join-Path $DotfilesDir "projects\media-organizer\requirements.txt") `
+    Install-PythonVenv -VenvDir (Join-Path $WorkstationDir "projects\media-organizer\.venv") `
+        -Requirements (Join-Path $WorkstationDir "projects\media-organizer\requirements.txt") `
         -DisplayName "projects\media-organizer" -DryRun:$DryRun
-    Install-PythonVenv -VenvDir (Join-Path $DotfilesDir "projects\ytdl\.venv") `
-        -Requirements (Join-Path $DotfilesDir "projects\ytdl\requirements.txt") `
+    Install-PythonVenv -VenvDir (Join-Path $WorkstationDir "projects\ytdl\.venv") `
+        -Requirements (Join-Path $WorkstationDir "projects\ytdl\requirements.txt") `
         -DisplayName "projects\ytdl" -DryRun:$DryRun
     # Whisper/torch deps — multi-GB download on first install
     Install-PythonVenv -VenvDir "$HOME\workstation\tools\transcribe-env" `
-        -Requirements (Join-Path $DotfilesDir "scripts\requirements-transcribe.txt") `
+        -Requirements (Join-Path $WorkstationDir "scripts\requirements-transcribe.txt") `
         -DisplayName "tools\transcribe-env (Whisper — large download)" -DryRun:$DryRun
 } elseif ($ConfigsOnly) {
     Write-Skip "Skipping Python project venvs (-ConfigsOnly)"
@@ -564,7 +424,7 @@ if (-not $ConfigsOnly -and -not $NoPythonProjects) {
 # =============================================================================
 if (-not $AppsOnly -and -not $ConfigsOnly) {
     Write-Step "Windows tweaks"
-    $tweaksScript = Join-Path $DotfilesDir "windows\tweaks.ps1"
+    $tweaksScript = Join-Path $WorkstationDir "windows\tweaks.ps1"
     if (-not (Test-IsAdmin)) {
         Write-Warn "Not running as admin — skipping tweaks. Re-run install.ps1 as admin, or run windows\tweaks.ps1 manually."
     } elseif (Test-Path $tweaksScript) {
@@ -583,8 +443,8 @@ if (-not $AppsOnly -and -not $ConfigsOnly) {
 if (-not $AppsOnly) {
     Write-Step "Linking config files"
     Remove-LegacyWeztermConfig -DryRun:$DryRun
-    foreach ($link in (Get-ConfigLinks -DotfilesDir $DotfilesDir)) {
-        Sync-ConfigLink -Link $link -DotfilesDir $DotfilesDir -DryRun:$DryRun
+    foreach ($link in (Get-ConfigLinks -WorkstationDir $WorkstationDir)) {
+        Sync-ConfigLink -Link $link -WorkstationDir $WorkstationDir -DryRun:$DryRun
     }
 }
 
@@ -592,7 +452,7 @@ if (-not $AppsOnly) {
 #   6. Editor extensions (VS Code + Cursor share vscode/extensions.txt)
 # =============================================================================
 if (-not $AppsOnly) {
-    $extFile = Join-Path $DotfilesDir "vscode\extensions.txt"
+    $extFile = Join-Path $WorkstationDir "vscode\extensions.txt"
 
     Write-Step "VS Code extensions"
     Sync-EditorExtensions -DisplayName "VS Code" `
@@ -620,7 +480,7 @@ if (-not $AppsOnly -and -not $ConfigsOnly) {
     Write-Step "mpv runtime bootstrap"
     $mpvDir = Join-Path $HOME "workstation\tools\mpv"
     $mpvExe = Join-Path $mpvDir "mpv.exe"
-    $mpvBootstrap = Join-Path $DotfilesDir "mpv-config\install.ps1"
+    $mpvBootstrap = Join-Path $WorkstationDir "mpv-config\install.ps1"
     if (Test-Path -LiteralPath $mpvExe) {
         Write-Skip "mpv runtime already present"
     } elseif (-not (Test-Path -LiteralPath $mpvBootstrap)) {
@@ -638,21 +498,21 @@ if (-not $AppsOnly -and -not $ConfigsOnly) {
 }
 
 # =============================================================================
-#   9. mpv config — junction tools\mpv\portable_config → dotfiles\mpv-config
+#   9. mpv config — junction tools\mpv\portable_config → mpv-config
 # =============================================================================
 if (-not $AppsOnly -and -not $ConfigsOnly) {
     Write-Step "mpv config"
     $mpvDir          = Join-Path $HOME "workstation\tools\mpv"
-    $mpvConfigSrc    = Join-Path $DotfilesDir "mpv-config"
+    $mpvConfigSrc    = Join-Path $WorkstationDir "mpv-config"
     $portableConfig  = Join-Path $mpvDir "portable_config"
     $mpvConfigSrcFull = [System.IO.Path]::GetFullPath($mpvConfigSrc)
 
     if (-not (Test-Path -LiteralPath $mpvConfigSrc)) {
-        Write-Warn "mpv config bundle missing: $mpvConfigSrc (expected with dotfiles checkout)"
+        Write-Warn "mpv config bundle missing: $mpvConfigSrc (expected in the repo checkout)"
     } elseif (-not (Test-Path -LiteralPath $mpvDir)) {
         Write-Warn "mpv not found at $mpvDir"
         Write-Warn "  Download shinchiro build and extract to $mpvDir, then re-run install.ps1"
-        Write-Warn "  Or run: .\mpv-config\install.ps1 from your dotfiles checkout"
+        Write-Warn "  Or run: .\mpv-config\install.ps1 from the repo root"
     } else {
         $alreadyOk = $false
         if (Test-Path -LiteralPath $portableConfig) {
@@ -688,7 +548,7 @@ if (-not $AppsOnly -and -not $ConfigsOnly) {
                 }
                 try {
                     New-Item -ItemType Junction -Path $portableConfig -Target $mpvConfigSrcFull -Force | Out-Null
-                    Write-OK "mpv portable_config → dotfiles\mpv-config"
+                    Write-OK "mpv portable_config → mpv-config"
                 } catch {
                     Write-Warn "Could not create junction at $portableConfig — $_"
                 }
@@ -727,7 +587,7 @@ if (-not $AppsOnly -and -not $ConfigsOnly) {
 # =============================================================================
 if (-not $AppsOnly) {
     Write-Step "AutoHotkey startup"
-    $ahkSrc = Join-Path $DotfilesDir "autohotkey\main.ahk"
+    $ahkSrc = Join-Path $WorkstationDir "autohotkey\main.ahk"
     if (Test-Path $ahkSrc) {
         $ahkSrc = (Resolve-Path $ahkSrc).Path
     }
@@ -774,8 +634,8 @@ if (-not $ConfigsOnly) {
     Write-Step "WSL provisioning + cron jobs"
     $wslCmd = Get-Command wsl.exe -ErrorAction SilentlyContinue
     $wslScripts = @(
-        @{ path = Join-Path $DotfilesDir "wsl\setup.sh";       desc = "WSL provisioning (wsl/setup.sh)" },
-        @{ path = Join-Path $DotfilesDir "wsl\setup-crons.sh"; desc = "WSL cron jobs (wsl/setup-crons.sh)" }
+        @{ path = Join-Path $WorkstationDir "wsl\setup.sh";       desc = "WSL provisioning (wsl/setup.sh)" },
+        @{ path = Join-Path $WorkstationDir "wsl\setup-crons.sh"; desc = "WSL cron jobs (wsl/setup-crons.sh)" }
     )
     if (-not $wslCmd) {
         Write-Warn "wsl.exe not found — skipping WSL provisioning and cron setup"
@@ -795,7 +655,14 @@ if (-not $ConfigsOnly) {
                     continue
                 }
                 try {
-                    $wslPath = (& wsl.exe wslpath -u $s.path).Trim()
+                    # WSL interop mangles lone backslashes in args — pass forward slashes
+                    $winPath = $s.path -replace '\\', '/'
+                    $wslPath = (& wsl.exe wslpath -u $winPath 2>$null)
+                    if ($wslPath) { $wslPath = ($wslPath -join '').Trim() }
+                    if (-not $wslPath) {
+                        Write-Warn "$($s.desc): could not translate path via wslpath — skipping"
+                        continue
+                    }
                     & wsl.exe bash $wslPath
                     if ($LASTEXITCODE -eq 0) {
                         Write-OK $s.desc

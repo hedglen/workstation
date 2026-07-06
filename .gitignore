@@ -26,3 +26,9 @@ projects/**/.venv/
 projects/**/cookies.txt
 
 # mpv-config — see mpv-config/.gitignore for shader cache, watch_later, etc.
+
+# Portable tools — binaries only, not tracked
+tools/
+
+# Personal notes — never push to the public remote
+notes/personal/

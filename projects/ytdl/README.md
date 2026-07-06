@@ -44,7 +44,7 @@ python -m venv .venv
 .venv/Scripts/pip install rich
 ```
 
-The `ytdl` alias is registered in the PowerShell profile via dotfiles.
+The `ytdl` alias is registered in the PowerShell profile (workstation repo).
 
 ## Supported Sites
 

@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+  <channel>
+    <title>Rob Hedglen — Writing</title>
+    <link>https://hedglen.org/writing.html</link>
+    <atom:link href="https://hedglen.org/feed.xml" rel="self" type="application/rss+xml" />
+    <description>Creative nonfiction, essays, craft notes, and long-form work by Rob Hedglen.</description>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 17 Apr 2026 00:00:00 -0400</lastBuildDate>
+    <image>
+      <url>https://hedglen.org/favicon-96x96.png</url>
+      <title>Rob Hedglen — Writing</title>
+      <link>https://hedglen.org/writing.html</link>
+      <width>96</width>
+      <height>96</height>
+    </image>
+    <item>
+      <title>Soul Doubt</title>
+      <link>https://hedglen.org/soul-doubt.html</link>
+      <guid isPermaLink="true">https://hedglen.org/soul-doubt.html</guid>
+      <pubDate>Fri, 17 Apr 2026 00:00:00 -0400</pubDate>
+      <category>Creative Nonfiction</category>
+      <description>A creative nonfiction piece by Rob Hedglen on four deployments, faith, a father's suicide, and the long climb back.</description>
+    </item>
+    <item>
+      <title>Echo Hours</title>
+      <link>https://hedglen.org/echo-hours.html</link>
+      <guid isPermaLink="true">https://hedglen.org/echo-hours.html</guid>
+      <pubDate>Sun, 31 Aug 2025 00:00:00 -0400</pubDate>
+      <category>Creative Nonfiction</category>
+      <description>A creative nonfiction piece by Rob Hedglen. A single day in Navarre, Florida, told in four movements.</description>
+    </item>
+  </channel>
+</rss>

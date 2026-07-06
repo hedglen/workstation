@@ -1,5 +1,5 @@
 # =============================================================================
-#   dotfiles/lib/common.ps1
+#   lib/common.ps1
 #   Shared logging + environment helpers for install.ps1, maintenance/update.ps1,
 #   and scripts/workstation-health.ps1. Dot-source; do not run directly.
 # =============================================================================

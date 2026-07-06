@@ -6,17 +6,17 @@
 
 ## Quick Install
 
-Primary source: **[hedglen/dotfiles](https://github.com/hedglen/dotfiles)** (this folder is **`mpv-config/`** inside that repo).
+Primary source: **[hedglen/workstation](https://github.com/hedglen/workstation)** (this folder is **`mpv-config/`** inside that repo).
 
 Open PowerShell and run:
 
 ```powershell
-irm https://raw.githubusercontent.com/hedglen/dotfiles/master/mpv-config/install.ps1 | iex
+irm https://raw.githubusercontent.com/hedglen/workstation/master/mpv-config/install.ps1 | iex
 ```
 
-**Requires:** [7-Zip](https://7-zip.org) (or another archiver the script accepts). **Git is not required** for the config itself: the installer can junction **`tools\mpv\portable_config`** to your **`dotfiles\mpv-config`** checkout (bundled when you clone dotfiles).
+**Requires:** [7-Zip](https://7-zip.org) (or another archiver the script accepts). **Git is not required** for the config itself: the installer can junction **`tools\mpv\portable_config`** to your **`workstation\mpv-config`** checkout (bundled with the workstation repo).
 
-On a machine bootstrapped with [hedglen/dotfiles](https://github.com/hedglen/dotfiles), **Git**, **`shinchiro.mpv`**, and yt-dlp are often already present via winget.
+On a machine bootstrapped with [hedglen/workstation](https://github.com/hedglen/workstation), **Git**, **`shinchiro.mpv`**, and yt-dlp are often already present via winget.
 
 The installer will:
 - Download the latest mpv build (shinchiro x86_64)
@@ -31,7 +31,7 @@ The installer will:
 ## 🔧 Manual Install
 
 1. Download mpv from [shinchiro's builds](https://github.com/shinchiro/mpv-winbuild-cmake/releases) and extract to `$HOME\workstation\tools\mpv`
-2. Junction or symlink **`portable_config`** to your **`dotfiles\mpv-config`** checkout (same repo when you use [hedglen/dotfiles](https://github.com/hedglen/dotfiles)), e.g. target `$HOME\workstation\dotfiles\mpv-config` for `$HOME\workstation\tools\mpv\portable_config`
+2. Junction or symlink **`portable_config`** to your **`workstation\mpv-config`** checkout (same repo when you use [hedglen/workstation](https://github.com/hedglen/workstation)), e.g. target `$HOME\workstation\mpv-config` for `$HOME\workstation\tools\mpv\portable_config`
 3. Download [yt-dlp.exe](https://github.com/yt-dlp/yt-dlp/releases/latest) into `$HOME\workstation\tools\mpv`
 4. Download [HdrSwitcher.zip](https://github.com/Vaiz/HdrSwitcher/releases/latest), extract, and copy `HdrSwitcher.exe` into `$HOME\workstation\tools\mpv\portable_config` as `hdrswitch.exe`
 5. The single-instance launchers (`mpv-single.bat`, `mpv-single.ps1`) live alongside `mpv.exe` in `tools\mpv\` — use `mpv-single.bat` for file associations

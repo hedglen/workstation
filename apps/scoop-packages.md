@@ -3,7 +3,7 @@
 Portable CLI tools from the **Scoop `main` bucket**, plus `lazygit` from **extras** (`install.ps1` adds that bucket automatically). The manifest is JSONC — categorized with `//` comments — which PowerShell's `ConvertFrom-Json` reads fine. Install [Scoop](https://scoop.sh/) first (`irm get.scoop.sh | iex`), then install everything from this folder with:
 
 ```powershell
-Set-Location $HOME\workstation\dotfiles\apps
+Set-Location $HOME\workstation\apps
 scoop bucket add extras
 $pkgs = (Get-Content .\scoop-packages.json -Raw | ConvertFrom-Json).packages
 scoop install @pkgs

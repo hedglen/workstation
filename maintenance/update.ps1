@@ -1,6 +1,6 @@
 # =============================================================================
-#   dotfiles/maintenance/update.ps1
-#   Keep a running machine in sync with your dotfiles repo.
+#   maintenance/update.ps1
+#   Keep a running machine in sync with the workstation repo.
 #
 #   Usage:
 #     .\maintenance\update.ps1             # full update
@@ -20,14 +20,14 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$DotfilesDir = Split-Path $PSScriptRoot -Parent
+$WorkstationDir = Split-Path $PSScriptRoot -Parent
 
 # Shared helpers (loggers, config map + linker, startup policy, fonts, extensions)
-. (Join-Path $DotfilesDir "lib\common.ps1")
-. (Join-Path $DotfilesDir "lib\config-links.ps1")
-. (Join-Path $DotfilesDir "lib\startup-policy.ps1")
-. (Join-Path $DotfilesDir "lib\fonts.ps1")
-. (Join-Path $DotfilesDir "lib\extensions.ps1")
+. (Join-Path $WorkstationDir "lib\common.ps1")
+. (Join-Path $WorkstationDir "lib\config-links.ps1")
+. (Join-Path $WorkstationDir "lib\startup-policy.ps1")
+. (Join-Path $WorkstationDir "lib\fonts.ps1")
+. (Join-Path $WorkstationDir "lib\extensions.ps1")
 
 function Test-WingetPackageInstalled {
     param([Parameter(Mandatory)][string]$Id)
@@ -73,17 +73,17 @@ $WingetUpdateNotApplicableExitCode = -1978335189
 
 Write-Host ""
 Write-Host "============================================" -ForegroundColor Magenta
-Write-Host "   dotfiles updater -- hedglen" -ForegroundColor Magenta
+Write-Host "   workstation updater -- hedglen" -ForegroundColor Magenta
 Write-Host "============================================" -ForegroundColor Magenta
 if ($DryRun) { Write-Host "   DRY RUN -- no changes will be made" -ForegroundColor Yellow }
 Write-Host ""
 
 # =============================================================================
-#   1. Pull dotfiles
+#   1. Pull the workstation repo
 # =============================================================================
 if (-not $SkipDots) {
-    Write-Step "Pulling dotfiles from GitHub"
-    Push-Location $DotfilesDir
+    Write-Step "Pulling workstation repo from GitHub"
+    Push-Location $WorkstationDir
 
     $dirty = git status --porcelain
     if ($dirty) {
@@ -93,14 +93,14 @@ if (-not $SkipDots) {
         Write-Skip "Would run: git pull"
     } else {
         git pull
-        Write-OK "Dotfiles up to date"
+        Write-OK "Workstation repo up to date"
     }
 
     Pop-Location
 }
 
 Write-Step "WezTerm helper scripts"
-$wslHelper = Join-Path $DotfilesDir "wezterm\wsl-helper.sh"
+$wslHelper = Join-Path $WorkstationDir "wezterm\wsl-helper.sh"
 if (Test-Path -LiteralPath $wslHelper) {
     Write-OK "wezterm\wsl-helper.sh present"
 } else {
@@ -113,22 +113,15 @@ if (Test-Path -LiteralPath $wslHelper) {
 Write-Step "Config symlinks"
 
 Remove-LegacyWeztermConfig -DryRun:$DryRun
-foreach ($link in (Get-ConfigLinks -DotfilesDir $DotfilesDir)) {
-    Sync-ConfigLink -Link $link -DotfilesDir $DotfilesDir -DryRun:$DryRun
+foreach ($link in (Get-ConfigLinks -WorkstationDir $WorkstationDir)) {
+    Sync-ConfigLink -Link $link -WorkstationDir $WorkstationDir -DryRun:$DryRun
 }
 
-# Workstation-root CLAUDE.md is a copy (workstation\ is not a repo) — flag drift
-$claudeMdSrc = Join-Path $DotfilesDir "claude\CLAUDE.md"
-$claudeMdDst = Join-Path $HOME "workstation\CLAUDE.md"
-if ((Test-Path $claudeMdSrc) -and (Test-Path $claudeMdDst) -and
-    ((Get-Content $claudeMdSrc -Raw) -ne (Get-Content $claudeMdDst -Raw))) {
-    Write-Warn "workstation\CLAUDE.md differs from dotfiles claude\CLAUDE.md — reconcile and commit"
-}
 
 # =============================================================================
 #   3. Editor extensions -- install only new ones (VS Code + Cursor)
 # =============================================================================
-$extFile = Join-Path $DotfilesDir "vscode\extensions.txt"
+$extFile = Join-Path $WorkstationDir "vscode\extensions.txt"
 
 Write-Step "VS Code extensions"
 Sync-EditorExtensions -DisplayName "VS Code" `
@@ -152,7 +145,7 @@ Install-NerdFontIfMissing -DryRun:$DryRun
 if (-not $SkipApps) {
     Write-Step "Upgrading apps (winget)"
 
-    $pkgFile = Join-Path $DotfilesDir "apps\winget-packages.json"
+    $pkgFile = Join-Path $WorkstationDir "apps\winget-packages.json"
     if (-not (Test-Path $pkgFile)) {
         Write-Warn "apps\winget-packages.json not found -- skipping"
     } else {
@@ -215,7 +208,7 @@ if (-not $SkipApps) {
 
     Write-Step "Updating Scoop apps (if Scoop is available)"
 
-    $scoopFile = Join-Path $DotfilesDir "apps\scoop-packages.json"
+    $scoopFile = Join-Path $WorkstationDir "apps\scoop-packages.json"
     if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
         Write-Warn "Scoop not on PATH — skipping"
     } elseif (-not (Test-Path $scoopFile)) {
@@ -270,18 +263,18 @@ if (-not $SkipPython) {
     $pythonTargets = @(
         @{
             name = "media-organizer"
-            py   = Join-Path $DotfilesDir "projects\media-organizer\.venv\Scripts\python.exe"
-            deps = @("-r", (Join-Path $DotfilesDir "projects\media-organizer\requirements.txt"))
+            py   = Join-Path $WorkstationDir "projects\media-organizer\.venv\Scripts\python.exe"
+            deps = @("-r", (Join-Path $WorkstationDir "projects\media-organizer\requirements.txt"))
         },
         @{
             name = "ytdl"
-            py   = Join-Path $DotfilesDir "projects\ytdl\.venv\Scripts\python.exe"
-            deps = @("-r", (Join-Path $DotfilesDir "projects\ytdl\requirements.txt"))
+            py   = Join-Path $WorkstationDir "projects\ytdl\.venv\Scripts\python.exe"
+            deps = @("-r", (Join-Path $WorkstationDir "projects\ytdl\requirements.txt"))
         },
         @{
             name = "transcribe-env"
             py   = "$HOME\workstation\tools\transcribe-env\Scripts\python.exe"
-            deps = @("-r", (Join-Path $DotfilesDir "scripts\requirements-transcribe.txt"))
+            deps = @("-r", (Join-Path $WorkstationDir "scripts\requirements-transcribe.txt"))
         }
     )
 

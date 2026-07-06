@@ -30,9 +30,9 @@ if [ -z "$_win_ws" ]; then
   _win_ws="/mnt/c/Users/${USER}/workstation"
   _win_ws_warn="1"
 fi
-_win_projects="${_win_ws}/dotfiles/projects"
-_win_dotfiles="${_win_ws}/dotfiles"
-_win_scripts="${_win_ws}/dotfiles/scripts"
+_win_projects="${_win_ws}/projects"
+_win_repo="${_win_ws}"
+_win_scripts="${_win_ws}/scripts"
 
 # ---- Helper function for consistent formatting ----
 _row() {
@@ -93,12 +93,11 @@ _section "Quick jump"
 printf "  \033[37mcd ~\033[0m                      # WSL home\n"
 printf "  \033[37mcd %s\033[0m       # workstation root\n" "$_win_ws"
 printf "  \033[37mcd %s\033[0m      # projects directory\n" "$_win_projects"
-printf "  \033[37mcd %s\033[0m     # dotfiles configs\n" "$_win_dotfiles"
+printf "  \033[37mcd %s\033[0m     # repo root (configs)\n" "$_win_repo"
 printf "  \033[37mcd %s\033[0m    # custom scripts\n" "$_win_scripts"
 printf "\n"
 printf "  \033[37mworkstation\033[0m    -> %s\n" "$_win_ws"
 printf "  \033[37mprojects\033[0m       -> %s\n" "$_win_projects"
-printf "  \033[37mdotfiles\033[0m       -> %s\n" "$_win_dotfiles"
 printf "  \033[37mscripts\033[0m        -> %s\n" "$_win_scripts"
 
 # ---- Installed tooling ----
@@ -293,7 +292,7 @@ _row "vibe --setup" "configure Vibe API key"
 _section "Workspace info"
 printf "  Left pane CWD: \033[37m%s\033[0m\n" "$_win_ws"
 printf "  Projects:      \033[37m%s\033[0m\n" "$_win_projects"
-printf "  Dotfiles:      \033[37m%s\033[0m\n" "$_win_dotfiles"
+printf "  Repo:          \033[37m%s\033[0m\n" "$_win_repo"
 printf "  Scripts:       \033[37m%s\033[0m\n" "$_win_scripts"
 
 # ---- Tips ----
@@ -306,7 +305,7 @@ printf "  \033[90mCtrl+Tab\033[0m       Cycle through tabs\n"
 printf "  \033[90mCtrl+Number\033[0m     Switch to specific tab\n"
 printf "\n"
 printf "  \033[90mType 'reload' in left pane to re-source shell profile\n"
-printf "  \033[90mUse 'workstation', 'projects', 'dotfiles' for quick cd\n"
+printf "  \033[90mUse 'workstation', 'projects', 'scripts' for quick cd\n"
 
 # ---- Drop to shell ----
 printf "\n"

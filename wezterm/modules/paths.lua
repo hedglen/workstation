@@ -7,8 +7,7 @@ local M = {
   workstation = home .. '\\workstation',
 }
 
-M.dotfiles = M.workstation .. '\\dotfiles'
-M.projects = M.dotfiles .. '\\projects'
+M.projects = M.workstation .. '\\projects'
 
 function M.file_exists(path)
   local fh = io.open(path, 'r')

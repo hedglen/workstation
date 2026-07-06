@@ -58,4 +58,4 @@ python -m venv .venv
 .venv\Scripts\pip install -r requirements.txt
 ```
 
-The `orgmed` and `orgmedx` aliases are defined in the [dotfiles PowerShell profile](https://github.com/hedglen/dotfiles).
+The `orgmed` and `orgmedx` aliases are defined in the [workstation PowerShell profile](https://github.com/hedglen/workstation).

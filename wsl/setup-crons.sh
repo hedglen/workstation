@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # wsl/setup-crons.sh
-# Idempotently installs system cron jobs for this dotfiles setup.
+# Idempotently installs system cron jobs for this workstation setup.
 # Must be run with sudo (or will re-exec itself with sudo).
 # Called by dotfiles/install.ps1 during machine bootstrap.
 
@@ -15,7 +15,7 @@ fi
 REAL_USER="${SUDO_USER:-$(logname 2>/dev/null || echo "$USER")}"
 WIN_USER=$(cmd.exe /c "echo %USERNAME%" 2>/dev/null | tr -d '\r\n')
 WIN_HOME="/mnt/c/Users/${WIN_USER}"
-DOTFILES="${WIN_HOME}/workstation/dotfiles"
+DOTFILES="${WIN_HOME}/workstation"
 LOG_DIR="${DOTFILES}/scripts/logs"
 
 echo ">> WSL cron setup"

@@ -1,9 +1,9 @@
 # `winget-packages.json`
 
-Companion notes for **`winget-packages.json`** in this folder (`dotfiles/apps`). The manifest is **JSONC** (JSON with `//` category headers), parsed by PowerShell — `winget import` will NOT read it. It is installed per package ID by `install.ps1` / `maintenance/update.ps1`, or manually:
+Companion notes for **`winget-packages.json`** in this folder (`apps/`). The manifest is **JSONC** (JSON with `//` category headers), parsed by PowerShell — `winget import` will NOT read it. It is installed per package ID by `install.ps1` / `maintenance/update.ps1`, or manually:
 
 ```powershell
-$ids = (Get-Content "$HOME\workstation\dotfiles\apps\winget-packages.json" -Raw | ConvertFrom-Json).packages
+$ids = (Get-Content "$HOME\workstation\apps\winget-packages.json" -Raw | ConvertFrom-Json).packages
 foreach ($id in $ids) { winget install --id $id -e --accept-package-agreements --accept-source-agreements }
 ```
 
@@ -67,7 +67,7 @@ Categories in the JSON: **dev toolchain → AI desktop apps → .NET / Windows p
 | ID | What it does | Example use |
 |----|----------------|-------------|
 | **Daum.PotPlayer** | Full-featured video/audio player. | Primary player — broad codecs and filters without extra plugins |
-| **shinchiro.mpv** | mpv player (shinchiro build). | Scriptable playback; `dotfiles/mpv-config` is junctioned in as its portable config |
+| **shinchiro.mpv** | mpv player (shinchiro build). | Scriptable playback; `mpv-config` is junctioned in as its portable config |
 | **ShareX.ShareX** | Screenshots, recording, uploads, workflows. | Region capture → clipboard or host in one shortcut |
 | **BandicamCompany.Bandicut** | Video cutter/joiner. | Trim clips without a full editor |
 | **yt-dlp.FFmpeg** | FFmpeg packaged for yt-dlp workflows. | Encoding/decoding for downloads and tools that call ffmpeg |

@@ -21,7 +21,7 @@ fi
 # ── resolve the Windows-side dotfiles checkout ────────────────────────────────
 WIN_USER=$(cmd.exe /c "echo %USERNAME%" 2>/dev/null | tr -d '\r\n')
 WIN_HOME="/mnt/c/Users/${WIN_USER}"
-DOTFILES="${WIN_HOME}/workstation/dotfiles"
+DOTFILES="${WIN_HOME}/workstation"
 
 echo ">> WSL provisioning"
 echo "   Linux user : $USER"

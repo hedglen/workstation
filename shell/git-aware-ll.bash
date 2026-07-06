@@ -4,7 +4,7 @@
 # Matches WezTerm coding/git panel logic (git -C dir status --porcelain).
 #
 # Install: add to ~/.bashrc (or ~/.bash_profile):
-#   [[ -f ~/workstation/dotfiles/shell/git-aware-ll.bash ]] && . ~/workstation/dotfiles/shell/git-aware-ll.bash
+#   [[ -f ~/workstation/shell/git-aware-ll.bash ]] && . ~/workstation/shell/git-aware-ll.bash
 
 _ll_git_repo_color_line() {
   local line name c r=$'\033[0m'

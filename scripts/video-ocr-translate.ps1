@@ -18,7 +18,7 @@ $python = "$HOME\workstation\tools\transcribe-env\Scripts\python.exe"
 $script = "$PSScriptRoot\video-ocr-translate.py"
 
 if (-not (Test-Path -LiteralPath $python)) {
-    Write-Error "Python venv not found at $python. Run dotfiles\install.ps1 (creates tools\transcribe-env)."
+    Write-Error "Python venv not found at $python. Run install.ps1 from $HOMEworkstation (creates tools\transcribe-env)."
     exit 1
 }
 

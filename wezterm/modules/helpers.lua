@@ -84,11 +84,11 @@ function _u($cmd, $desc) {
 
 Write-Host 'STAY UP TO DATE - type these, in order' -ForegroundColor Magenta
 _u 'update-all -DryRun' 'preview everything; changes nothing'
-_u 'update-all' 'THE update: dotfiles pull + relink, winget, scoop, python venvs'
+_u 'update-all' 'THE update: repo pull + relink, winget, scoop, python venvs'
 _u 'start ms-settings:windowsupdate' 'Windows Update (check weekly, reboot if asked)'
 Write-Host ''
 Write-Host 'AFTER YOU EDIT CONFIGS' -ForegroundColor Cyan
-_u 'save-dots "msg"' 'commit + push dotfiles to GitHub'
+_u 'save-dots "msg"' 'commit + push the workstation repo'
 _u 'reload' 're-source the pwsh profile in this shell'
 Write-Host ''
 Write-Host 'IF SOMETHING SEEMS BROKEN' -ForegroundColor Cyan
@@ -251,7 +251,7 @@ Clear-Host
 
   Write-Host 'WSL paths' -ForegroundColor Cyan
   _row '/mnt/c/Users/rjh/workstation' 'workstation root (left pane CWD)'
-  _row '.../dotfiles' 'configs, scripts, wezterm'
+  _row '.../scripts, .../docs' 'repo content at the workstation root'
   _row '~/.claude/settings.json' 'Claude Code settings'
   _row '~/.claude/' 'sessions, projects, and local state'
   Write-Host ''
@@ -350,7 +350,7 @@ Clear-Host
 
   Write-Host 'WSL paths' -ForegroundColor Cyan
   _row '/mnt/c/Users/rjh/workstation' 'workstation root (left pane CWD)'
-  _row '.../dotfiles' 'configs, scripts, wezterm'
+  _row '.../scripts, .../docs' 'repo content at the workstation root'
   _row '~/.codex/config.toml' 'Codex configuration'
   _row '~/.codex/skills/' 'installed personal skills'
   Write-Host ''
@@ -443,7 +443,7 @@ Clear-Host
 
   Write-Host 'WSL paths' -ForegroundColor Cyan
   _row '/mnt/c/Users/rjh/workstation' 'workstation root (left pane CWD)'
-  _row '.../dotfiles' 'configs, scripts, wezterm'
+  _row '.../scripts, .../docs' 'repo content at the workstation root'
   _row '~/.grok/config.toml' 'Grok config'
   _row '~/.grok/docs/user-guide/' 'full docs'
   Write-Host ''
@@ -586,7 +586,7 @@ Clear-Host
 
   Write-Host 'WSL paths' -ForegroundColor Cyan
   _row '/mnt/c/Users/rjh/workstation' 'workstation root (left pane CWD)'
-  _row '.../dotfiles' 'configs, scripts, wezterm'
+  _row '.../scripts, .../docs' 'repo content at the workstation root'
   _row '~/.vibe/config.toml' 'Vibe configuration'
   _row '~/.vibe/.env' 'Mistral API key (from vibe --setup)'
   _row '~/.vibe/agents/' 'custom agent profiles'
@@ -667,7 +667,7 @@ while ($true) {
   Write-Host '  1.  git status --short --branch' -ForegroundColor Yellow
   Write-Host '      check branch + pending changes' -ForegroundColor DarkGray
   Write-Host ''
-  Write-Host '  2.  sync-dots   (dotfiles only, when clean)' -ForegroundColor Yellow
+  Write-Host '  2.  sync-dots   (workstation repo, when clean)' -ForegroundColor Yellow
   Write-Host '      pull/relink before local edits' -ForegroundColor DarkGray
   Write-Host ''
   Write-Host '  3.  git diff' -ForegroundColor Yellow
@@ -685,9 +685,9 @@ while ($true) {
   Write-Host '  7.  git push' -ForegroundColor Yellow
   Write-Host '      fallback: git push -u origin HEAD' -ForegroundColor DarkGray
   Write-Host ''
-  Write-Host 'Dotfiles shortcut:' -ForegroundColor Cyan
-  Write-Host '  save-dots "chore(dotfiles): summary"' -ForegroundColor Yellow
-  Write-Host '  stages all, commits, pushes dotfiles' -ForegroundColor DarkGray
+  Write-Host 'Repo shortcut:' -ForegroundColor Cyan
+  Write-Host '  save-dots "chore(scope): summary"' -ForegroundColor Yellow
+  Write-Host '  stages all, commits, pushes the repo' -ForegroundColor DarkGray
   Write-Host ''
   Write-Host 'Undo:' -ForegroundColor Cyan
   Write-Host '  unstage   git restore --staged <file>'
@@ -703,7 +703,7 @@ while ($true) {
 M.git_live_view_cmd = [[
 state_file="$HOME/.wezterm-git-current-repo"
 default_repo=]]
-  .. spawn.bash_quote(spawn.bash_path(paths.dotfiles))
+  .. spawn.bash_quote(spawn.bash_path(paths.workstation))
   .. [[
 
 while true; do

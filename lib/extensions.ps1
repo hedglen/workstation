@@ -1,5 +1,5 @@
 # =============================================================================
-#   dotfiles/lib/extensions.ps1
+#   lib/extensions.ps1
 #   Editor extension sync from vscode/extensions.txt (VS Code and Cursor share
 #   the list). Installs only what is missing.
 #   Requires lib/common.ps1. Dot-source; do not run directly.

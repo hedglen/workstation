@@ -1,5 +1,5 @@
 # =============================================================================
-#   dotfiles/lib/startup-policy.ps1
+#   lib/startup-policy.ps1
 #   Startup hygiene: remove HKCU Run entries and shortcuts that apps re-add.
 #   Requires lib/common.ps1. Dot-source; do not run directly.
 # =============================================================================

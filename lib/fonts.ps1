@@ -1,5 +1,5 @@
 # =============================================================================
-#   dotfiles/lib/fonts.ps1
+#   lib/fonts.ps1
 #   CaskaydiaCove Nerd Font install (per-user, no admin needed).
 #   Requires lib/common.ps1. Dot-source; do not run directly.
 # =============================================================================

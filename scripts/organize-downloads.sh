@@ -10,7 +10,7 @@ set -euo pipefail
 WIN_USER=$(cmd.exe /c "echo %USERNAME%" 2>/dev/null | tr -d '\r\n')
 WIN_HOME="/mnt/c/Users/${WIN_USER}"
 DOWNLOADS="${WIN_HOME}/Downloads"
-LOG_DIR="${WIN_HOME}/workstation/dotfiles/scripts/logs"
+LOG_DIR="${WIN_HOME}/workstation/scripts/logs"
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 ROLLBACK_SCRIPT="$LOG_DIR/rollback_${TIMESTAMP}.sh"
 DRY_RUN=true

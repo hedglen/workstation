@@ -5,7 +5,7 @@ Long-form workstation guides live in **this `docs/` folder** (same repo as `inst
 ## Documentation conventions
 
 - Use **sentence case** for headings.
-- Use `/` for repo-relative paths (example: `dotfiles/docs/workstation-setup.md`).
+- Use `/` for repo-relative paths (example: `docs/workstation-setup.md`).
 - Use `\` only in Windows absolute path or PowerShell examples.
 - Prefer `$HOME`-based examples over hardcoded usernames.
 - For PowerShell commands, prefer `Set-Location` over hardcoded `cd C:\...`.

@@ -21,7 +21,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$DotfilesDir = Split-Path $PSScriptRoot -Parent
+$WorkstationDir = Split-Path $PSScriptRoot -Parent
 $BackupDir   = Join-Path $PSScriptRoot 'backups'
 $iCUEDir     = "$env:APPDATA\Corsair\CUE5"
 
@@ -69,10 +69,10 @@ function Resolve-Ref {
     param([string]$RefName)
     # Try as a scimitar/ tag first
     $tagRef = "scimitar/$RefName"
-    $result = git -C $DotfilesDir rev-parse --verify $tagRef 2>$null
+    $result = git -C $WorkstationDir rev-parse --verify $tagRef 2>$null
     if ($LASTEXITCODE -eq 0) { return $tagRef }
     # Try as a raw ref (commit sha, HEAD, etc.)
-    $result = git -C $DotfilesDir rev-parse --verify $RefName 2>$null
+    $result = git -C $WorkstationDir rev-parse --verify $RefName 2>$null
     if ($LASTEXITCODE -eq 0) { return $RefName }
     Write-Host "  ERROR: ref '$RefName' not found (tried tag 'scimitar/$RefName' and raw ref)." -ForegroundColor Red
     exit 1
@@ -98,9 +98,9 @@ function Invoke-Backup {
     }
 
     # Stage only the backups/ subtree
-    git -C $DotfilesDir add "corsair/backups/"
+    git -C $WorkstationDir add "corsair/backups/"
 
-    $status = git -C $DotfilesDir status --porcelain -- "corsair/backups/" 2>&1
+    $status = git -C $WorkstationDir status --porcelain -- "corsair/backups/" 2>&1
     if (-not $status) {
         Write-Host ""
         Write-Info "No changes since last backup."
@@ -114,23 +114,23 @@ function Invoke-Backup {
     $profileSummary = ($slot1Name, $slot2Name, $slot3Name | Where-Object { $_ }) -join ' / '
     $commitMsg = "chore(corsair): backup scimitar profiles [$profileSummary]"
 
-    git -C $DotfilesDir commit -m $commitMsg
-    $sha = git -C $DotfilesDir rev-parse --short HEAD
+    git -C $WorkstationDir commit -m $commitMsg
+    $sha = git -C $WorkstationDir rev-parse --short HEAD
 
     Write-OK "Committed as $sha"
 
     if ($Name) {
         $tag = "scimitar/$Name"
-        $existing = git -C $DotfilesDir tag -l $tag
+        $existing = git -C $WorkstationDir tag -l $tag
         if ($existing) {
             $response = Read-Host "   Tag '$tag' already exists. Overwrite? [y/N]"
             if ($response -notmatch '^[Yy]') {
                 Write-Info "Tag skipped."
                 return
             }
-            git -C $DotfilesDir tag -f $tag
+            git -C $WorkstationDir tag -f $tag
         } else {
-            git -C $DotfilesDir tag $tag
+            git -C $WorkstationDir tag $tag
         }
         Write-OK "Tagged as '$tag'"
     }
@@ -141,7 +141,7 @@ function Invoke-List {
     Write-Host "  Scimitar profile backups" -ForegroundColor Cyan
     Write-Host ""
 
-    $log = git -C $DotfilesDir log -$n --format="%H %h %as %s" -- "corsair/backups/" 2>&1
+    $log = git -C $WorkstationDir log -$n --format="%H %h %as %s" -- "corsair/backups/" 2>&1
     if (-not $log) {
         Write-Info "No backups found."
         return
@@ -149,9 +149,9 @@ function Invoke-List {
 
     # Get all scimitar/* tags with their commit SHAs
     $tagMap = @{}
-    $tags = git -C $DotfilesDir tag -l "scimitar/*" 2>&1
+    $tags = git -C $WorkstationDir tag -l "scimitar/*" 2>&1
     foreach ($tag in $tags) {
-        $sha = git -C $DotfilesDir rev-list -n 1 $tag 2>&1
+        $sha = git -C $WorkstationDir rev-list -n 1 $tag 2>&1
         if ($sha) { $tagMap[$sha] = $tag -replace '^scimitar/', '' }
     }
 
@@ -193,7 +193,7 @@ function Invoke-Restore {
 
     foreach ($file in $files) {
         $gitPath = "corsair/backups/$file"
-        $content = git -C $DotfilesDir show "${ref}:${gitPath}" 2>$null
+        $content = git -C $WorkstationDir show "${ref}:${gitPath}" 2>$null
         if ($LASTEXITCODE -ne 0 -or -not $content) {
             Write-Info "$file - not found in $ref, skipping"
             continue
@@ -241,8 +241,8 @@ function Invoke-Diff {
     $files = @('hw-slot-1.cueprofiledata', 'hw-slot-2.cueprofiledata', 'hw-slot-3.cueprofiledata', 'config.cuecfg')
     foreach ($file in $files) {
         $gitPath = "corsair/backups/$file"
-        $fromContent = git -C $DotfilesDir show "${fromRef}:${gitPath}" 2>$null
-        $toContent   = git -C $DotfilesDir show "${toRef}:${gitPath}"   2>$null
+        $fromContent = git -C $WorkstationDir show "${fromRef}:${gitPath}" 2>$null
+        $toContent   = git -C $WorkstationDir show "${toRef}:${gitPath}"   2>$null
         if ($fromContent) { [System.IO.File]::WriteAllText("$tmpFrom\$file", ($fromContent -join "`n"), [System.Text.Encoding]::UTF8) }
         if ($toContent)   { [System.IO.File]::WriteAllText("$tmpTo\$file",   ($toContent   -join "`n"), [System.Text.Encoding]::UTF8) }
     }
@@ -254,7 +254,7 @@ function Invoke-Diff {
 
 function Invoke-Status {
     # Compare live iCUE files against the last backup (HEAD)
-    $hasBackup = git -C $DotfilesDir log -1 --format="%H" -- "corsair/backups/" 2>$null
+    $hasBackup = git -C $WorkstationDir log -1 --format="%H" -- "corsair/backups/" 2>$null
     if (-not $hasBackup) {
         Write-Host ""
         Write-Info "No backups yet. Run: scimitar backup"
@@ -279,7 +279,7 @@ function Invoke-Status {
 
     $files = @('hw-slot-1.cueprofiledata', 'hw-slot-2.cueprofiledata', 'hw-slot-3.cueprofiledata', 'config.cuecfg')
     foreach ($file in $files) {
-        $content = git -C $DotfilesDir show "HEAD:corsair/backups/$file" 2>$null
+        $content = git -C $WorkstationDir show "HEAD:corsair/backups/$file" 2>$null
         if ($content) { [System.IO.File]::WriteAllText("$tmpBack\$file", ($content -join "`n"), [System.Text.Encoding]::UTF8) }
     }
 

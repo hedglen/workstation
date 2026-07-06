@@ -1,5 +1,5 @@
 # =============================================================================
-#   dotfiles/lib/python-projects.ps1
+#   lib/python-projects.ps1
 #   Venv creation + dependency install, uv-first with py/pip fallback.
 #   Takes absolute paths so it covers repo projects (.venv in the project dir)
 #   and out-of-repo venvs like tools\transcribe-env alike.

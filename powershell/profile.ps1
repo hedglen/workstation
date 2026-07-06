@@ -1,6 +1,6 @@
 # =============================================================================
 #   PowerShell Profile — rjh
-#   Managed via dotfiles: https://github.com/hedglen/dotfiles
+#   Managed via https://github.com/hedglen/workstation
 # =============================================================================
 
 # --- Secrets (not in git) ---
@@ -27,7 +27,7 @@ if ($script:IsInteractiveTerminal) {
 }
 
 if ($script:IsInteractiveTerminal -and (Get-Command oh-my-posh -ErrorAction SilentlyContinue)) {
-    oh-my-posh init pwsh --config "$HOME\workstation\dotfiles\oh-my-posh\hedglab.omp.json" | Invoke-Expression
+    oh-my-posh init pwsh --config "$HOME\workstation\oh-my-posh\hedglab.omp.json" | Invoke-Expression
 }
 
 if (Get-Command zoxide -ErrorAction SilentlyContinue) {
@@ -45,7 +45,7 @@ function d { Set-Location D:\ }
 function tools { Set-Location "$HOME\workstation\tools" }
 function psh { Set-Location "$HOME\workstation\tools\powershell" }
 function home { Set-Location $HOME }
-function dots { Set-Location "$HOME\workstation\dotfiles" }
+function dots { Set-Location "$HOME\workstation" }
 
 # =============================================================================
 #   System / User Helpers
@@ -177,34 +177,34 @@ function grep { param([string]$Pattern) $input | Select-String $Pattern }
 # reload — re-source the profile
 function reload { . $PROFILE; Write-Host "Profile reloaded." -ForegroundColor Green }
 
-# save-dots — commit and push all dotfile changes to GitHub
+# save-dots — commit and push all workstation repo changes to GitHub
 function save-dots {
     param([string]$Message = "update configs")
-    Push-Location "$HOME\workstation\dotfiles"
+    Push-Location "$HOME\workstation"
     $status = git status --porcelain
     if (-not $status) {
-        Write-Host "Nothing to save — dotfiles already up to date." -ForegroundColor DarkGray
+        Write-Host "Nothing to save — repo already up to date." -ForegroundColor DarkGray
     }
     else {
         git add -A
         git commit -m $Message
         git push
-        Write-Host "Dotfiles saved to GitHub." -ForegroundColor Green
+        Write-Host "Workstation repo saved to GitHub." -ForegroundColor Green
     }
     Pop-Location
 }
 
-# sync-dots — pull latest dotfiles from GitHub and re-apply configs (no app upgrades)
+# sync-dots — pull the workstation repo from GitHub and re-apply configs (no app upgrades)
 function sync-dots {
-    & "$HOME\workstation\dotfiles\maintenance\update.ps1" -SkipApps
+    & "$HOME\workstation\maintenance\update.ps1" -SkipApps
 }
 
-function Update-Dotfiles {
-    & "$HOME\workstation\dotfiles\maintenance\update.ps1" @args
+function Update-Workstation {
+    & "$HOME\workstation\maintenance\update.ps1" @args
 }
 
 function Test-WorkstationHealth {
-    & "$HOME\workstation\dotfiles\scripts\workstation-health.ps1" @args
+    & "$HOME\workstation\scripts\workstation-health.ps1" @args
 }
 
 # ask — plain-English terminal helper powered by Anthropic
@@ -219,7 +219,7 @@ function ask {
         return
     }
 
-    $script = "$HOME\workstation\dotfiles\powershell\ask.py"
+    $script = "$HOME\workstation\powershell\ask.py"
     $python = (Get-Command python -ErrorAction SilentlyContinue)?.Source
 
     if (-not $python) {
@@ -235,20 +235,20 @@ function ask {
 # =============================================================================
 
 function orgmed {
-    $py  = "$HOME\workstation\dotfiles\projects\media-organizer\.venv\Scripts\python.exe"
-    $scr = "$HOME\workstation\dotfiles\projects\media-organizer\organize.py"
+    $py  = "$HOME\workstation\projects\media-organizer\.venv\Scripts\python.exe"
+    $scr = "$HOME\workstation\projects\media-organizer\organize.py"
     & $py $scr @args
 }
 
 function orgmedx {
-    $py  = "$HOME\workstation\dotfiles\projects\media-organizer\.venv\Scripts\python.exe"
-    $scr = "$HOME\workstation\dotfiles\projects\media-organizer\organize.py"
+    $py  = "$HOME\workstation\projects\media-organizer\.venv\Scripts\python.exe"
+    $scr = "$HOME\workstation\projects\media-organizer\organize.py"
     & $py $scr --dest x --apply
 }
 
 function ytdl {
-    $py  = "$HOME\workstation\dotfiles\projects\ytdl\.venv\Scripts\python.exe"
-    $scr = "$HOME\workstation\dotfiles\projects\ytdl\ytdl.py"
+    $py  = "$HOME\workstation\projects\ytdl\.venv\Scripts\python.exe"
+    $scr = "$HOME\workstation\projects\ytdl\ytdl.py"
     & $py $scr @args
 }
 Set-Alias dl ytdl
@@ -265,36 +265,36 @@ function Install-VenvRequirements {
 }
 
 function Update-MediaOrganizerPip {
-    & "$HOME\workstation\dotfiles\projects\media-organizer\.venv\Scripts\python.exe" -m pip install --upgrade pip
+    & "$HOME\workstation\projects\media-organizer\.venv\Scripts\python.exe" -m pip install --upgrade pip
 }
 
 function Update-MediaOrganizerDeps {
-    Install-VenvRequirements "$HOME\workstation\dotfiles\projects\media-organizer\.venv\Scripts\python.exe" "$HOME\workstation\dotfiles\projects\media-organizer\requirements.txt"
+    Install-VenvRequirements "$HOME\workstation\projects\media-organizer\.venv\Scripts\python.exe" "$HOME\workstation\projects\media-organizer\requirements.txt"
 }
 
 function Update-YtdlDeps {
-    Install-VenvRequirements "$HOME\workstation\dotfiles\projects\ytdl\.venv\Scripts\python.exe" "$HOME\workstation\dotfiles\projects\ytdl\requirements.txt"
+    Install-VenvRequirements "$HOME\workstation\projects\ytdl\.venv\Scripts\python.exe" "$HOME\workstation\projects\ytdl\requirements.txt"
 }
 
 function Update-TranscribeDeps {
-    Install-VenvRequirements "$HOME\workstation\tools\transcribe-env\Scripts\python.exe" "$HOME\workstation\dotfiles\scripts\requirements-transcribe.txt"
+    Install-VenvRequirements "$HOME\workstation\tools\transcribe-env\Scripts\python.exe" "$HOME\workstation\scripts\requirements-transcribe.txt"
 }
 
 function Update-ProjectVenvs {
-    & "$HOME\workstation\dotfiles\install.ps1" -NoApps
+    & "$HOME\workstation\install.ps1" -NoApps
 }
 
-function scimitar { & "$HOME\workstation\dotfiles\corsair\scimitar.ps1" @args }
+function scimitar { & "$HOME\workstation\corsair\scimitar.ps1" @args }
 
 function trans {
     $py  = "$HOME\workstation\tools\transcribe-env\Scripts\python.exe"
-    $scr = "$HOME\workstation\dotfiles\scripts\transcribe.py"
+    $scr = "$HOME\workstation\scripts\transcribe.py"
     & $py $scr @args
 }
 
 function vtrans {
     $py  = "$HOME\workstation\tools\transcribe-env\Scripts\python.exe"
-    $scr = "$HOME\workstation\dotfiles\scripts\video-ocr-translate.py"
+    $scr = "$HOME\workstation\scripts\video-ocr-translate.py"
     & $py $scr @args
 }
 function fixsub { vtrans @args }
@@ -310,8 +310,8 @@ Set-Alias startup-list Get-StartupList
 Set-Alias tasks-user   Get-UserTasks
 Set-Alias startup-find Search-Startup
 Set-Alias uptime       Get-Uptime
-Set-Alias dots-update  Update-Dotfiles
-Set-Alias update-all   Update-Dotfiles
+Set-Alias dots-update  Update-Workstation
+Set-Alias update-all   Update-Workstation
 Set-Alias dots-health  Test-WorkstationHealth
 Set-Alias pip-upgrade  Update-MediaOrganizerPip
 Set-Alias py-media-deps Update-MediaOrganizerDeps
@@ -352,8 +352,8 @@ if ($script:IsInteractiveTerminal) {
     [Console]::WriteLine("${esc}[38;2;233;84;255m  orgmed [--apply] [--dest x|movies|tv|music_videos]  ${esc}[38;2;255;20;200morgmedx${esc}[38;2;233;84;255m  -- organize R:\Media\x\dl${esc}[0m")
     [Console]::WriteLine("${esc}[1m${esc}[38;2;255;28;65m  ytdl <url> [--audio] [--quality 1080|720|480|best]   -- download video/audio${esc}[0m")
     [Console]::WriteLine("${esc}[38;2;100;181;255m  trans <path> [--model large-v3|medium|small] [--language en]  -- transcribe video to .srt + .md${esc}[0m")
-    [Console]::WriteLine("${esc}[38;2;255;102;0m  save-dots [message]  — commit & push dotfiles to GitHub${esc}[0m")
-    [Console]::WriteLine("${esc}[38;2;92;255;184m  sync-dots             — pull latest dotfiles & relink configs${esc}[0m")
+    [Console]::WriteLine("${esc}[38;2;255;102;0m  save-dots [message]  — commit & push the repo to GitHub${esc}[0m")
+    [Console]::WriteLine("${esc}[38;2;92;255;184m  sync-dots             — pull latest repo & relink configs${esc}[0m")
 
     $quotes = @(
         # originals

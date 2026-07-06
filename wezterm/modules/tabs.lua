@@ -121,21 +121,21 @@ wezterm.on('gui-startup', function(cmd)
     end
   end
 
-  local git_tab, git_pane = window:spawn_tab(spawn.git_bash_spawn(paths.dotfiles, helpers.git_top_helper_cmd))
+  local git_tab, git_pane = window:spawn_tab(spawn.git_bash_spawn(paths.workstation, helpers.git_top_helper_cmd))
   git_pane = spawn.mux_tab_primary_pane(git_tab, git_pane)
   git_tab:set_title 'git'
   if git_pane then
     git_pane:split {
       direction = 'Right',
       size = 0.37,
-      cwd = paths.dotfiles,
-      args = spawn.pwsh_spawn(paths.dotfiles, helpers.git_right_panel_cmd).args,
+      cwd = paths.workstation,
+      args = spawn.pwsh_spawn(paths.workstation, helpers.git_right_panel_cmd).args,
     }
     local git_live_pane = git_pane:split {
       direction = 'Bottom',
       size = 0.35,
-      cwd = paths.dotfiles,
-      args = spawn.git_bash_spawn(paths.dotfiles).args,
+      cwd = paths.workstation,
+      args = spawn.git_bash_spawn(paths.workstation).args,
     }
     if git_live_pane then
       pcall(function()

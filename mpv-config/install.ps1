@@ -84,7 +84,7 @@ OK "yt-dlp downloaded"
 
 # -----------------------------------------------------------------------------
 # 4. Junction bundled config (this script's folder) → portable_config
-#     (Config lives under hedglen/dotfiles as mpv-config/; standalone clone is the same tree.)
+#     (Config lives under hedglen/workstation as mpv-config/; standalone clone is the same tree.)
 # -----------------------------------------------------------------------------
 Info "Linking mpv config (junction)..."
 $alreadyOk = $false

@@ -94,9 +94,9 @@ function M.apply(config)
       cwd = paths.workstation,
     },
     {
-      label = 'pwsh - dotfiles',
+      label = 'pwsh - workstation',
       args = { 'pwsh.exe', '-NoLogo' },
-      cwd = paths.dotfiles,
+      cwd = paths.workstation,
     },
     {
       label = 'pwsh - projects',
@@ -106,7 +106,7 @@ function M.apply(config)
     {
       label = 'pwsh - scripts',
       args = { 'pwsh.exe', '-NoLogo' },
-      cwd = paths.dotfiles .. '\\scripts',
+      cwd = paths.workstation .. '\\scripts',
     },
     {
       label = 'wsl - ubuntu zsh',

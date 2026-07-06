@@ -2,10 +2,10 @@
 
 This folder tracks the Linux-side shell setup used by the WezTerm `wsl`, `grok`, `claude`, `codex`, and `vibe` tabs.
 
-**Provisioning is automated:** `wsl/setup.sh` idempotently installs the apt tooling, zsh + oh-my-zsh + Powerlevel10k, copies the tracked shell files, and installs uv, yt-dlp, and the claude/codex/grok/vibe CLIs. `dotfiles/install.ps1` runs it during bootstrap (after the distro's first launch has created your user); you can also run it any time from WSL:
+**Provisioning is automated:** `wsl/setup.sh` idempotently installs the apt tooling, zsh + oh-my-zsh + Powerlevel10k, copies the tracked shell files, and installs uv, yt-dlp, and the claude/codex/grok/vibe CLIs. `install.ps1` runs it during bootstrap (after the distro's first launch has created your user); you can also run it any time from WSL:
 
 ```bash
-bash "$WIN_HOME/workstation/dotfiles/wsl/setup.sh"
+bash "$WIN_HOME/workstation/wsl/setup.sh"
 ```
 
 The only remaining manual step afterwards is `gh auth login` (see below).
@@ -44,15 +44,15 @@ WIN_HOME="/mnt/c/Users/$(cmd.exe /c "echo %USERNAME%" 2>/dev/null | tr -d '\r')"
 From PowerShell:
 
 ```powershell
-wsl -e zsh -lc 'WIN_HOME="/mnt/c/Users/$(cmd.exe /c "echo %USERNAME%" 2>/dev/null | tr -d "\r")"; cp "$WIN_HOME/workstation/dotfiles/wsl/.zshrc" ~/.zshrc'
-wsl -e zsh -lc 'WIN_HOME="/mnt/c/Users/$(cmd.exe /c "echo %USERNAME%" 2>/dev/null | tr -d "\r")"; cp "$WIN_HOME/workstation/dotfiles/wsl/.p10k.zsh" ~/.p10k.zsh'
+wsl -e zsh -lc 'WIN_HOME="/mnt/c/Users/$(cmd.exe /c "echo %USERNAME%" 2>/dev/null | tr -d "\r")"; cp "$WIN_HOME/workstation/wsl/.zshrc" ~/.zshrc'
+wsl -e zsh -lc 'WIN_HOME="/mnt/c/Users/$(cmd.exe /c "echo %USERNAME%" 2>/dev/null | tr -d "\r")"; cp "$WIN_HOME/workstation/wsl/.p10k.zsh" ~/.p10k.zsh'
 ```
 
 From WSL:
 
 ```bash
-cp "$WIN_HOME/workstation/dotfiles/wsl/.zshrc" ~/.zshrc
-cp "$WIN_HOME/workstation/dotfiles/wsl/.p10k.zsh" ~/.p10k.zsh
+cp "$WIN_HOME/workstation/wsl/.zshrc" ~/.zshrc
+cp "$WIN_HOME/workstation/wsl/.p10k.zsh" ~/.p10k.zsh
 exec zsh -l
 ```
 
@@ -119,7 +119,7 @@ If you change the prompt, update both the live WSL file and the tracked copy her
 
 ## Initial Setup
 
-Ubuntu 24.04 LTS installed via `wsl --install -d Ubuntu` from PowerShell (done by `dotfiles/install.ps1`). Launch Ubuntu once to create your user, then re-run `install.ps1` — it runs `wsl/setup.sh`, which installs the apt packages, zsh + oh-my-zsh + Powerlevel10k, yt-dlp, uv, the shell files, and the claude/codex/grok/vibe CLIs. Shell is zsh with Powerlevel10k.
+Ubuntu 24.04 LTS installed via `wsl --install -d Ubuntu` from PowerShell (done by `install.ps1`). Launch Ubuntu once to create your user, then re-run `install.ps1` — it runs `wsl/setup.sh`, which installs the apt packages, zsh + oh-my-zsh + Powerlevel10k, yt-dlp, uv, the shell files, and the claude/codex/grok/vibe CLIs. Shell is zsh with Powerlevel10k.
 
 ### Git identity
 
@@ -152,7 +152,7 @@ ssh -T git@github.com
 | WSL home | `$HOME` |
 | Windows home | `$WIN_HOME` |
 | Workstation folder | `$WIN_HOME/workstation` |
-| Dotfiles | `$WIN_HOME/workstation/dotfiles` |
+| Repo root | `$WIN_HOME/workstation` |
 | Music library | `/mnt/r/Media/Music` |
 | Video download inbox | `/mnt/r/Media/x/dl` (same as Windows `R:\Media\x\dl`) |
 | zsh config | `~/.zshrc` |
@@ -179,7 +179,7 @@ alias dl='yt-dlp -o "/mnt/r/Media/x/dl/%(title)s.%(ext)s"'
 |------|-----|
 | YouTube downloads | PowerShell (cookies work) |
 | winget / Windows apps | PowerShell |
-| dotfiles management | PowerShell (source of truth is Windows side) |
+| repo management | PowerShell (source of truth is Windows side) |
 | Claude Code | WSL |
 | Bash scripts from the internet | WSL |
 | Bulk file rename / find / process | WSL |

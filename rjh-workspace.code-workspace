@@ -1,0 +1,88 @@
+{
+  "$schema": "vscode://schemas/workspaceConfig",
+
+  "folders": [
+    {
+      "name": "workstation",
+      "path": ".",
+    },
+  ],
+
+  "settings": {
+    "workbench.colorTheme": "Neon Dark Theme",
+    "workbench.iconTheme": "material-icon-theme",
+
+    "chat.tools.terminal.autoApprove": {
+      "git add": true,
+      "git commit": true,
+    },
+
+    "cSpell.words": [
+      "audiomack",
+      "audius",
+      "Audius",
+      "Bandcamp",
+      "cuecfg",
+      "cueprofiledata",
+      "deepthroat",
+      "khanacademy",
+      "Libsyn",
+      "mixcloud",
+      "Mixcloud",
+      "PAWG",
+      "pluralsight",
+      "Pluralsight",
+      "simplecast",
+      "Simplecast",
+      "soundcloud",
+      "Spreaker",
+      "Streamable",
+      "udemy",
+      "Udemy",
+      "ytdl",
+    ],
+    "git.ignoreLimitWarning": true,
+    "python.languageServer": "None",
+    "powershell.cwd": ".",
+  },
+
+  "extensions": {
+    "recommendations": [
+      "anthropic.claude-code",
+      "github.copilot-chat",
+
+      "ms-vscode.powershell",
+      "ms-python.python",
+      "sumneko.lua",
+      "thqby.vscode-autohotkey2-lsp",
+      "dbaeumer.vscode-eslint",
+      "tamasfe.even-better-toml",
+
+      "eamodio.gitlens",
+      "mhutchie.git-graph",
+      "github.vscode-pull-request-github",
+
+      "usernamehw.errorlens",
+      "christian-kohler.path-intellisense",
+      "oderwat.indent-rainbow",
+      "aaron-bond.better-comments",
+      "gruntfuggly.todo-tree",
+      "alefragnani.bookmarks",
+      "sleistner.vscode-fileutils",
+
+      "pkief.material-icon-theme",
+      "robbowen.synthwave-vscode",
+
+      "esbenp.prettier-vscode",
+      "streetsidesoftware.code-spell-checker",
+      "davidanson.vscode-markdownlint",
+
+      "ms-vscode.hexeditor",
+      "tomoki1207.pdf",
+
+      "yzhang.markdown-all-in-one",
+      "redhat.vscode-yaml",
+      "humao.rest-client",
+    ],
+  },
+}

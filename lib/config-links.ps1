@@ -1,5 +1,5 @@
 # =============================================================================
-#   dotfiles/lib/config-links.ps1
+#   lib/config-links.ps1
 #   Single source of truth for which configs get linked where, plus the linker.
 #   Consumed by install.ps1, maintenance/update.ps1 (via Sync-ConfigLink) and
 #   scripts/workstation-health.ps1 (map only, for spot-checks).
@@ -7,7 +7,7 @@
 # =============================================================================
 
 function Get-ConfigLinks {
-    param([Parameter(Mandatory)][string]$DotfilesDir)
+    param([Parameter(Mandatory)][string]$WorkstationDir)
     @(
         @{
             src    = "powershell\profile.ps1"
@@ -59,11 +59,11 @@ function Get-ConfigLinks {
 function Sync-ConfigLink {
     param(
         [Parameter(Mandatory)][hashtable]$Link,
-        [Parameter(Mandatory)][string]$DotfilesDir,
+        [Parameter(Mandatory)][string]$WorkstationDir,
         [switch]$DryRun
     )
 
-    $src    = Join-Path $DotfilesDir $Link.src
+    $src    = Join-Path $WorkstationDir $Link.src
     $dst    = $Link.dst
     $desc   = $Link.desc
     $dstDir = Split-Path $dst -Parent
