@@ -13,6 +13,11 @@ wezterm.on('gui-startup', function(cmd)
   end
 
   local system_tab, system_pane, window = mux.spawn_window(startup)
+  -- Maximize BEFORE panes print their helper output — reflowing scrollback
+  -- after the fact leaves blank voids in the right-pane cheat sheets.
+  pcall(function()
+    window:gui_window():maximize()
+  end)
   system_tab:set_title 'system'
 
   system_pane:split {
@@ -157,7 +162,6 @@ wezterm.on('gui-startup', function(cmd)
   end
 
   system_tab:activate()
-  window:gui_window():maximize()
 end)
 
 return {}

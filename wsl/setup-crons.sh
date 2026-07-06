@@ -7,21 +7,24 @@
 set -euo pipefail
 
 # ── re-exec with sudo if needed ───────────────────────────────────────────────
+# Windows interop (cmd.exe) is unavailable to root, so resolve the Windows
+# username BEFORE elevating and pass it through the sudo environment.
 if [[ $EUID -ne 0 ]]; then
-  exec sudo bash "$0" "$@"
+  WIN_USER="${WIN_USER:-$(cmd.exe /c "echo %USERNAME%" 2>/dev/null | tr -d '\r\n' || true)}"
+  exec sudo WIN_USER="$WIN_USER" bash "$0" "$@"
 fi
 
 # ── resolve the calling user (even when running under sudo) ──────────────────
 REAL_USER="${SUDO_USER:-$(logname 2>/dev/null || echo "$USER")}"
-WIN_USER=$(cmd.exe /c "echo %USERNAME%" 2>/dev/null | tr -d '\r\n')
+WIN_USER="${WIN_USER:-$REAL_USER}"
 WIN_HOME="/mnt/c/Users/${WIN_USER}"
-DOTFILES="${WIN_HOME}/workstation"
-LOG_DIR="${DOTFILES}/scripts/logs"
+REPO="${WIN_HOME}/workstation"
+LOG_DIR="${REPO}/scripts/logs"
 
 echo ">> WSL cron setup"
 echo "   Linux user : $REAL_USER"
 echo "   Win user   : $WIN_USER"
-echo "   Dotfiles   : $DOTFILES"
+echo "   Repo       : $REPO"
 
 # ── ensure cron runs on WSL boot ─────────────────────────────────────────────
 WSL_CONF="/etc/wsl.conf"
@@ -75,7 +78,7 @@ EOF
   echo "   OK  installed /etc/cron.d/$name"
 }
 
-SCRIPT="${DOTFILES}/scripts/organize-downloads.sh"
+SCRIPT="${REPO}/scripts/organize-downloads.sh"
 LOG="${LOG_DIR}/organize-downloads.log"
 
 install_cron_job \

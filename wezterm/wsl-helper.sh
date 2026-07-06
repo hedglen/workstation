@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # WSL tab right pane — printed once, then drops into zsh. Spawned via wezterm.lua wsl_helper_spawn().
 cd "$HOME" || exit 1
+# Spawned as a non-login bash: user-level bins (uv, grok, vibe, codex) are
+# not on PATH without this.
+export PATH="$HOME/.local/bin:$HOME/.npm-global/bin:$PATH"
 clear
 
 # ---- Path resolution ----
@@ -304,8 +307,8 @@ printf "  \033[90mAlt+Click\033[0m       Select text in rectangular mode\n"
 printf "  \033[90mCtrl+Tab\033[0m       Cycle through tabs\n"
 printf "  \033[90mCtrl+Number\033[0m     Switch to specific tab\n"
 printf "\n"
-printf "  \033[90mType 'reload' in left pane to re-source shell profile\n"
-printf "  \033[90mUse 'workstation', 'projects', 'scripts' for quick cd\n"
+printf "  \033[90mType 'reload' in left pane to re-source shell profile\033[0m\n"
+printf "  \033[90mUse 'workstation', 'projects', 'scripts' for quick cd\033[0m\n"
 
 # ---- Drop to shell ----
 printf "\n"
