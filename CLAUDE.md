@@ -1,6 +1,7 @@
 # Hedglen Workspace - Claude Code Context
 
 ## Who I Am
+
 - GitHub: **hedglen**
 - OS: Windows 11 Home
 - Shell preference: PowerShell (scripts), Bash (Claude Code sessions)
@@ -9,7 +10,7 @@
 
 `C:\Users\rjh\workstation\` IS the git repo (`github.com/hedglen/workstation`) — no nesting, no junctions.
 
-```
+```text
 C:\Users\rjh\workstation\             # repo root
 ├── docs/, notes/, scripts/, projects/, mpv-config/, apps/, lib/, wezterm/, wsl/, ...
 ├── tools/                            # Portable tools (gitignored — binaries only, not tracked)
@@ -20,10 +21,10 @@ C:\Users\rjh\workstation\             # repo root
 
 ## Key Projects
 
-| Repo | Type | Stack | Notes |
-|------|------|-------|-------|
-| `workstation` | config | PowerShell, JSON | Main Windows config & automation (this repo); **mpv-config/** for mpv (Lua, HDR, shaders) |
-| `hedglen.github.io` | site | HTML/CSS/JS | Personal site; folded in as plain content (no `.git` of its own) — its real history/remote is `github.com/hedglen/hedglen.github.io`; to push changes there, edit in a separate clone of that repo |
+| Repo                | Type   | Stack               | Notes                                                                                                                                                                      |
+|---------------------|--------|---------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `workstation`       | config | PowerShell, JSON   | Main Windows config & automation (this repo); **mpv-config/** for mpv (Lua, HDR, shaders)                                                                                 |
+| `hedglen.github.io` | site   | HTML/CSS/JS        | Personal site; folded in as plain content (no `.git` of its own) — its real history/remote is `github.com/hedglen/hedglen.github.io`; to push changes there, edit in a separate clone of that repo |
 
 ## MCP Integrations
 
@@ -40,9 +41,23 @@ C:\Users\rjh\workstation\             # repo root
 
 ## Common Starting Points
 
-**Workspace root (= repo):** `cd C:\Users\rjh\workstation`
-**MPV config:** `cd C:\Users\rjh\workstation\mpv-config`
-**Portable tools:** `cd C:\Users\rjh\workstation\tools`
+**Workspace root (= repo):**
+
+```text
+cd C:\Users\rjh\workstation
+```
+
+**MPV config:**
+
+```text
+cd C:\Users\rjh\workstation\mpv-config
+```
+
+**Portable tools:**
+
+```text
+cd C:\Users\rjh\workstation\tools
+```
 
 ## Canonical Path Rules
 
