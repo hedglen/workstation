@@ -39,6 +39,26 @@ function Get-ConfigLinks {
             desc = "Cursor settings"
         },
         @{
+            src  = "zed\settings.json"
+            dst  = "$HOME\AppData\Roaming\Zed\settings.json"
+            desc = "Zed settings"
+        },
+        @{
+            src  = "zed\keymap.json"
+            dst  = "$HOME\AppData\Roaming\Zed\keymap.json"
+            desc = "Zed keymap"
+        },
+        @{
+            src  = "zed\themes\rio-neon-city.json"
+            dst  = "$HOME\AppData\Roaming\Zed\themes\rio-neon-city.json"
+            desc = "Zed Rio Neon theme"
+        },
+        @{
+            src  = "zed\AGENTS.md"
+            dst  = "$HOME\AppData\Roaming\Zed\AGENTS.md"
+            desc = "Zed commit instructions"
+        },
+        @{
             src  = "claude\settings.json"
             dst  = "$HOME\.claude\settings.json"
             desc = "Claude Code settings"

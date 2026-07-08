@@ -74,7 +74,7 @@ This will:
 2. Install apps: **`winget install`** per package ID from **`apps/winget-packages.json`** (JSONC with category comments — no `winget import`); then **Scoop** via **get.scoop.sh** (unless **`-NoScoop`**), the **extras** bucket, and **`scoop install`** from **`apps/scoop-packages.json`** (see **`apps/winget-packages.md`** / **`apps/scoop-packages.md`**). Then the **Claude Code CLI** (native installer — auto-updates) when `claude` is not on PATH.
 3. Create Python **`.venv`**s for **`projects\media-organizer`**, **`projects\ytdl`**, and **`tools\transcribe-env`** (Whisper deps — large download) from their `requirements` files (uses **`uv`** when available, else **`py`** + pip; skipped by **`-NoPythonProjects`** or **`-ConfigsOnly`**).
 4. Apply Windows tweaks (requires admin)
-5. Symlink all configs to their correct locations (incl. **`claude/settings.json`** → `~/.claude/settings.json`; the map lives in **`lib/config-links.ps1`**)
+5. Symlink all configs to their correct locations (including Zed and Claude Code; the map lives in **`lib/config-links.ps1`**)
 6. Install all VS Code + Cursor extensions
 7. Install CaskaydiaCove Nerd Font
 8. Junction `tools\mpv\portable_config` to `mpv-config\` for mpv (when the installer configures mpv)
@@ -104,6 +104,11 @@ workstation/                       ← this repo IS $HOME\workstation
 ├── claude/
 │   ├── CLAUDE.md                  ← workstation-root Claude Code context (copied to workstation\)
 │   └── settings.json              ← ~/.claude/settings.json (symlinked)
+├── zed/
+│   ├── settings.json              ← %APPDATA%\Zed\settings.json (symlinked)
+│   ├── keymap.json                ← syntax-aware selection shortcuts
+│   ├── themes/rio-neon-city.json  ← Rio-matched custom Zed theme
+│   └── AGENTS.md                  ← generated commit-message guidance
 ├── autohotkey/
 │   └── main.ahk                   ← hotkeys, app launchers, text expanders
 ├── powershell/
@@ -405,6 +410,12 @@ Script: `autohotkey/main.ahk` — loads on startup via registry Run key.
 
 **Cursor:** the same `vscode/settings.json` is symlinked to `%APPDATA%\Cursor\User\settings.json` by `install.ps1` / `update.ps1`, so integrated-terminal options (font, Neon Dark colors, **blinking bar cursor**) apply in Cursor—not only in VS Code.
 
+### Zed
+
+Zed uses the same Cascadia/Caskaydia fonts and editing defaults, with the custom Rio Neon City theme, a PowerShell terminal, left-side project/Git panels, and a right-side agent panel. The theme mirrors Rio's near-black surfaces and cyan, magenta, yellow, green, blue, and pink palette across the editor, UI, diagnostics, and integrated terminal. Codex, Claude, and Gemini are registered as external ACP agents and continue to use their own CLI authentication.
+
+The tracked files under `zed/` are linked into `%APPDATA%\Zed`. In addition to the VS Code base keymap, `Ctrl+Alt+Right` expands selection to the next syntax node and `Ctrl+Alt+Left` shrinks it.
+
 ### Extensions
 
 | Category | Extension |
@@ -515,7 +526,7 @@ For **how to use** installed apps and profile helpers (not just the install list
 
 | Category | Apps (from `apps/winget-packages.json`) |
 | --- | --- |
-| **Dev / runtimes** | Git, VS Code, **Notepad++**, Cursor, Claude (desktop), PowerShell 7, Python 3.14 + Python Launcher, **uv**, AutoHotkey, Node.js LTS, JetBrainsMono Nerd Font; .NET SDK 10 + .NET 8/10 runtimes, VC++ redists, VCLibs, App Installer, UI XAML, Windows App Runtime; **WSL** + **Ubuntu** |
+| **Dev / runtimes** | Git, VS Code, **Zed**, **Notepad++**, Cursor, Claude (desktop), PowerShell 7, Python 3.14 + Python Launcher, **uv**, AutoHotkey, Node.js LTS, JetBrainsMono Nerd Font; .NET SDK 10 + .NET 8/10 runtimes, VC++ redists, VCLibs, App Installer, UI XAML, Windows App Runtime; **WSL** + **Ubuntu** |
 | **CLI (Scoop)** | Full list in `apps/scoop-packages.json` — see **`apps/scoop-packages.md`** |
 | **Terminal / shell** | Windows Terminal, WezTerm, Oh My Posh (winget) |
 | **Browsers** | Chrome, Firefox Nightly |

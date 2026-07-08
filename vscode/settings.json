@@ -217,4 +217,8 @@
   "cursorpyright.analysis.autoImportCompletions": true,
   "cursorpyright.analysis.typeCheckingMode": "basic",
   "vsicons.dontShowNewVersionMessage": true,
+  "window.autoDetectColorScheme": false,
+  "cursor.composer.shouldChimeAfterChatFinishes": true,
+  "cursor.general.emailPrivacyEnabled": true,
+  "cursor.composer.codeBlockWordWrap": true,
 }

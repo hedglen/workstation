@@ -1,0 +1,10 @@
+// Small additions to the VS Code base keymap.
+[
+  {
+    "context": "Editor",
+    "bindings": {
+      "ctrl-alt-right": "editor::SelectLargerSyntaxNode",
+      "ctrl-alt-left": "editor::SelectSmallerSyntaxNode",
+    },
+  },
+]

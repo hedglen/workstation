@@ -18,6 +18,7 @@ Categories in the JSON: **dev toolchain → AI desktop apps → .NET / Windows p
 | **Git.Git** | Distributed version control. | Clone, branch, commit any software project |
 | **Microsoft.PowerShell** | PowerShell 7+ on Windows. | Scripts and daily terminal when you want `pwsh` features |
 | **Microsoft.VisualStudioCode** | Lightweight extensible code editor. | General coding, debugging with extensions |
+| **ZedIndustries.Zed** | Fast native editor with built-in collaboration and ACP agents. | Low-latency coding with Codex, Claude, or Gemini in the agent panel |
 | **Notepad++.Notepad++** | Fast editor with syntax highlighting and plugins. | Quick edits, logs, XML/JSON without a full IDE |
 | **AutoHotkey.AutoHotkey** | Hotkeys, text expansion, window automation. | Global shortcuts, remaps, simple GUI automation |
 | **OpenJS.NodeJS.LTS** | Long-term-support Node.js (JavaScript + npm). | Web frontends, tooling, `npx` utilities |

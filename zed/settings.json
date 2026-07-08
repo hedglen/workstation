@@ -1,0 +1,93 @@
+// Tracked Zed configuration. Linked to %APPDATA%\Zed\settings.json by install.ps1.
+{
+  // Appearance
+  "theme": {
+    "mode": "dark",
+    "light": "One Light",
+    "dark": "Rio Neon City",
+  },
+  "icon_theme": "Colored Zed Icons Theme Dark",
+  "ui_font_size": 16,
+  "buffer_font_family": "Cascadia Code",
+  "buffer_font_fallbacks": ["Fira Code", "Consolas", "monospace"],
+  "buffer_font_size": 14,
+
+  // Editing
+  "base_keymap": "VSCode",
+  "preview_tabs": { "enabled": false },
+  "sticky_scroll": { "enabled": true },
+  "minimap": { "show": "never" },
+  "current_line_highlight": "all",
+  "cursor_blink": true,
+  "colorize_brackets": true,
+  "show_whitespaces": "boundary",
+  "show_edit_predictions": true,
+  "wrap_guides": [100],
+  "soft_wrap": "none",
+  "hard_tabs": false,
+  "tab_size": 4,
+  "format_on_save": "on",
+  "remove_trailing_whitespace_on_save": true,
+  "ensure_final_newline_on_save": true,
+  "autosave": "on_focus_change",
+
+  // Prose should wrap; source code should not.
+  "languages": {
+    "Markdown": {
+      "soft_wrap": "preferred_line_length",
+      "preferred_line_length": 100,
+      "format_on_save": "off",
+    },
+    "PowerShell": {
+      "tab_size": 4,
+    },
+    "Python": {
+      "tab_size": 4,
+      "inlay_hints": { "enabled": true },
+    },
+    "Lua": {
+      "tab_size": 4,
+      "inlay_hints": { "enabled": true },
+    },
+  },
+
+  // Panels
+  "project_panel": {
+    "dock": "left",
+    "auto_fold_dirs": false,
+  },
+  "outline_panel": { "dock": "left" },
+  "git_panel": { "dock": "left" },
+  "collaboration_panel": { "dock": "left" },
+  "agent": {
+    "dock": "right",
+    "favorite_models": [],
+    "model_parameters": [],
+    "commit_message_instructions": "Use imperative mood, capitalize the subject, omit a trailing period, and keep the subject near 50 characters. Add a short body only when it provides useful context.",
+  },
+
+  // Windows shell and terminal
+  "terminal": {
+    "shell": { "program": "pwsh" },
+    "font_family": "CaskaydiaCove Nerd Font",
+    "font_fallbacks": ["Cascadia Code", "Consolas"],
+    "font_size": 13,
+    "cursor_shape": "bar",
+    "blinking": "on",
+    "max_scroll_history_lines": 10000,
+    "scroll_multiplier": 3,
+  },
+
+  // External ACP agents use their own existing CLI authentication.
+  "agent_servers": {
+    "codex-acp": { "type": "registry" },
+    "claude-acp": { "type": "registry" },
+    "gemini": { "type": "registry" },
+  },
+
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false,
+  },
+  "session": { "trust_all_worktrees": true },
+}

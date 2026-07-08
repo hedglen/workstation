@@ -11,6 +11,7 @@
     "Git.Git",
     "Microsoft.PowerShell",
     "Microsoft.VisualStudioCode",
+    "ZedIndustries.Zed",
     "Notepad++.Notepad++",
     "AutoHotkey.AutoHotkey",
     "OpenJS.NodeJS.LTS",
