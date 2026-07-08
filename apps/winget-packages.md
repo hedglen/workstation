@@ -20,6 +20,10 @@ Categories in the JSON: **dev toolchain → AI desktop apps → .NET / Windows p
 | **Microsoft.PowerShell** | PowerShell 7+ on Windows. | Scripts and daily terminal when you want `pwsh` features |
 | **Microsoft.VisualStudioCode** | Lightweight extensible code editor. | General coding, debugging with extensions |
 | **Notepad++.Notepad++** | Fast editor with syntax highlighting and plugins. | Quick edits, logs, XML/JSON without a full IDE |
+| **ZedIndustries.Zed** | High-performance Rust-based code editor with built-in AI and collaboration. | Fast native editor; AI-assisted editing without Electron overhead |
+| **SublimeHQ.SublimeText.4** | Polished, fast GUI text editor (commercial). | Large files, multi-cursor editing, quick project-wide search |
+| **Neovim.Neovim** | Modernized Vim: Lua config, LSP, terminal UI. | `nvim file` for modal editing in the terminal |
+| **Helix.Helix** | Modal terminal editor with built-in LSP and tree-sitter (no plugin setup). | Kakoune-style selection-first editing: `hx file` |
 | **AutoHotkey.AutoHotkey** | Hotkeys, text expansion, window automation. | Global shortcuts, remaps, simple GUI automation |
 | **OpenJS.NodeJS.LTS** | Long-term-support Node.js (JavaScript + npm). | Web frontends, tooling, `npx` utilities |
 | **Python.Python.3.14** | CPython 3.14 (system-wide install). | Base interpreter for venvs, scripts, and the `python` command |

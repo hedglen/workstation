@@ -515,7 +515,7 @@ For **how to use** installed apps and profile helpers (not just the install list
 
 | Category | Apps (from `apps/winget-packages.json`) |
 | --- | --- |
-| **Dev / runtimes** | Git, VS Code, **Notepad++**, Cursor, Claude (desktop), PowerShell 7, Python 3.14 + Python Launcher, **uv**, AutoHotkey, Node.js LTS, JetBrainsMono Nerd Font; .NET SDK 10 + .NET 8/10 runtimes, VC++ redists, VCLibs, App Installer, UI XAML, Windows App Runtime; **WSL** + **Ubuntu** |
+| **Dev / runtimes** | Git, GitHub Desktop, VS Code, **Notepad++**, Zed, Sublime Text 4, Neovim, Helix, Cursor, Claude (desktop), PowerShell 7, Python 3.14 + Python Launcher, **uv**, AutoHotkey, Node.js LTS, JetBrainsMono Nerd Font; .NET SDK 10 + .NET 8/10 runtimes, VC++ redists, VCLibs, App Installer, UI XAML, Windows App Runtime; **WSL** + **Ubuntu** |
 | **CLI (Scoop)** | Full list in `apps/scoop-packages.json` — see **`apps/scoop-packages.md`** |
 | **Terminal / shell** | Windows Terminal, WezTerm, Oh My Posh (winget) |
 | **Browsers** | Chrome, Firefox Nightly |
