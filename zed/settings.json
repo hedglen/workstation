@@ -80,7 +80,10 @@
 
   // External ACP agents use their own existing CLI authentication.
   "agent_servers": {
-    "codex-acp": { "type": "registry" },
+    "codex-acp": { "default_config_options": {
+                         "reasoning_effort": "high"
+                   },
+                   "type": "registry" },
     "claude-acp": { "default_config_options": {
                           "mode": "plan"
                     },
