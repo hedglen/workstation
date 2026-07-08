@@ -52,6 +52,10 @@
     // ── Terminals & shell ────────────────────────────────────────────────────
     "Microsoft.WindowsTerminal",
     "wez.wezterm",
+    // Trials — evaluating; WezTerm stays primary. Drop these if they don't stick.
+    "raphamorim.rio",        // GPU terminal (Rust/WebGPU)
+    "Alacritty.Alacritty",   // minimal OpenGL terminal
+    "AmanThanvi.winghostty", // Ghostty terminal core on Windows
 
     // ── Media: playback, capture, download ───────────────────────────────────
     "Daum.PotPlayer", // primary player

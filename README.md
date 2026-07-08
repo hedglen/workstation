@@ -517,7 +517,7 @@ For **how to use** installed apps and profile helpers (not just the install list
 | --- | --- |
 | **Dev / runtimes** | Git, GitHub Desktop, VS Code, **Notepad++**, Zed, Sublime Text 4, Cursor, Claude (desktop), PowerShell 7, Python 3.14 + Python Launcher, **uv**, AutoHotkey, Node.js LTS, JetBrainsMono Nerd Font; .NET SDK 10 + .NET 8/10 runtimes, VC++ redists, VCLibs, App Installer, UI XAML, Windows App Runtime; **WSL** + **Ubuntu** |
 | **CLI (Scoop)** | Full list in `apps/scoop-packages.json` — see **`apps/scoop-packages.md`** |
-| **Terminal / shell** | Windows Terminal, WezTerm, Oh My Posh (winget) |
+| **Terminal / shell** | Windows Terminal, WezTerm, Oh My Posh (winget); trials: Rio, Alacritty, winghostty |
 | **Browsers** | Chrome, Firefox Nightly |
 | **Media** | PotPlayer (primary), mpv (shinchiro build), ShareX, Bandicut, yt-dlp + FFmpeg, Mp3tag, XnViewMP, HandBrake, OBS Studio, MediaInfo, ImageGlass, ScreenToGif, SumatraPDF |
 | **File management** | Everything, Directory Opus, NanaZip, Bulk Rename Utility, WizTree |

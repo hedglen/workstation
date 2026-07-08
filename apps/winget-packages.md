@@ -153,6 +153,9 @@ Categories in the JSON: **dev toolchain → AI desktop apps → .NET / Windows p
 |----|----------------|-------------|
 | **StartIsBack.StartAllBack** | Taskbar and Start styling for Windows 11 (commercial). | Familiar taskbar/Start layout |
 | **Microsoft.WindowsTerminal** | Tabbed host for PowerShell, CMD, WSL, etc. | One window, multiple profiles |
+| **raphamorim.rio** | *Trial* — GPU-accelerated terminal in Rust/WebGPU. | Evaluating against WezTerm; config in TOML |
+| **Alacritty.Alacritty** | *Trial* — minimal, fast OpenGL terminal (no tabs/splits by design). | Evaluating; pair with a multiplexer if kept |
+| **AmanThanvi.winghostty** | *Trial* — Ghostty's terminal core as a native Windows app. | Evaluating; PowerShell/WSL profiles built in |
 | **Microsoft.PowerToys** | FancyZones, PowerRename, Color Picker, Keyboard Manager, … | Tiling, bulk rename in Explorer, remaps |
 | **wez.wezterm** | GPU terminal with Lua configuration. | Splits, themes, advanced terminal users |
 | **CharlesMilette.TranslucentTB** | Transparent or blurred taskbar. | Visual desktop tweak |
