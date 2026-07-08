@@ -4,7 +4,7 @@
 
 [core]
     autocrlf   = input
-    editor     = code --wait
+    editor     = zed --wait
     whitespace = trailing-space,space-before-tab
     pager      = delta
 

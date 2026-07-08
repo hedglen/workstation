@@ -36,6 +36,7 @@ C:\Users\rjh\workstation\             # repo root
 - Commits: imperative mood, no prefix (e.g. "Add print styles", "Update contact email")
 - Always review `git diff` before committing
 - Push manually - do not auto-push unless asked
+- Editors: **Zed** for any plain text editing (`edit` helper, `$env:EDITOR`, git commit editor); **Cursor** for workspace-level work in this repo (`work` opens `rjh-workspace.code-workspace`)
 - Keep READMEs updated when making significant changes
 - AHK lives in `autohotkey/main.ahk` - launched via registry Run key set by `install.ps1`
 

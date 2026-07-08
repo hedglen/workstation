@@ -269,6 +269,8 @@ Format: `[USER/ADMIN] HH:MM PS path>`
 | `pkillf name` | Force-kill all processes matching name |
 | `which name` | Find where a command lives |
 | `touch path` | Create an empty file |
+| `edit path` | Open in Zed (default editor for any text) |
+| `work` | Open `rjh-workspace.code-workspace` in Cursor |
 | `grep pattern` | Pipeline-friendly `Select-String` wrapper |
 | `reload` | Re-source the profile in the current session |
 | `save-dots [message]` | Commit & push all dotfile changes to GitHub |
@@ -464,7 +466,7 @@ Instead of typing full git commands, these short versions work:
 | --- | --- | --- |
 | `defaultBranch` | `main` | New repos start on `main` not `master` |
 | `autocrlf` | `input` | Don't mangle line endings on Windows |
-| `editor` | `code --wait` | VS Code opens for commit messages |
+| `editor` | `zed --wait` | Zed opens for commit messages |
 | `pull.rebase` | `false` | `git pull` merges, doesn't rebase |
 | `push.autoSetupRemote` | `true` | First push sets upstream automatically |
 | `fetch.prune` | `true` | Auto-delete stale remote branches |
@@ -526,9 +528,9 @@ For **how to use** installed apps and profile helpers (not just the install list
 
 | Category | Apps (from `apps/winget-packages.json`) |
 | --- | --- |
-| **Dev / runtimes** | Git, VS Code, **Zed**, **Notepad++**, Cursor, Claude (desktop), PowerShell 7, Python 3.14 + Python Launcher, **uv**, AutoHotkey, Node.js LTS, JetBrainsMono Nerd Font; .NET SDK 10 + .NET 8/10 runtimes, VC++ redists, VCLibs, App Installer, UI XAML, Windows App Runtime; **WSL** + **Ubuntu** |
+| **Dev / runtimes** | Git, GitHub Desktop, VS Code, **Notepad++**, **Zed**, Sublime Text 4, Cursor, Claude (desktop), PowerShell 7, Python 3.14 + Python Launcher, **uv**, AutoHotkey, Node.js LTS, JetBrainsMono Nerd Font; .NET SDK 10 + .NET 8/10 runtimes, VC++ redists, VCLibs, App Installer, UI XAML, Windows App Runtime; **WSL** + **Ubuntu** |
 | **CLI (Scoop)** | Full list in `apps/scoop-packages.json` — see **`apps/scoop-packages.md`** |
-| **Terminal / shell** | Windows Terminal, WezTerm, Oh My Posh (winget) |
+| **Terminal / shell** | Windows Terminal, WezTerm, Oh My Posh (winget); trials: Rio, Alacritty, winghostty |
 | **Browsers** | Chrome, Firefox Nightly |
 | **Media** | PotPlayer (primary), mpv (shinchiro build), ShareX, Bandicut, yt-dlp + FFmpeg, Mp3tag, XnViewMP, HandBrake, OBS Studio, MediaInfo, ImageGlass, ScreenToGif, SumatraPDF |
 | **File management** | Everything, Directory Opus, NanaZip, Bulk Rename Utility, WizTree |

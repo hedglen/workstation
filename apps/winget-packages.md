@@ -16,10 +16,13 @@ Categories in the JSON: **dev toolchain → AI desktop apps → .NET / Windows p
 | ID | What it does | Example use |
 |----|----------------|-------------|
 | **Git.Git** | Distributed version control. | Clone, branch, commit any software project |
+| **GitHub.GitHubDesktop** | GitHub Desktop GUI client for Git/GitHub. | Clone, commit, and manage PRs without the command line |
 | **Microsoft.PowerShell** | PowerShell 7+ on Windows. | Scripts and daily terminal when you want `pwsh` features |
 | **Microsoft.VisualStudioCode** | Lightweight extensible code editor. | General coding, debugging with extensions |
 | **ZedIndustries.Zed** | Fast native editor with built-in collaboration and ACP agents. | Low-latency coding with Codex, Claude, or Gemini in the agent panel |
 | **Notepad++.Notepad++** | Fast editor with syntax highlighting and plugins. | Quick edits, logs, XML/JSON without a full IDE |
+| **ZedIndustries.Zed** | High-performance Rust-based code editor with built-in AI and collaboration. | Fast native editor; AI-assisted editing without Electron overhead |
+| **SublimeHQ.SublimeText.4** | Polished, fast GUI text editor (commercial). | Large files, multi-cursor editing, quick project-wide search |
 | **AutoHotkey.AutoHotkey** | Hotkeys, text expansion, window automation. | Global shortcuts, remaps, simple GUI automation |
 | **OpenJS.NodeJS.LTS** | Long-term-support Node.js (JavaScript + npm). | Web frontends, tooling, `npx` utilities |
 | **Python.Python.3.14** | CPython 3.14 (system-wide install). | Base interpreter for venvs, scripts, and the `python` command |
@@ -151,6 +154,9 @@ Categories in the JSON: **dev toolchain → AI desktop apps → .NET / Windows p
 |----|----------------|-------------|
 | **StartIsBack.StartAllBack** | Taskbar and Start styling for Windows 11 (commercial). | Familiar taskbar/Start layout |
 | **Microsoft.WindowsTerminal** | Tabbed host for PowerShell, CMD, WSL, etc. | One window, multiple profiles |
+| **raphamorim.rio** | *Trial* — GPU-accelerated terminal in Rust/WebGPU. | Evaluating against WezTerm; config in TOML |
+| **Alacritty.Alacritty** | *Trial* — minimal, fast OpenGL terminal (no tabs/splits by design). | Evaluating; pair with a multiplexer if kept |
+| **AmanThanvi.winghostty** | *Trial* — Ghostty's terminal core as a native Windows app. | Evaluating; PowerShell/WSL profiles built in |
 | **Microsoft.PowerToys** | FancyZones, PowerRename, Color Picker, Keyboard Manager, … | Tiling, bulk rename in Explorer, remaps |
 | **wez.wezterm** | GPU terminal with Lua configuration. | Splits, themes, advanced terminal users |
 | **CharlesMilette.TranslucentTB** | Transparent or blurred taskbar. | Visual desktop tweak |

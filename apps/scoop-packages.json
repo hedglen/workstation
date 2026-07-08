@@ -21,6 +21,8 @@
     "delta",        // rich git diffs
     "sd",           // simple find-and-replace
     "less",         // plain pager (referenced by the toolbelt-tab cheat sheet)
+    "neovim",       // modal terminal editor (nvim)
+    "helix",        // modal terminal editor with built-in LSP (hx)
 
     // ── Git & GitHub ─────────────────────────────────────────────────────────
     "gh",           // GitHub CLI

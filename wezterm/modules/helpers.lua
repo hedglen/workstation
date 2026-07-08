@@ -131,6 +131,8 @@ Clear-Host
   _cliRow 'glow file.md' 'render markdown in the terminal (glow . = browse)'
   _cliRow 'less file' 'plain pager (q quits, / searches)'
   _cliRow 'sd "old" "new" file' 'find & replace without sed syntax'
+  _cliRow 'nvim file' 'neovim: i insert, Esc normal, :wq save+quit, :q! discard'
+  _cliRow 'hx file' 'helix: built-in LSP; same keys idea, hx --tutor to learn'
   Write-Host ''
 
   Write-Host 'Git & GitHub' -ForegroundColor Cyan
@@ -171,6 +173,8 @@ Clear-Host
   _cliRow 'which name' 'resolve a command to its path'
   _cliRow 'grep pat' 'pipeline: ... | grep pat (Select-String)'
   _cliRow 'touch path' 'create empty file'
+  _cliRow 'edit file' 'open in Zed (default editor, $env:EDITOR)'
+  _cliRow 'work' 'open the workspace in Cursor'
   _cliRow 'dots / tools / home' 'cd shortcuts (see profile.ps1)'
   Write-Host ''
 

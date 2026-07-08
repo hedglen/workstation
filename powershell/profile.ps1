@@ -48,6 +48,18 @@ function home { Set-Location $HOME }
 function dots { Set-Location "$HOME\workstation" }
 
 # =============================================================================
+#   Editors — Zed for any text editing, Cursor for workspace work
+# =============================================================================
+
+$env:EDITOR = 'zed'
+
+# edit — open any file (or folder) in Zed
+function edit { zed @args }
+
+# work — open the workstation workspace in Cursor
+function work { cursor "$HOME\workstation\rjh-workspace.code-workspace" }
+
+# =============================================================================
 #   System / User Helpers
 # =============================================================================
 

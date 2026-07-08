@@ -136,9 +136,14 @@ Install everything from the JSON (keeps the list in sync): see **`apps/scoop-pac
 | --------------------------------------- | ------------------------------------------------------------ |
 | **Git**                                 | Version control; aliases in `git/.gitconfig`        |
 | **GitHub CLI** (`gh`)                   | PRs, clones, API — `gh auth login`                           |
-| **VS Code** / **Cursor** / **Zed**      | Editors; VS Code/Cursor share `vscode/` settings, while Zed uses tracked `zed/` settings and ACP agents; **Claude** desktop (winget) provides Anthropic chat |
+| **GitHub Desktop**                      | Git/GitHub GUI — clone, commit, PRs without the command line (winget) |
+| **VS Code** / **Cursor**                | Editors; VS Code/Cursor share `vscode/` settings and extensions from `vscode/extensions.txt`; Claude desktop (winget) for Anthropic chat |
+| **Zed**                                 | Zed is the default text editor (`edit` helper, $env:EDITOR); uses tracked `zed/` settings and ACP agents |
+| **Sublime Text 4**                      | Polished, commercial editor (winget) |
+| **Neovim** (`nvim`) / **Helix** (`hx`)  | Terminal modal editors (Scoop); Helix ships LSP + tree-sitter built in, no plugins needed |
 | **PowerShell 7**                        | Default shell in Windows Terminal / WezTerm                  |
 | **Windows Terminal** / **WezTerm**      | **WezTerm** (`wezterm/wezterm.lua`), tab order: **system** (drives, IP, update runbook in the right pane); **wsl** with right-pane helper (`wezterm/wsl-helper.sh`); dedicated **grok**, **claude**, **codex**, and **vibe** AI tabs (vibe's right pane live-checks CLI version + auth); **git** (workspace-folder clean/dirty + commit checklist, refreshes); **toolbelt** (Scoop CLI cheat sheet in the right pane). **Windows Terminal**: linked `windows-terminal/settings.json`. |
+| **Rio** / **Alacritty** / **winghostty** | Terminal emulators on trial (winget) — WezTerm stays primary until one earns its keep |
 | **Node.js LTS**                         | `node`, `npm`                                                |
 | **Python Launcher** (`py`)              | Picks installed Python                                       |
 | **AutoHotkey**                          | Hotkeys — `autohotkey/main.ahk`                     |
