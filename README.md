@@ -264,6 +264,8 @@ Format: `[USER/ADMIN] HH:MM PS path>`
 | `pkillf name` | Force-kill all processes matching name |
 | `which name` | Find where a command lives |
 | `touch path` | Create an empty file |
+| `edit path` | Open in Zed (default editor for any text) |
+| `work` | Open `rjh-workspace.code-workspace` in Cursor |
 | `grep pattern` | Pipeline-friendly `Select-String` wrapper |
 | `reload` | Re-source the profile in the current session |
 | `save-dots [message]` | Commit & push all dotfile changes to GitHub |
@@ -453,7 +455,7 @@ Instead of typing full git commands, these short versions work:
 | --- | --- | --- |
 | `defaultBranch` | `main` | New repos start on `main` not `master` |
 | `autocrlf` | `input` | Don't mangle line endings on Windows |
-| `editor` | `code --wait` | VS Code opens for commit messages |
+| `editor` | `zed --wait` | Zed opens for commit messages |
 | `pull.rebase` | `false` | `git pull` merges, doesn't rebase |
 | `push.autoSetupRemote` | `true` | First push sets upstream automatically |
 | `fetch.prune` | `true` | Auto-delete stale remote branches |

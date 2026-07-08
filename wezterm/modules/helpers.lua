@@ -173,6 +173,8 @@ Clear-Host
   _cliRow 'which name' 'resolve a command to its path'
   _cliRow 'grep pat' 'pipeline: ... | grep pat (Select-String)'
   _cliRow 'touch path' 'create empty file'
+  _cliRow 'edit file' 'open in Zed (default editor, $env:EDITOR)'
+  _cliRow 'work' 'open the workspace in Cursor'
   _cliRow 'dots / tools / home' 'cd shortcuts (see profile.ps1)'
   Write-Host ''
 
