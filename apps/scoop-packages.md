@@ -30,12 +30,14 @@ Or install packages individually. These complement GUI and runtime apps in **`wi
 | **git-lfs** | Git extension for large binary assets (stores pointers in Git). | Game assets, datasets, large images in a tracked repo |
 | **glow** | Renders Markdown in the terminal. | `glow NOTES.md` or `README.md` without opening a browser |
 | **gsudo** | Sudo-style elevation for Windows commands and shells. | `gsudo notepad C:\Windows\System32\drivers\etc\hosts` |
+| **helix** (`hx`) | Modal terminal editor with built-in LSP and tree-sitter — no plugin setup. | Selection-first editing: `hx config.toml` |
 | **hyperfine** | Benchmarks shell commands (warmup, multiple runs, stats). | Compare two tools: `hyperfine 'fd foo' 'rg --files \| findstr foo'` |
 | **jq** | Query and transform JSON on the command line. | `curl -s API | jq '.items[].id'` |
 | **just** | Command runner / mini task runner (like a focused Makefile). | `just test` from a repo with a `justfile` |
 | **lazygit** | Full-screen TUI for Git staging, commits, branches, logs. | Quick interactive Git when you do not want the full GUI |
 | **less** | Plain terminal pager. | `less file.log`; the toolbelt-tab cheat sheet references it |
 | **neofetch** | System info banner (themed — cyberpunk neon config). | Quick “what machine is this?” in a new shell |
+| **neovim** (`nvim`) | Modernized Vim: Lua config, LSP, terminal UI. | `nvim notes.md` for modal editing in the terminal |
 | **openssh** | SSH client and utilities (`ssh`, `scp`, `ssh-keygen`). | `ssh user@host`; `ssh-keygen -t ed25519` for a new key |
 | **pandoc** | Converts between Markdown, Word, PDF, HTML, LaTeX, and more. | `pandoc report.md -o report.pdf` |
 | **rclone** | Syncs and mounts cloud storage (S3, Drive, Dropbox, etc.). | `rclone sync remote:bucket D:\backup` |

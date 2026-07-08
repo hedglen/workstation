@@ -139,7 +139,7 @@ Install everything from the JSON (keeps the list in sync): see **`apps/scoop-pac
 | **GitHub Desktop**                      | Git/GitHub GUI — clone, commit, PRs without the command line (winget) |
 | **VS Code** / **Cursor**                | Editors; extensions from `vscode/extensions.txt`; **Claude** desktop (winget) for Anthropic chat |
 | **Zed** / **Sublime Text 4**            | GUI editors (winget): Zed — fast Rust-based with AI/collab; Sublime — polished, commercial |
-| **Neovim** (`nvim`) / **Helix** (`hx`)  | Terminal modal editors (winget); Helix ships LSP + tree-sitter built in, no plugins needed |
+| **Neovim** (`nvim`) / **Helix** (`hx`)  | Terminal modal editors (Scoop); Helix ships LSP + tree-sitter built in, no plugins needed |
 | **PowerShell 7**                        | Default shell in Windows Terminal / WezTerm                  |
 | **Windows Terminal** / **WezTerm**      | **WezTerm** (`wezterm/wezterm.lua`), tab order: **system** (drives, IP, update runbook in the right pane); **wsl** with right-pane helper (`wezterm/wsl-helper.sh`); dedicated **grok**, **claude**, **codex**, and **vibe** AI tabs (vibe's right pane live-checks CLI version + auth); **git** (workspace-folder clean/dirty + commit checklist, refreshes); **toolbelt** (Scoop CLI cheat sheet in the right pane). **Windows Terminal**: linked `windows-terminal/settings.json`. |
 | **Node.js LTS**                         | `node`, `npm`                                                |
