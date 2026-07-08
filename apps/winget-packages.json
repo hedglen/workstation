@@ -9,6 +9,7 @@
 
     // ── Dev toolchain ────────────────────────────────────────────────────────
     "Git.Git",
+    "GitHub.GitHubDesktop",
     "Microsoft.PowerShell",
     "Microsoft.VisualStudioCode",
     "Notepad++.Notepad++",

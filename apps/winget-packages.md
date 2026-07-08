@@ -16,6 +16,7 @@ Categories in the JSON: **dev toolchain → AI desktop apps → .NET / Windows p
 | ID | What it does | Example use |
 |----|----------------|-------------|
 | **Git.Git** | Distributed version control. | Clone, branch, commit any software project |
+| **GitHub.GitHubDesktop** | GitHub Desktop GUI client for Git/GitHub. | Clone, commit, and manage PRs without the command line |
 | **Microsoft.PowerShell** | PowerShell 7+ on Windows. | Scripts and daily terminal when you want `pwsh` features |
 | **Microsoft.VisualStudioCode** | Lightweight extensible code editor. | General coding, debugging with extensions |
 | **Notepad++.Notepad++** | Fast editor with syntax highlighting and plugins. | Quick edits, logs, XML/JSON without a full IDE |
