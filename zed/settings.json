@@ -81,7 +81,10 @@
   // External ACP agents use their own existing CLI authentication.
   "agent_servers": {
     "codex-acp": { "type": "registry" },
-    "claude-acp": { "type": "registry" },
+    "claude-acp": { "default_config_options": {
+                          "mode": "plan"
+                    },
+                    "type": "registry" },
     "gemini": { "type": "registry" },
   },
 
