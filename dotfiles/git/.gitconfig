@@ -1,0 +1,80 @@
+[user]
+	name = Rob Hedglen
+	email = 108037230+hedglen@users.noreply.github.com
+
+[core]
+    autocrlf   = input
+    editor     = zed --wait
+    whitespace = trailing-space,space-before-tab
+    pager      = delta
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate     = true
+    line-numbers = true
+    dark         = true
+
+[init]
+    defaultBranch = main
+
+[pull]
+    rebase = false
+
+[push]
+    autoSetupRemote = true
+
+[fetch]
+    prune = true
+
+[diff]
+    colorMoved = zebra
+
+[merge]
+    conflictStyle = diff3
+
+[color]
+    ui = auto
+
+[color "branch"]
+    current = yellow bold
+    local   = green
+    remote  = cyan
+
+[color "diff"]
+    meta       = yellow
+    frag       = magenta bold
+    old        = red bold
+    new        = green bold
+    whitespace = red reverse
+
+[color "status"]
+    added     = green bold
+    changed   = yellow bold
+    untracked = red
+
+[alias]
+    st       = status
+    co       = checkout
+    br       = branch
+    cp       = cherry-pick
+    rb       = rebase
+    lg       = log --oneline --graph --decorate --all
+    ll       = log --oneline --decorate -20
+    last     = log -1 HEAD --stat
+    unstage  = reset HEAD --
+    undo     = reset --soft HEAD~1
+    discard  = checkout --
+    aliases  = config --get-regexp alias
+    branches = branch -a
+    remotes  = remote -v
+    tags     = tag -l
+    stashes  = stash list
+    changed  = diff HEAD~1 HEAD --name-only
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
