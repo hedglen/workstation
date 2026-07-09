@@ -143,7 +143,7 @@ Install everything from the JSON (keeps the list in sync): see **`apps/scoop-pac
 | **Neovim** (`nvim`) / **Helix** (`hx`)  | Terminal modal editors (Scoop); Helix ships LSP + tree-sitter built in, no plugins needed |
 | **PowerShell 7**                        | Default shell in Windows Terminal / WezTerm                  |
 | **Windows Terminal** / **WezTerm**      | **WezTerm** (`wezterm/wezterm.lua`), tab order: **system** (drives, IP, update runbook in the right pane); **wsl** with right-pane helper (`wezterm/wsl-helper.sh`); dedicated **grok**, **claude**, **codex**, and **vibe** AI tabs (vibe's right pane live-checks CLI version + auth); **git** (workspace-folder clean/dirty + commit checklist, refreshes); **toolbelt** (Scoop CLI cheat sheet in the right pane). **Windows Terminal**: linked `windows-terminal/settings.json`. |
-| **Rio** / **Alacritty** / **winghostty** | Terminal emulators on trial (winget) — WezTerm stays primary until one earns its keep |
+| **Rio** / **Alacritty** / **winghostty** / **Warp** / **Wave** | Terminal emulators on trial (winget) — WezTerm stays primary until one earns its keep |
 | **Node.js LTS**                         | `node`, `npm`                                                |
 | **Python Launcher** (`py`)              | Picks installed Python                                       |
 | **AutoHotkey**                          | Hotkeys — `autohotkey/main.ahk`                     |

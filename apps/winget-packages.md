@@ -157,11 +157,15 @@ Categories in the JSON: **dev toolchain → AI desktop apps → .NET / Windows p
 | **raphamorim.rio** | *Trial* — GPU-accelerated terminal in Rust/WebGPU. | Evaluating against WezTerm; config in TOML |
 | **Alacritty.Alacritty** | *Trial* — minimal, fast OpenGL terminal (no tabs/splits by design). | Evaluating; pair with a multiplexer if kept |
 | **AmanThanvi.winghostty** | *Trial* — Ghostty's terminal core as a native Windows app. | Evaluating; PowerShell/WSL profiles built in |
+| **Warp.Warp** | *Trial* — AI-first terminal with modern command workflows. | Evaluating as an alternate daily terminal |
+| **CommandLine.Wave** | *Trial* — terminal workspace with command blocks, notebooks, and persistent sessions. | Evaluating for heavier command/project workflows |
 | **Microsoft.PowerToys** | FancyZones, PowerRename, Color Picker, Keyboard Manager, … | Tiling, bulk rename in Explorer, remaps |
 | **wez.wezterm** | GPU terminal with Lua configuration. | Splits, themes, advanced terminal users |
 | **CharlesMilette.TranslucentTB** | Transparent or blurred taskbar. | Visual desktop tweak |
 | **Anysphere.Cursor** | VS Code–style editor with AI features. | Daily coding with AI assistance |
 | **Anthropic.Claude** | Official Claude desktop app. | Chat outside the browser |
+
+> **kitty terminal:** the official kitty terminal publishes macOS/Linux binaries, not a Windows winget package. Do not add winget `avborup.kitty` here; that is a Kattis CLI manager, not the terminal emulator. Scoop `kitty` is KiTTY, a PuTTY fork, also not the same app.
 
 > **Claude Code CLI** is intentionally *not* in this manifest: `install.ps1` installs it with the native installer (`irm https://claude.ai/install.ps1 | iex`), which auto-updates in the background — the winget build (`Anthropic.ClaudeCode`) does not, and mixing the two causes conflicting installs.
 

@@ -57,6 +57,9 @@
     "raphamorim.rio",        // GPU terminal (Rust/WebGPU)
     "Alacritty.Alacritty",   // minimal OpenGL terminal
     "AmanThanvi.winghostty", // Ghostty terminal core on Windows
+    "Warp.Warp",             // AI-first terminal
+    "CommandLine.Wave",      // terminal workspace with command blocks and notebooks
+    // kitty terminal is macOS/Linux-only upstream; winget avborup.kitty is a Kattis CLI, not the terminal.
 
     // ── Media: playback, capture, download ───────────────────────────────────
     "Daum.PotPlayer", // primary player
