@@ -64,12 +64,12 @@ They are not copied into Git because the installer obtains them from the maintai
 | 8 | Reset A-B loop | KP2 |
 | 9 | Set A point | KP3 |
 | 10 | Pause and minimize | KP0 |
-| 11 | Toggle file loop | KP decimal |
-| 12 | Set B point | KP subtract |
+| 11 | Toggle file loop | F10 |
+| 12 | Set B point | F11 |
 
 Additional mappings: Ctrl+2/3 (previous/next chapter), Ctrl+4 (add favorite), Alt+4 (remove favorite). Those modifiers mean Ctrl/Alt held while using the actual side button, not keyboard number keys.
 
-The favorites removal menu uses mpv's native `mp.input.select`, not uosc. The A-B and boss key scripts use direct forced bindings. No automatic directory playlist is loaded. If Scimitar input differs due to iCUE, adjust the keyboard mappings in `input.conf`.
+Buttons 9, 11, and 12 were verified against iCUE screenshots: KP3, F10, and F11 respectively.\n\nThe favorites removal menu uses mpv's native `mp.input.select`, not uosc. The A-B and boss key scripts use direct forced bindings. No automatic directory playlist is loaded. If Scimitar input differs due to iCUE, adjust the keyboard mappings in `input.conf`.
 
 ## Notes and caveats
 
