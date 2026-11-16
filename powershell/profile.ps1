@@ -12,3 +12,5 @@ function apps-preview { & (Join-Path $WorkstationRoot 'install.ps1') }
 function apps-check { & (Join-Path $WorkstationRoot 'install.ps1') -Validate -ContinueOnError }
 function apps-install { & (Join-Path $WorkstationRoot 'install.ps1') -Install -ContinueOnError }
 function workstation-update { & (Join-Path $WorkstationRoot 'maintenance\update.ps1') @args }
+# One unobtrusive startup reminder; no commands are run automatically.
+Write-Host 'Update WinGet apps: winget upgrade --all' -ForegroundColor DarkGray
