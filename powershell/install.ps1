@@ -11,7 +11,7 @@ if (-not (Test-Path -LiteralPath $repoProfile)) { throw "Missing profile: $repoP
 # console host so PowerShell/Windows Terminal/WezTerm share the same profile.
 $destination = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'PowerShell\Microsoft.PowerShell_profile.ps1'
 $escaped = $repoProfile.Replace("'", "''")
-$loader = "# Workstation profile loader: edits belong in the Git repository.\r\n. '$escaped'\r\n"
+$loader = "# Workstation profile loader: edits belong in the Git repository.`r`n. '$escaped'`r`n"
 
 Write-Host "Repository profile: $repoProfile"
 Write-Host "Current-user profile: $destination"
