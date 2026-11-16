@@ -9,12 +9,16 @@ $env:EDITOR = 'zed'
 # Repo helpers are optional. They locate the canonical checkout when invoked,
 # and have no effect at PowerShell startup when the repository is absent.
 function Get-WorkstationRoot {
-    $candidate = Join-Path $HOME 'workstation'
-    if (-not (Test-Path -LiteralPath (Join-Path $candidate 'apps.json'))) {
-        Write-Warning "Workstation repo not found at $candidate. Clone it there or use scripts directly from your checkout."
-        return $null
+    # Prefer an explicit override, then the fresh-PC canonical path.
+    # Desktop/workstation-2 is a temporary fallback for the current workstation.
+    $candidates = @($env:WORKSTATION_ROOT, (Join-Path $HOME 'workstation'), (Join-Path $HOME 'Desktop\workstation-2'))
+    foreach ($candidate in $candidates) {
+        if ($candidate -and (Test-Path -LiteralPath (Join-Path $candidate 'apps.json'))) {
+            return $candidate
+        }
     }
-    return $candidate
+    Write-Warning 'Workstation repo not found. Set WORKSTATION_ROOT or clone to $HOME\workstation.'
+    return $null
 }
 function dots {
     $repo = Get-WorkstationRoot
