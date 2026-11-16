@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "description": "Workstation 2.0 curated Windows 11 software. 28 original IDs validated on user's PC; new IDs require validation.",
+  "description": "Workstation 2.0 curated Windows 11 software. WinGet IDs require validation on user's PC.",
   "winget": [
     {
       "name": "Vivaldi",
@@ -121,20 +121,34 @@
     {
       "name": "EarTrumpet",
       "id": "File-New-Project.EarTrumpet"
+    },
+    {
+      "name": "File Pilot",
+      "id": "Voidstar.FilePilot"
+    },
+    {
+      "name": "Directory Opus",
+      "id": "GPSoftware.DirectoryOpus"
+    },
+    {
+      "name": "PicView",
+      "id": "Ruben2776.PicView"
+    },
+    {
+      "name": "LosslessCut",
+      "id": "ch.LosslessCut"
+    },
+    {
+      "name": "Scrivener",
+      "id": "LiteratureAndLatte.Scrivener"
     }
   ],
   "verifyPackageId": [
-    "File Pilot",
-    "Directory Opus",
-    "PicView",
-    "LosslessCut",
     "Discord",
     "Battle.net",
-    "NVIDIA App",
-    "Scrivener"
+    "NVIDIA App"
   ],
   "manualOrConfiguration": [
-    "Scrivener license and installer if WinGet unavailable",
     "ModernZ for mpv (replace old uosc only after review)",
     "Revo Uninstaller Pro Portable",
     "Directory Opus license",
@@ -143,7 +157,8 @@
     "WezTerm configuration review",
     "Rio settings review",
     "PowerShell and Oh My Posh profile review",
-    "pCloud sign-in"
+    "pCloud sign-in",
+    "Scrivener license activation"
   ],
   "optionalNotAutoInstalled": [
     "Roon"
