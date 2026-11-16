@@ -2,7 +2,7 @@
 
 One Windows 11 workstation. One curated WinGet manifest. One preview-first installer.
 
-**Review branch:** `workstation-2`. `master` is intentionally unchanged until the cleanup is reviewed and tested.
+**Primary branch:** `master`. The cleaned workstation configuration and 37-package manifest are maintained here.
 
 ## Software
 
@@ -10,10 +10,10 @@ One Windows 11 workstation. One curated WinGet manifest. One preview-first insta
 
 ## Getting started
 
-Clone this branch to `$HOME\workstation` for the configuration paths below:
+Clone `master` to `$HOME\workstation` for the configuration paths below:
 
 ```powershell
-git clone --branch workstation-2 https://github.com/hedglen/workstation.git "$HOME\workstation"
+git clone --branch master https://github.com/hedglen/workstation.git "$HOME\workstation"
 cd "$HOME\workstation"
 .\install.ps1                           # Preview, makes no changes
 .\install.ps1 -Validate -ContinueOnError # Validate package IDs
@@ -42,10 +42,9 @@ No WSL, Scoop, AutoHotkey, Python toolchains, startup tweaks, or registry debloa
 
 The website is maintained separately in [hedglen/hedglen.github.io](https://github.com/hedglen/hedglen.github.io). Its 31 tracked files matched the prior workstation copy. The custom media-organizer and yt-dlp wrapper were retired. All prior content remains accessible in Git history.
 
-## Before merging
+## Verification and next steps
 
-1. Validate all 37 WinGet IDs on Windows and test installs as needed.
-2. Verify WezTerm and PowerShell configs on the actual PC. No automatic config restore yet.
-3. Review remaining Zed, Git, Corsair, and utility files.
-4. Review the branch diff, merge into `master`, and retire `workstation-2`.
-5. Rebuild mpv separately after repository cleanup.
+- All 37 WinGet package IDs passed validation; actual installs were not tested as a batch.
+- The simplified Windows-only WezTerm configuration launched successfully; the PowerShell profile has not been independently tested in a clean session.
+- Configuration restoration is still manual. Review local settings before replacing them.
+- `mpv-config/` has deliberately been preserved unchanged and is next for a ground-up review.
