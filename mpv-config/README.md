@@ -21,13 +21,33 @@ cd "$HOME\workstation\mpv-config"
 .\install.ps1 -Mode Stage      # Create independent test config on Desktop
 ```
 
-The staging script prints a folder path. Test it with the video of your choice:
+The staging script prints a folder path. **Stage is not an active installation**; Preview and Stage do not update AppData or change which config normal mpv playback uses. Test it with the video of your choice:
 
 ```powershell
 mpv --config-dir="C:\path\printed\by\staging" "D:\Media\video.mkv"
 ```
 
-After testing **ModernZ, thumbnails, subtitles, favorites, Scimitar and resume**, choose to install:
+After testing **ModernZ, thumbnails, subtitles, favorites, Scimitar and resume**, confirm the active executable and its configuration location:
+
+```powershell
+Get-Command mpv -All | Select-Object Name, Source
+Get-Item "$env:APPDATA\\mpv" -Force -ErrorAction SilentlyContinue |
+    Select-Object FullName, LinkType, Target
+Get-ChildItem "$HOME\\tools\\mpv\\portable_config" -Force -ErrorAction SilentlyContinue
+```
+
+**Critical: mpv portable-config precedence.** A `portable_config` directory or junction beside the mpv executable takes priority over `%APPDATA%\\mpv`. This caused the November 2026 regression: the first `mpv.exe` on PATH was in `%USERPROFILE%\\tools\\mpv`, and its `portable_config` junction pointed at an old workstation config. The correct ModernZ config was already present under AppData but never loaded.
+
+The installer now **warns in Preview and refuses Install** if an executable on PATH has a `portable_config` override. To fix a legacy junction, verify its target and back up anything important, then remove **only the junction**, not the destination directory. In PowerShell, for the *verified* old junction `$HOME\\tools\\mpv\\portable_config`, use:
+
+```powershell
+# Only after Get-Item confirms LinkType = Junction and the old target is known.
+cmd /c rmdir "$HOME\\tools\\mpv\\portable_config"
+```
+
+If it's a real directory rather than a junction, **do not** run the junction removal command. Rename/back it up after inspection. Never delete legacy configs recursively as a shortcut.
+
+Once the portable override is resolved, choose to install:
 
 ```powershell
 .\install.ps1 -Mode Install
@@ -77,4 +97,4 @@ Buttons 9, 11, and 12 were verified against iCUE screenshots: KP3, F10, and F11 
 - The `favorites.txt`, `volume.conf`, and `watch_later/` data files are local runtime state, not Git-tracked. The install backup can retain prior runtime state for manual migration.
 - The new audio setup decodes multichannel audio to stereo PCM; it does **not** bitstream Dolby Atmos to the Element IV.
 - No historical shader stacks, automatic HDR toggling, GIF/clip export, standalone FFmpeg, SponsorBlock, or yt-dlp integration.
-- This configuration has **not yet been integration-tested** as a whole on your PC. Only the minimal playback/ModernZ/thumbfast foundation was previously tested. Run `-Mode Stage` first.
+- This configuration was confirmed working on the existing PC in November 2026 after removing an obsolete `portable_config` junction. A **fresh PC rebuild remains untested**; run `-Mode Stage` and validate controls before installing.
