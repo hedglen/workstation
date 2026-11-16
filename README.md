@@ -1,39 +1,51 @@
-# Workstation 2.0
+# Workstation
 
-A lean, curated Windows 11 setup. **This branch is a review candidate, not yet merged into master.**
+One Windows 11 workstation. One curated WinGet manifest. One preview-first installer.
 
-## Install from a local checkout
+**Review branch:** `workstation-2`. `master` is intentionally unchanged until the cleanup is reviewed and tested.
 
-Open PowerShell 7 in the repository root:
+## Software
+
+`apps.json` is the source of truth for 37 WinGet applications, including Scrivener, EarTrumpet, Snipaste, Discord, and Battle.net. NVIDIA App, Revo Uninstaller Pro Portable, license activation, and ModernZ configuration are documented as manual steps in the manifest. Roon remains optional.
+
+## Getting started
+
+Clone this branch to `$HOME\workstation` for the configuration paths below:
 
 ```powershell
-.\install.ps1                          # Preview only (default)
-.\install.ps1 -Validate -ContinueOnError # Check exact WinGet package IDs, no installs
-.\install.ps1 -Install -ContinueOnError  # Install approved WinGet packages
+git clone --branch workstation-2 https://github.com/hedglen/workstation.git "$HOME\workstation"
+cd "$HOME\workstation"
+.\install.ps1                           # Preview, makes no changes
+.\install.ps1 -Validate -ContinueOnError # Validate package IDs
+.\install.ps1 -Install -ContinueOnError  # Install packages
+.\scripts\health.ps1                     # Read-only health checks
+.\maintenance\update.ps1                # Preview app upgrades
+.\maintenance\update.ps1 -Upgrade       # Attempt upgrades
 ```
 
-**Do not run the old `irm .../master/install.ps1 | iex` command.** The master branch still contains the legacy bootstrap. This branch's installer requires its adjacent `apps.json` file, so download or clone the branch before running.
+**No installer, updater, or configuration is automatically executed by cloning this repository.** Review scripts before running them.
 
-## What is included
+## Configurations
 
-- `apps.json`: one curated manifest, currently 30 WinGet entries, including Snipaste (`liule.Snipaste`) and EarTrumpet (`File-New-Project.EarTrumpet`).
-- Scrivener is approved, but its installer/WinGet ID and license workflow still need confirmation.
-- Eight additional apps are listed under `verifyPackageId` until installation methods are verified.
-- Manual steps include ModernZ, portable Revo, license activation, account sign-ins, and config review.
-- Roon is optional, not installed automatically.
-- Browser-based office, email, and calendar require no desktop installer.
+- `wezterm/`: Windows-only PowerShell tabs and neon theme; no WSL or Linux shell dependency.
+- `powershell/profile.ps1`: lightweight PowerShell 7 profile and Oh My Posh prompt. Copy manually after review.
+- `oh-my-posh/`: prompt theme.
+- `zed/`: editor settings and theme, retained for later review.
+- `git/.gitconfig`: lean Git defaults, retained for later review.
+- `corsair/`: preserved iCUE/Scimitar profiles and management scripts; not auto-restored.
+- `scripts/rio-doctor.ps1`: optional Rio troubleshooting, modifies local Rio settings if run.
+- `mpv-config/`: **preserved completely unchanged** until a separate, ground-up mpv review.
 
-## Safety and limitations
+No WSL, Scoop, AutoHotkey, Python toolchains, startup tweaks, or registry debloating.
 
-The installer is preview-only by default, requires WinGet, checks exact IDs, and skips packages WinGet recognizes as installed. It does not alter Windows startup, registry, privacy settings, or perform debloating. It does not restore configurations automatically. The original repository history and older files remain available on this branch for inspection, **but many legacy documents, scripts, and manifests are not part of Workstation 2.0 and must not be run**. The old `apps/winget-packages.json` and `apps/scoop-packages.json` are archival references, **not** inputs to the new installer.
+## Website and retired projects
 
-The user's original 28 WinGet IDs passed a Windows discovery check; the two newly added IDs need a new validation run. A successful validation proves discoverability, not successful installation. No installation or config migration has been tested on a clean Windows machine.
+The website is maintained separately in [hedglen/hedglen.github.io](https://github.com/hedglen/hedglen.github.io). Its 31 tracked files matched the prior workstation copy. The custom media-organizer and yt-dlp wrapper were retired. All prior content remains accessible in Git history.
 
-Never commit passwords, license keys, or private configuration data. Keep separate backups of important files.
+## Before merging
 
-## Next steps
-
-1. Validate the two new WinGet IDs on Windows and resolve remaining application installation methods.
-2. Review WezTerm, Rio, PowerShell, and mpv configs before copying any of them.
-3. Audit or archive legacy files before merging this branch into `master`.
-4. Test a fresh-machine install before publishing a one-command bootstrap.
+1. Validate all 37 WinGet IDs on Windows and test installs as needed.
+2. Verify WezTerm and PowerShell configs on the actual PC. No automatic config restore yet.
+3. Review remaining Zed, Git, Corsair, and utility files.
+4. Review the branch diff, merge into `master`, and retire `workstation-2`.
+5. Rebuild mpv separately after repository cleanup.
