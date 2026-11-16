@@ -1,4 +1,4 @@
--- Original independent A/B/reset semantics and Scimitar Num Lock compatibility.
+-- Independent A/B/reset semantics. Scimitar button 12 is mapped to F11 in iCUE.
 local function mark_a()
     local p = mp.get_property_number("time-pos")
     if not p then return end
@@ -19,7 +19,7 @@ end
 for _, key in ipairs({"F21", "KP3", "KP_PGDWN"}) do
     mp.add_forced_key_binding(key, "mark-a-" .. key, mark_a)
 end
-for _, key in ipairs({"F24", "KP_SUBTRACT"}) do
+for _, key in ipairs({"F24", "F11"}) do
     mp.add_forced_key_binding(key, "mark-b-" .. key, mark_b)
 end
 for _, key in ipairs({"F20", "KP2", "KP_DOWN"}) do
