@@ -1,0 +1,196 @@
+{
+  "schemaVersion": 2,
+  "description": "Workstation 2.0 curated Windows 11 software. WinGet IDs require validation on user's PC.",
+  "winget": [
+    {
+      "name": "Vivaldi",
+      "id": "Vivaldi.Vivaldi"
+    },
+    {
+      "name": "Firefox",
+      "id": "Mozilla.Firefox"
+    },
+    {
+      "name": "NanaZip",
+      "id": "M2Team.NanaZip"
+    },
+    {
+      "name": "SumatraPDF",
+      "id": "SumatraPDF.SumatraPDF"
+    },
+    {
+      "name": "Zed",
+      "id": "ZedIndustries.Zed"
+    },
+    {
+      "name": "PasteBar",
+      "id": "PasteBar.PasteBar"
+    },
+    {
+      "name": "Fluent Search",
+      "id": "BlastApps.FluentSearch"
+    },
+    {
+      "name": "Proton Pass",
+      "id": "Proton.ProtonPass"
+    },
+    {
+      "name": "UpNote",
+      "id": "UpNote.UpNote"
+    },
+    {
+      "name": "mpv",
+      "id": "shinchiro.mpv"
+    },
+    {
+      "name": "Qobuz",
+      "id": "Qobuz.Qobuz"
+    },
+    {
+      "name": "HandBrake",
+      "id": "HandBrake.HandBrake"
+    },
+    {
+      "name": "Internet Download Manager",
+      "id": "Tonec.InternetDownloadManager"
+    },
+    {
+      "name": "pCloud Drive",
+      "id": "pCloudAG.pCloudDrive"
+    },
+    {
+      "name": "WezTerm",
+      "id": "wez.wezterm"
+    },
+    {
+      "name": "Rio",
+      "id": "raphamorim.rio"
+    },
+    {
+      "name": "PowerShell 7",
+      "id": "Microsoft.PowerShell"
+    },
+    {
+      "name": "Oh My Posh",
+      "id": "JanDeDobbeleer.OhMyPosh"
+    },
+    {
+      "name": "Git for Windows",
+      "id": "Git.Git"
+    },
+    {
+      "name": "StartAllBack",
+      "id": "StartIsBack.StartAllBack"
+    },
+    {
+      "name": "HWiNFO64",
+      "id": "REALiX.HWiNFO"
+    },
+    {
+      "name": "Proton VPN",
+      "id": "Proton.ProtonVPN"
+    },
+    {
+      "name": "Signal",
+      "id": "OpenWhisperSystems.Signal"
+    },
+    {
+      "name": "Steam",
+      "id": "Valve.Steam"
+    },
+    {
+      "name": "Corsair iCUE",
+      "id": "Corsair.iCUE.5"
+    },
+    {
+      "name": "Calibre",
+      "id": "calibre.calibre"
+    },
+    {
+      "name": "MediaInfo GUI",
+      "id": "MediaArea.MediaInfo.GUI"
+    },
+    {
+      "name": "UniGetUI",
+      "id": "Devolutions.UniGetUI"
+    },
+    {
+      "name": "Snipaste",
+      "id": "liule.Snipaste"
+    },
+    {
+      "name": "EarTrumpet",
+      "id": "File-New-Project.EarTrumpet"
+    },
+    {
+      "name": "File Pilot",
+      "id": "Voidstar.FilePilot"
+    },
+    {
+      "name": "Directory Opus",
+      "id": "GPSoftware.DirectoryOpus"
+    },
+    {
+      "name": "PicView",
+      "id": "Ruben2776.PicView"
+    },
+    {
+      "name": "LosslessCut",
+      "id": "ch.LosslessCut"
+    },
+    {
+      "name": "Scrivener",
+      "id": "LiteratureAndLatte.Scrivener"
+    },
+    {
+      "name": "Discord",
+      "id": "Discord.Discord"
+    },
+    {
+      "name": "Battle.net",
+      "id": "Blizzard.BattleNet"
+    }
+  ],
+  "verifyPackageId": [],
+  "manualOrConfiguration": [
+    "ModernZ for mpv (replace old uosc only after review)",
+    "Revo Uninstaller Pro Portable",
+    "Directory Opus license",
+    "StartAllBack license",
+    "IDM license",
+    "WezTerm configuration review",
+    "Rio settings review",
+    "PowerShell and Oh My Posh profile review",
+    "pCloud sign-in",
+    "Scrivener license activation",
+    "NVIDIA App: install manually from NVIDIA official website; do not add Chocolatey solely for this"
+  ],
+  "optionalNotAutoInstalled": [
+    "Roon"
+  ],
+  "browserOnly": [
+    "Proton Mail",
+    "Google Docs",
+    "Google Sheets",
+    "Google Slides",
+    "Calendar"
+  ],
+  "excluded": [
+    "Adobe Creative Cloud",
+    "Lossless Scaling",
+    "YoloMouse",
+    "ScreenToGif",
+    "Audirvana",
+    "Aethra",
+    "WSL",
+    "Linux distribution",
+    "PowerToys",
+    "TranslucentTB",
+    "Windhawk",
+    "LibreOffice",
+    "AutoHotkey",
+    "Standalone FFmpeg",
+    "Development SDKs",
+    "Dedicated backup software"
+  ]
+}
