@@ -1,16 +1,40 @@
-# Workstation PowerShell 7 profile. Loaded from this repository via a tiny user-profile loader.
-# No startup banners, WSL, Scoop, Python projects, or terminal-clearing side effects.
-$WorkstationRoot = Split-Path -Parent $PSScriptRoot
-$theme = Join-Path $WorkstationRoot 'oh-my-posh\hedglab.omp.json'
-if ((Get-Command oh-my-posh -ErrorAction SilentlyContinue) -and (Test-Path -LiteralPath $theme)) {
-    oh-my-posh init pwsh --config $theme | Invoke-Expression
+# Workstation PowerShell 7 profile. Installed as an independent user-profile copy.
+# No dot-sourcing from Git; no dependency on where the repository is checked out.
+$workstationTheme = Join-Path $PSScriptRoot 'Workstation\hedglab.omp.json'
+if ((Get-Command oh-my-posh -ErrorAction SilentlyContinue) -and (Test-Path -LiteralPath $workstationTheme)) {
+    oh-my-posh init pwsh --config $workstationTheme | Invoke-Expression
 }
 $env:EDITOR = 'zed'
-function dots { Set-Location $WorkstationRoot }
+
+# Repo helpers are optional. They locate the canonical checkout when invoked,
+# and have no effect at PowerShell startup when the repository is absent.
+function Get-WorkstationRoot {
+    $candidate = Join-Path $HOME 'workstation'
+    if (-not (Test-Path -LiteralPath (Join-Path $candidate 'apps.json'))) {
+        Write-Warning "Workstation repo not found at $candidate. Clone it there or use scripts directly from your checkout."
+        return $null
+    }
+    return $candidate
+}
+function dots {
+    $repo = Get-WorkstationRoot
+    if ($repo) { Set-Location $repo }
+}
 function edit { & zed @args }
-function apps-preview { & (Join-Path $WorkstationRoot 'install.ps1') }
-function apps-check { & (Join-Path $WorkstationRoot 'install.ps1') -Validate -ContinueOnError }
-function apps-install { & (Join-Path $WorkstationRoot 'install.ps1') -Install -ContinueOnError }
-function workstation-update { & (Join-Path $WorkstationRoot 'maintenance\update.ps1') @args }
-# One unobtrusive startup reminder; no commands are run automatically.
+function apps-preview {
+    $repo = Get-WorkstationRoot
+    if ($repo) { & (Join-Path $repo 'install.ps1') }
+}
+function apps-check {
+    $repo = Get-WorkstationRoot
+    if ($repo) { & (Join-Path $repo 'install.ps1') -Validate -ContinueOnError }
+}
+function apps-install {
+    $repo = Get-WorkstationRoot
+    if ($repo) { & (Join-Path $repo 'install.ps1') -Install -ContinueOnError }
+}
+function workstation-update {
+    $repo = Get-WorkstationRoot
+    if ($repo) { & (Join-Path $repo 'maintenance\update.ps1') @args }
+}
 Write-Host 'Update WinGet apps: winget upgrade --all' -ForegroundColor DarkGray
