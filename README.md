@@ -28,7 +28,7 @@ cd "$HOME\workstation"
 ## Configurations
 
 - `wezterm/`: Windows-only PowerShell tabs and neon theme; no WSL or Linux shell dependency.
-- `powershell/profile.ps1`: lightweight PowerShell 7 profile and Oh My Posh prompt. Copy manually after review.
+- `powershell/profile.ps1`: lightweight PowerShell 7 profile with Oh My Posh. Run `powershell/install.ps1` in preview mode first, then `-Install` to back up your existing PowerShell profile and install a loader pointing to this checkout.
 - `oh-my-posh/`: prompt theme.
 - `zed/`: editor settings and theme, retained for later review.
 - `git/.gitconfig`: lean Git defaults, retained for later review.
@@ -46,5 +46,16 @@ The website is maintained separately in [hedglen/hedglen.github.io](https://gith
 
 - All 37 WinGet package IDs passed validation; actual installs were not tested as a batch.
 - The simplified Windows-only WezTerm configuration launched successfully; the PowerShell profile has not been independently tested in a clean session.
-- Configuration restoration is still manual. Review local settings before replacing them.
+- PowerShell profile activation is opt-in using a backup-first loader; other configuration restoration remains manual.
 - mpv's baseline 4K HDR playback and ModernZ/thumbfast were tested independently; the full rebuilt configuration still needs a local staged integration test before installation.
+
+## PowerShell profile setup
+
+From PowerShell 7, while inside your checked-out workstation repository:
+
+```powershell
+.\powershell\install.ps1           # Preview; leaves current profile unchanged
+.\powershell\install.ps1 -Install  # Backup existing profile and install loader
+```
+
+Open a **new** PowerShell 7 window afterward. Your existing prompt theme is preserved, but the obsolete `orgmed`, `ytdl`, transcription, Scoop, and WSL startup helpers are not included. The installer never deletes the old profile; its backup remains alongside the new loader. Avoid moving your repo after installation without rerunning the installer.

@@ -1,8 +1,8 @@
-# Workstation profile: Windows PowerShell 7, Zed, Oh My Posh.
-# To use: copy to $HOME\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
-$WorkstationRoot = Join-Path $HOME 'workstation'
+# Workstation PowerShell 7 profile. Loaded from this repository via a tiny user-profile loader.
+# No startup banners, WSL, Scoop, Python projects, or terminal-clearing side effects.
+$WorkstationRoot = Split-Path -Parent $PSScriptRoot
 $theme = Join-Path $WorkstationRoot 'oh-my-posh\hedglab.omp.json'
-if ((Get-Command oh-my-posh -ErrorAction SilentlyContinue) -and (Test-Path $theme)) {
+if ((Get-Command oh-my-posh -ErrorAction SilentlyContinue) -and (Test-Path -LiteralPath $theme)) {
     oh-my-posh init pwsh --config $theme | Invoke-Expression
 }
 $env:EDITOR = 'zed'
