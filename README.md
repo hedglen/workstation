@@ -26,14 +26,14 @@ Use **PowerShell 7** once WinGet and Git are available. Windows PowerShell 5.1 c
 
    App installs are opt-in; the repository does not install anything when cloned. WinGet matching may vary with installer type, Store registration or preexisting installs. Inspect results before rerunning.
 
-4. Install the **PowerShell 7** prompt loader after the repo is at its final path:
+4. Install the **standalone PowerShell 7 profile and Oh My Posh theme**. These are copied into your user PowerShell folder, not linked to the repository:
 
    ```powershell
    .\powershell\install.ps1           # Preview
-   .\powershell\install.ps1 -Install  # Backup current profile and install loader
+   .\powershell\install.ps1 -Install  # Back up old files; copy profile and theme
    ```
 
-   Start a **new PowerShell 7** window afterward. The profile relies on files in this repo, so moving the checkout later requires rerunning the loader installation.
+   Start a **new PowerShell 7** window afterward. The installed profile and theme work even when GitHub is unavailable or the repository moves. Optional `dots` / `apps-*` commands expect the canonical `$HOME\workstation` checkout; the prompt itself does not. To apply later profile/theme changes from GitHub, rerun `powershell/install.ps1 -Install` after pulling.
 
 5. Configure WezTerm, Rio, Zed, Git, and Corsair iCUE profiles after reviewing their folders. Configs are not automatically linked or restored by the package installer. See **Configurations** below.
 
@@ -83,7 +83,7 @@ Use **PowerShell 7** once WinGet and Git are available. Windows PowerShell 5.1 c
 | Folder | Purpose |
 | --- | --- |
 | `wezterm/` | Windows-only WezTerm appearance and tabs |
-| `powershell/` and `oh-my-posh/` | Colorful PowerShell 7 prompt and backup-first loader |
+| `powershell/` and `oh-my-posh/` | Colorful PowerShell 7 prompt and theme; backup-first **independent file copies**, no loader/link |
 | `mpv-config/` | ModernZ, thumbfast, HDR/GPU playback, Scimitar controls and playback scripts |
 | `corsair/` | iCUE/Scimitar profile backups, reviewed/restored manually |
 | `zed/` | Editor preferences |
@@ -98,6 +98,8 @@ Use **PowerShell 7** once WinGet and Git are available. Windows PowerShell 5.1 c
 - The mpv installer downloads pinned ModernZ/thumbfast assets from their upstream repositories, so network access is required for Stage/Install.
 - Existing local mpv favorites and watch-later state are runtime data, not tracked in Git. Fresh PCs do not inherit them without a separate personal backup.
 - A successful WinGet binary install does not mean app configuration was restored. Check each application individually.
+- The root `install.ps1` only previews, validates, or installs manifest WinGet applications. It does **not** create symlinks/junctions, change PATH, configure PowerShell or mpv, restore Corsair profiles, modify the registry, or run troubleshooting scripts.
+- `powershell/install.ps1 -Install` only copies two files with backups to the current user's PowerShell profile directory. `mpv-config/install.ps1 -Mode Install` independently updates AppData with backup/override checks. Corsair restore and Rio troubleshooting are separate opt-in actions; `scripts/rio-doctor.ps1` is preview-only unless `-Apply` is specified.
 - The website lives separately at [hedglen/hedglen.github.io](https://github.com/hedglen/hedglen.github.io). Retired organizer and yt-dlp wrapper content remains in Git history, not the current workstation setup.
 
 ## Maintenance
