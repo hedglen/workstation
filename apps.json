@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "description": "Workstation 2.0 curated Windows 11 software. WinGet IDs require validation on user's PC.",
+  "description": "Workstation 2.0: curated 37 WinGet applications for Windows 11; validate IDs and inspect local installs.",
   "winget": [
     {
       "name": "Vivaldi",
@@ -153,7 +153,7 @@
   ],
   "verifyPackageId": [],
   "manualOrConfiguration": [
-    "ModernZ for mpv (replace old uosc only after review)",
+    "mpv ModernZ: after installing shinchiro.mpv run mpv-config/install.ps1 -Mode Diagnose, -Mode Stage, then -Mode Install. Diagnose old portable_config overrides first.",
     "Revo Uninstaller Pro Portable",
     "Directory Opus license",
     "StartAllBack license",
@@ -166,7 +166,10 @@
     "NVIDIA App: install manually from NVIDIA official website; do not add Chocolatey solely for this"
   ],
   "optionalNotAutoInstalled": [
-    "Roon"
+    "Roon",
+    "Adobe Creative Cloud and installed Adobe applications (keep, manual)",
+    "Lossless Scaling (keep, Steam-managed)",
+    "YoloMouse (keep, Steam-managed)"
   ],
   "browserOnly": [
     "Proton Mail",
@@ -176,9 +179,6 @@
     "Calendar"
   ],
   "excluded": [
-    "Adobe Creative Cloud",
-    "Lossless Scaling",
-    "YoloMouse",
     "ScreenToGif",
     "Audirvana",
     "Aethra",
