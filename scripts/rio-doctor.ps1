@@ -12,7 +12,8 @@
 [CmdletBinding()]
 param(
     # Seconds to let Rio live before deciding it survived startup
-    [int]$SurviveSeconds = 5
+    [int]$SurviveSeconds = 5,
+    [switch]$Apply
 )
 
 $ErrorActionPreference = 'Stop'
@@ -42,6 +43,16 @@ if (-not $rio) {
     exit 1
 }
 Write-OK "Found: $rio"
+
+# Preview-first: do not stop Rio, create files or change settings unless opted in.
+if (-not $Apply) {
+    Write-Host 'PREVIEW ONLY. No Rio processes or settings have been changed.' -ForegroundColor Yellow
+    Write-Host "Config location: $(Join-Path $env:LOCALAPPDATA 'rio\config.toml')"
+    Write-Host 'With -Apply, this tool backs up the current config, closes Rio,'
+    Write-Host 'then tests GPU renderers, rewriting the Rio config during testing.'
+    Write-Host 'Use: .\scripts\rio-doctor.ps1 -Apply'
+    exit 0
+}
 
 # --- Prepare config dir, back up whatever is there now ----------------------
 $configDir  = Join-Path $env:LOCALAPPDATA 'rio'
