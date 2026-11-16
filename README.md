@@ -34,7 +34,7 @@ cd "$HOME\workstation"
 - `git/.gitconfig`: lean Git defaults, retained for later review.
 - `corsair/`: preserved iCUE/Scimitar profiles and management scripts; not auto-restored.
 - `scripts/rio-doctor.ps1`: optional Rio troubleshooting, modifies local Rio settings if run.
-- `mpv-config/`: **preserved completely unchanged** until a separate, ground-up mpv review.
+- `mpv-config/`: rebuilt minimal ModernZ + thumbfast configuration, original Scimitar bindings, preview-first staging installer. See [`mpv-config/README.md`](mpv-config/README.md).
 
 No WSL, Scoop, AutoHotkey, Python toolchains, startup tweaks, or registry debloating.
 
@@ -47,4 +47,4 @@ The website is maintained separately in [hedglen/hedglen.github.io](https://gith
 - All 37 WinGet package IDs passed validation; actual installs were not tested as a batch.
 - The simplified Windows-only WezTerm configuration launched successfully; the PowerShell profile has not been independently tested in a clean session.
 - Configuration restoration is still manual. Review local settings before replacing them.
-- `mpv-config/` has deliberately been preserved unchanged and is next for a ground-up review.
+- mpv's baseline 4K HDR playback and ModernZ/thumbfast were tested independently; the full rebuilt configuration still needs a local staged integration test before installation.

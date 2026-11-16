@@ -1,127 +1,54 @@
--- favorites.lua
--- F16   (btn 4)            → open favorites as playlist
--- Ctrl+F16  (btn 4)        → add current file to favorites
--- Alt+F16   (btn 4)        → open remove-favorites menu
-
-local mp    = require 'mp'
-local utils = require 'mp.utils'
-
-local fav_file = mp.command_native({"expand-path", "~~/favorites.txt"})
-
--- ── helpers ──────────────────────────────────────────────────────────────────
-
-local function read_favorites()
-    local lines = {}
-    local f = io.open(fav_file, "r")
-    if f then
-        for line in f:lines() do
-            if line ~= "" then table.insert(lines, line) end
-        end
-        f:close()
-    end
-    return lines
-end
-
-local function write_favorites(lines)
-    local f = io.open(fav_file, "w")
-    if f then
-        for _, line in ipairs(lines) do f:write(line .. "\n") end
-        f:close()
-        return true
-    end
-    return false
-end
-
--- ── add ──────────────────────────────────────────────────────────────────────
-
-local function add_favorite()
-    local path = mp.get_property("path")
-    if not path then mp.osd_message("No file playing"); return end
-
-    local lines = read_favorites()
-    for _, line in ipairs(lines) do
-        if line == path then mp.osd_message("Already in favorites"); return end
-    end
-
-    table.insert(lines, path)
-    if write_favorites(lines) then
-        mp.osd_message("Added to favorites: " .. (mp.get_property("filename") or path))
-    else
-        mp.osd_message("Error: could not write favorites file")
-    end
-end
-
--- ── open as playlist ─────────────────────────────────────────────────────────
-
-local function open_favorites()
-    local f = io.open(fav_file, "r")
-    if not f then
-        mp.osd_message("Favorites empty — Ctrl+F16 to add current file")
-        return
+-- Favorited paths stored locally in mpv's active config, not in Git.
+-- ModernZ-compatible removal uses mpv's built-in selection interface.
+local input = require "mp.input"
+local file = mp.command_native({"expand-path", "~~/favorites.txt"})
+local function read()
+    local a, f = {}, io.open(file, "r")
+    if not f then return a end
+    for line in f:lines() do
+        if line ~= "" then table.insert(a, line) end
     end
     f:close()
-    -- Tell autoload this is a manual playlist so it doesn't override it
-    mp.commandv("script-message-to", "autoload", "autoload-reset")
-    mp.commandv("loadlist", fav_file, "replace")
-    mp.osd_message("Loaded favorites")
+    return a
 end
-
--- ── remove (called by uosc menu selection) ───────────────────────────────────
-
-local function remove_favorite(path)
-    if not path or path == "" then return end
-    local lines = read_favorites()
-    local new_lines = {}
-    local removed = false
-    for _, line in ipairs(lines) do
-        if line == path then
-            removed = true
-        else
-            table.insert(new_lines, line)
-        end
-    end
-    if removed and write_favorites(new_lines) then
-        local name = path:match("[^\\/]+$") or path
-        mp.osd_message("Removed from favorites:\n" .. name, 3)
-    end
+local function write(a)
+    local f = io.open(file, "w")
+    if not f then mp.osd_message("Favorites: unable to write file"); return false end
+    for _, p in ipairs(a) do f:write(p, "\n") end
+    f:close()
+    return true
 end
-
--- ── remove menu ──────────────────────────────────────────────────────────────
-
-local function remove_favorites_menu()
-    local lines = read_favorites()
-    if #lines == 0 then
-        mp.osd_message("No favorites to remove")
-        return
-    end
-
-    local items = {}
-    for _, path in ipairs(lines) do
-        local name = path:match("[^\\/]+$") or path
-        table.insert(items, {
-            title = name,
-            hint  = path,
-            value = {"script-message-to", "favorites", "remove-favorite", path},
-        })
-    end
-
-    local menu = {
-        type  = "menu",
-        title = "Remove Favorite",
-        items = items,
-    }
-
-    mp.commandv("script-message-to", "uosc", "open-menu",
-        utils.format_json(menu))
+local function add()
+    local p = mp.get_property("path")
+    if not p or p == "" then return end
+    local a = read()
+    for _, v in ipairs(a) do if v == p then mp.osd_message("Already a favorite"); return end end
+    table.insert(a, p)
+    if write(a) then mp.osd_message("Added favorite") end
 end
-
--- ── bindings ─────────────────────────────────────────────────────────────────
-
-mp.add_key_binding(nil, "favorites-open",          open_favorites)
-mp.add_key_binding(nil, "favorites-add",           add_favorite)
-mp.add_key_binding(nil, "favorites-remove-menu",   remove_favorites_menu)
-
-mp.register_script_message("favorites-open",        open_favorites)
-mp.register_script_message("favorites-add",         add_favorite)
-mp.register_script_message("favorites-remove-menu", remove_favorites_menu)
-mp.register_script_message("remove-favorite",       remove_favorite)
+local function open()
+    local a = read()
+    if #a == 0 then mp.osd_message("No favorites yet"); return end
+    -- This playlist is explicit (Scimitar button 4), not automatic folder scanning.
+    mp.commandv("loadlist", file, "replace")
+end
+local function remove()
+    local a = read()
+    if #a == 0 then mp.osd_message("No favorites to remove"); return end
+    local labels = {}
+    for i, p in ipairs(a) do
+        labels[i] = p:match("[^/\\]+$") or p
+    end
+    input.select({
+        prompt = "Remove favorite:",
+        items = labels,
+        submit = function(index)
+            if not index or not a[index] then return end
+            table.remove(a, index)
+            if write(a) then mp.osd_message("Removed favorite") end
+        end,
+    })
+end
+mp.register_script_message("favorites-open", open)
+mp.register_script_message("favorites-add", add)
+mp.register_script_message("favorites-remove-menu", remove)

@@ -1,9 +1,0 @@
-* text=auto
-*.glsl text eol=lf
-*.conf text eol=lf
-*.ps1 text eol=crlf
-*.bat text eol=crlf
-*.json text eol=lf
-*.md text eol=lf
-*.sh text eol=lf
-*.lua text eol=lf
