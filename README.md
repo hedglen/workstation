@@ -1,61 +1,111 @@
-# Workstation
+# Workstation 2.0
 
-One Windows 11 workstation. One curated WinGet manifest. One preview-first installer.
+A lean, repeatable Windows 11 setup. **One repository, one canonical branch (`master`), one curated 37-app WinGet manifest.** No WSL, no mandatory Scoop, no automatic system debloating.
 
-**Primary branch:** `master`. The cleaned workstation configuration and 37-package manifest are maintained here.
+## Fresh Windows installation: do this in order
 
-## Software
+Use **PowerShell 7** once WinGet and Git are available. Windows PowerShell 5.1 can bootstrap Git, but the configuration scripts target PowerShell 7.
 
-`apps.json` is the source of truth for 37 WinGet applications, including Scrivener, EarTrumpet, Snipaste, Discord, and Battle.net. NVIDIA App, Revo Uninstaller Pro Portable, license activation, and ModernZ configuration are documented as manual steps in the manifest. Roon remains optional.
+1. Install and update Windows 11, NVIDIA GPU driver and essential hardware drivers. Ensure Microsoft App Installer / WinGet is present.
+2. Install **Git for Windows** and **PowerShell 7** if necessary, then clone **to a single canonical path**:
 
-## Getting started
+   ```powershell
+   git clone --branch master https://github.com/hedglen/workstation.git "$HOME\workstation"
+   Set-Location "$HOME\workstation"
+   ```
 
-Clone `master` to `$HOME\workstation` for the configuration paths below:
+   If that directory already exists, use `git -C "$HOME\workstation" pull --ff-only origin master` instead. Do **not** create additional `workstation-2` copies or legacy `$HOME\tools\mpv\portable_config` junctions.
 
-```powershell
-git clone --branch master https://github.com/hedglen/workstation.git "$HOME\workstation"
-cd "$HOME\workstation"
-.\install.ps1                           # Preview, makes no changes
-.\install.ps1 -Validate -ContinueOnError # Validate package IDs
-.\install.ps1 -Install -ContinueOnError  # Install packages
-.\scripts\health.ps1                     # Read-only health checks
-.\maintenance\update.ps1                # Preview app upgrades
-.\maintenance\update.ps1 -Upgrade       # Attempt upgrades
-```
+3. Check the software manifest, then install only the 37 curated entries:
 
-**No installer, updater, or configuration is automatically executed by cloning this repository.** Review scripts before running them.
+   ```powershell
+   .\install.ps1                            # Preview, read-only
+   .\install.ps1 -Validate -ContinueOnError # Check WinGet IDs
+   .\install.ps1 -Install -ContinueOnError  # Perform installs
+   ```
+
+   App installs are opt-in; the repository does not install anything when cloned. WinGet matching may vary with installer type, Store registration or preexisting installs. Inspect results before rerunning.
+
+4. Install the **PowerShell 7** prompt loader after the repo is at its final path:
+
+   ```powershell
+   .\powershell\install.ps1           # Preview
+   .\powershell\install.ps1 -Install  # Backup current profile and install loader
+   ```
+
+   Start a **new PowerShell 7** window afterward. The profile relies on files in this repo, so moving the checkout later requires rerunning the loader installation.
+
+5. Configure WezTerm, Rio, Zed, Git, and Corsair iCUE profiles after reviewing their folders. Configs are not automatically linked or restored by the package installer. See **Configurations** below.
+
+6. **Set up mpv as a separate, required configuration step.** WinGet installs the player binary, **not ModernZ**. To prevent a recurrence of the November 2026 old-player incident:
+
+   ```powershell
+   Set-Location "$HOME\workstation\mpv-config"
+   .\install.ps1 -Mode Diagnose  # Read-only. Checks mpv locations and portable overrides
+   .\install.ps1                 # Preview, no changes
+   .\install.ps1 -Mode Stage     # Downloads an independent Desktop test config
+   ```
+
+   Test with a local video using the path printed by Stage:
+
+   ```powershell
+   mpv --config-dir="C:\path\to\mpv-modernz-test-folder" "D:\path\to\video.mkv"
+   ```
+
+   When ModernZ, thumbnails, subtitles and Scimitar buttons work, and Diagnose finds no legacy `portable_config` beside the mpv executable:
+
+   ```powershell
+   .\install.ps1 -Mode Install   # Backs up old AppData config and activates ModernZ
+   .\install.ps1 -Mode Diagnose  # Confirm executable and configuration paths
+   ```
+
+   **Do not stop after Preview or Stage**: neither makes the normal mpv launch use ModernZ. The installer refuses to overwrite AppData if a portable override is detected. It preserves local favorites, saved volume, and watch-later state on upgrades. Read [mpv's full troubleshooting guide](mpv-config/README.md) before removing any legacy junction; never delete linked target directories as a shortcut.
+
+7. Check repository integrity and preview application maintenance:
+
+   ```powershell
+   Set-Location "$HOME\workstation"
+   .\scripts\health.ps1
+   .\maintenance\update.ps1           # Preview only
+   # .\maintenance\update.ps1 -Upgrade # Opt-in upgrades
+   ```
+
+## Software policy
+
+- **Curated WinGet applications:** The 37 exact IDs in [apps.json](apps.json) are the rebuild baseline.
+- **Keep as manual/Steam-managed exceptions:** Adobe Creative Cloud and existing Adobe applications, Lossless Scaling, YoloMouse, NVIDIA App, and Revo Uninstaller Pro Portable.
+- **Optional, not automatically installed:** Roon. Existing Scoop command-line tools are under review, not a fresh-PC requirement.
+- **Not in the rebuild:** WSL, Ubuntu, Visual Studio/Cursor/Windsurf toolchains, standalone Python/Node/.NET SDKs, PowerToys, old media players and legacy portable mpv configurations.
+- **Do not blindly uninstall:** NVIDIA/Corsair/JDS drivers, Microsoft VC++ and .NET runtimes, Microsoft Store frameworks, Steam games and anti-cheat components.
 
 ## Configurations
 
-- `wezterm/`: Windows-only PowerShell tabs and neon theme; no WSL or Linux shell dependency.
-- `powershell/profile.ps1`: lightweight PowerShell 7 profile with Oh My Posh. Run `powershell/install.ps1` in preview mode first, then `-Install` to back up your existing PowerShell profile and install a loader pointing to this checkout.
-- `oh-my-posh/`: prompt theme.
-- `zed/`: editor settings and theme, retained for later review.
-- `git/.gitconfig`: lean Git defaults, retained for later review.
-- `corsair/`: preserved iCUE/Scimitar profiles and management scripts; not auto-restored.
-- `scripts/rio-doctor.ps1`: optional Rio troubleshooting, modifies local Rio settings if run.
-- `mpv-config/`: rebuilt minimal ModernZ + thumbfast configuration, original Scimitar bindings, preview-first staging installer. See [`mpv-config/README.md`](mpv-config/README.md).
+| Folder | Purpose |
+| --- | --- |
+| `wezterm/` | Windows-only WezTerm appearance and tabs |
+| `powershell/` and `oh-my-posh/` | Colorful PowerShell 7 prompt and backup-first loader |
+| `mpv-config/` | ModernZ, thumbfast, HDR/GPU playback, Scimitar controls and playback scripts |
+| `corsair/` | iCUE/Scimitar profile backups, reviewed/restored manually |
+| `zed/` | Editor preferences |
+| `git/` | Git defaults |
+| `maintenance/` | Preview-first app upgrades |
+| `scripts/` | Health checks and optional diagnostics |
 
-No WSL, Scoop, AutoHotkey, Python toolchains, startup tweaks, or registry debloating.
+## Verification and limitations
 
-## Website and retired projects
+- All 37 manifest IDs previously passed WinGet validation, but a fresh-PC end-to-end install has **not** been tested.
+- A fully working mpv ModernZ/thumbfast configuration was confirmed on the existing Windows PC in November 2026 after removing an obsolete junction. A **fresh-PC build remains untested**.
+- The mpv installer downloads pinned ModernZ/thumbfast assets from their upstream repositories, so network access is required for Stage/Install.
+- Existing local mpv favorites and watch-later state are runtime data, not tracked in Git. Fresh PCs do not inherit them without a separate personal backup.
+- A successful WinGet binary install does not mean app configuration was restored. Check each application individually.
+- The website lives separately at [hedglen/hedglen.github.io](https://github.com/hedglen/hedglen.github.io). Retired organizer and yt-dlp wrapper content remains in Git history, not the current workstation setup.
 
-The website is maintained separately in [hedglen/hedglen.github.io](https://github.com/hedglen/hedglen.github.io). Its 31 tracked files matched the prior workstation copy. The custom media-organizer and yt-dlp wrapper were retired. All prior content remains accessible in Git history.
+## Maintenance
 
-## Verification and next steps
-
-- All 37 WinGet package IDs passed validation; actual installs were not tested as a batch.
-- The simplified Windows-only WezTerm configuration launched successfully; the PowerShell profile has not been independently tested in a clean session.
-- PowerShell profile activation is opt-in using a backup-first loader; other configuration restoration remains manual.
-- mpv's baseline 4K HDR playback and ModernZ/thumbfast were tested independently; the full rebuilt configuration still needs a local staged integration test before installation.
-
-## PowerShell profile setup
-
-From PowerShell 7, while inside your checked-out workstation repository:
+Update your canonical local checkout with:
 
 ```powershell
-.\powershell\install.ps1           # Preview; leaves current profile unchanged
-.\powershell\install.ps1 -Install  # Backup existing profile and install loader
+git -C "$HOME\workstation" pull --ff-only origin master
 ```
 
-Open a **new** PowerShell 7 window afterward. Your existing prompt theme is preserved, but the obsolete `orgmed`, `ytdl`, transcription, Scoop, and WSL startup helpers are not included. The installer never deletes the old profile; its backup remains alongside the new loader. Avoid moving your repo after installation without rerunning the installer.
+All setup scripts are designed to be **preview-first**. No registry debloating, forced file associations, automatic driver deletion, or destructive app cleanup.
