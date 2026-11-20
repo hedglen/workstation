@@ -1,4 +1,4 @@
-# Preview-first Workstation 2.0 maintenance.
+# Preview-first Workstation maintenance.
 [CmdletBinding()]
 param([switch]$Upgrade, [switch]$ContinueOnError)
 $ErrorActionPreference = 'Stop'
