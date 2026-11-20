@@ -1,4 +1,4 @@
-# Workstation 2.0
+# Workstation
 
 A lean, repeatable Windows 11 setup. **One repository, one canonical branch (`master`), one curated 37-app WinGet manifest.** No WSL, no mandatory Scoop, no automatic system debloating.
 
@@ -14,7 +14,7 @@ Use **PowerShell 7** once WinGet and Git are available. Windows PowerShell 5.1 c
    Set-Location "$HOME\workstation"
    ```
 
-   If that directory already exists, use `git -C "$HOME\workstation" pull --ff-only origin master` instead. Do **not** create additional `workstation-2` copies or legacy `$HOME\tools\mpv\portable_config` junctions.
+   If that directory already exists, use `git -C "$HOME\workstation" pull --ff-only origin master` instead. Use one working checkout; do not create configuration junctions or symlinks pointing into it.
 
 3. Check the software manifest, then install only the 37 curated entries:
 
@@ -37,7 +37,7 @@ Use **PowerShell 7** once WinGet and Git are available. Windows PowerShell 5.1 c
 
 5. Configure WezTerm, Rio, Zed, Git, and Corsair iCUE profiles after reviewing their folders. Configs are not automatically linked or restored by the package installer. See **Configurations** below.
 
-6. **Set up mpv as a separate, required configuration step.** WinGet installs the player binary, **not ModernZ**. To prevent a recurrence of the November 2026 old-player incident:
+6. **Set up mpv as a separate, required configuration step.** WinGet installs the player binary, **not ModernZ**. For an independent configuration that does not depend on the Git repository:
 
    ```powershell
    Set-Location "$HOME\workstation\mpv-config"
@@ -75,7 +75,7 @@ Use **PowerShell 7** once WinGet and Git are available. Windows PowerShell 5.1 c
 - **Curated WinGet applications:** The 37 exact IDs in [apps.json](apps.json) are the rebuild baseline.
 - **Keep as manual/Steam-managed exceptions:** Adobe Creative Cloud and existing Adobe applications, Lossless Scaling, YoloMouse, NVIDIA App, and Revo Uninstaller Pro Portable.
 - **Optional, not automatically installed:** Roon. Existing Scoop command-line tools are under review, not a fresh-PC requirement.
-- **Not in the rebuild:** WSL, Ubuntu, Visual Studio/Cursor/Windsurf toolchains, standalone Python/Node/.NET SDKs, PowerToys, old media players and legacy portable mpv configurations.
+- **Not in the rebuild:** WSL, Ubuntu, Visual Studio/Cursor/Windsurf toolchains, standalone Python/Node/.NET SDKs, PowerToys, additional media players, and portable mpv overrides.
 - **Do not blindly uninstall:** NVIDIA/Corsair/JDS drivers, Microsoft VC++ and .NET runtimes, Microsoft Store frameworks, Steam games and anti-cheat components.
 
 ## Configurations
@@ -94,13 +94,13 @@ Use **PowerShell 7** once WinGet and Git are available. Windows PowerShell 5.1 c
 ## Verification and limitations
 
 - All 37 manifest IDs previously passed WinGet validation, but a fresh-PC end-to-end install has **not** been tested.
-- A fully working mpv ModernZ/thumbfast configuration was confirmed on the existing Windows PC in November 2026 after removing an obsolete junction. A **fresh-PC build remains untested**.
+- mpv ModernZ/thumbfast is working on the current Windows PC. A **fresh-PC build remains untested**.
 - The mpv installer downloads pinned ModernZ/thumbfast assets from their upstream repositories, so network access is required for Stage/Install.
 - Existing local mpv favorites and watch-later state are runtime data, not tracked in Git. Fresh PCs do not inherit them without a separate personal backup.
 - A successful WinGet binary install does not mean app configuration was restored. Check each application individually.
 - The root `install.ps1` only previews, validates, or installs manifest WinGet applications. It does **not** create symlinks/junctions, change PATH, configure PowerShell or mpv, restore Corsair profiles, modify the registry, or run troubleshooting scripts.
 - `powershell/install.ps1 -Install` only copies two files with backups to the current user's PowerShell profile directory. `mpv-config/install.ps1 -Mode Install` independently updates AppData with backup/override checks. Corsair restore and Rio troubleshooting are separate opt-in actions; `scripts/rio-doctor.ps1` is preview-only unless `-Apply` is specified.
-- The website lives separately at [hedglen/hedglen.github.io](https://github.com/hedglen/hedglen.github.io). Retired organizer and yt-dlp wrapper content remains in Git history, not the current workstation setup.
+- The personal website lives separately at [hedglen/hedglen.github.io](https://github.com/hedglen/hedglen.github.io). This repository contains only active workstation files and opt-in backups/templates; Git history remains unchanged.
 
 ## Maintenance
 
