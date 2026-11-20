@@ -1,4 +1,4 @@
-// Tracked Zed configuration. Linked to %APPDATA%\Zed\settings.json by install.ps1.
+// Optional Zed settings template. The Workstation installer does not link or deploy this file.
 {
   // Appearance
   "theme": {
