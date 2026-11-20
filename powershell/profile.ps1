@@ -10,8 +10,7 @@ $env:EDITOR = 'zed'
 # and have no effect at PowerShell startup when the repository is absent.
 function Get-WorkstationRoot {
     # Prefer an explicit override, then the fresh-PC canonical path.
-    # Desktop/workstation-2 is a temporary fallback for the current workstation.
-    $candidates = @($env:WORKSTATION_ROOT, (Join-Path $HOME 'workstation'), (Join-Path $HOME 'Desktop\workstation-2'))
+    $candidates = @($env:WORKSTATION_ROOT, (Join-Path $HOME 'workstation'))
     foreach ($candidate in $candidates) {
         if ($candidate -and (Test-Path -LiteralPath (Join-Path $candidate 'apps.json'))) {
             return $candidate
