@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "description": "Workstation 2.0: curated 37 WinGet applications for Windows 11; validate IDs and inspect local installs.",
+  "description": "Workstation: curated 37 WinGet applications for Windows 11; validate IDs and inspect local installs.",
   "winget": [
     {
       "name": "Vivaldi",
