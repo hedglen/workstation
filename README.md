@@ -35,7 +35,42 @@ Use **PowerShell 7** once WinGet and Git are available. Windows PowerShell 5.1 c
 
    Start a **new PowerShell 7** window afterward. The installed profile and theme work even when GitHub is unavailable or the repository moves. Optional `dots` / `apps-*` commands expect the canonical `$HOME\workstation` checkout; the prompt itself does not. To apply later profile/theme changes from GitHub, rerun `powershell/install.ps1 -Install` after pulling.
 
-5. Configure WezTerm, Rio, Zed, Git, and Corsair iCUE profiles after reviewing their folders. Configs are not automatically linked or restored by the package installer. See **Configurations** below.
+5. **Install independent WezTerm and Zed configurations.** These commands copy files into the application-owned configuration directories. They do not create symlinks or junctions.
+
+   **WezTerm**: from PowerShell 7, after WinGet has installed WezTerm:
+
+   ```powershell
+   $source = "$HOME\workstation\wezterm"
+   $dest = "$HOME\.config\wezterm"
+   if (Test-Path -LiteralPath $dest) {
+       throw "WezTerm config already exists at $dest. Back it up and inspect any junction before replacing it."
+   }
+   New-Item -ItemType Directory -Path "$HOME\.config" -Force | Out-Null
+   Copy-Item -LiteralPath $source -Destination $dest -Recurse -ErrorAction Stop
+   Test-Path "$dest\wezterm.lua"
+   Test-Path "$dest\modules\theme.lua"
+   ```
+
+   A fresh install should show `True` twice. Restart WezTerm; its configuration will work independently of Git. If an existing `$HOME\.config\wezterm` is a **junction**, do not copy over it. Stage the files under a temporary new name, verify them, then remove **only the verified junction** using `cmd /c rmdir` and rename the staged folder, as described below.
+
+   **Zed**: after installing Zed, close the editor before copying. For a fresh PC with no personal Zed settings:
+
+   ```powershell
+   $source = "$HOME\workstation\zed"
+   $dest = "$env:APPDATA\Zed"
+   New-Item -ItemType Directory -Path "$dest\themes" -Force | Out-Null
+   foreach ($name in @('AGENTS.md','keymap.json','settings.json','themes\rio-neon-city.json')) {
+       $target = Join-Path $dest $name
+       if (Test-Path -LiteralPath $target) { throw "Already exists: $target. Back it up before restoring." }
+       Copy-Item -LiteralPath (Join-Path $source $name) -Destination $target -ErrorAction Stop
+   }
+   ```
+
+   These commands refuse to replace existing settings. If a prior install used symbolic links, inspect each with `Get-Item -Force | Select-Object FullName,LinkType,Target`, stage copies from Git separately, and replace **only confirmed symbolic links** while preserving originals and backups. Keep all four installed settings files as normal files.
+
+   **Windows Terminal (optional)**: Windows Terminal is not required when using WezTerm. On a fresh Windows installation, use its built-in settings; no repository link is installed. If recovering settings from an existing workstation, copy a verified `settings.json` into its user `LocalState` folder, never symlink it.
+
+   **Git, Rio, and Corsair iCUE**: Review their individual configuration folders and restore only what you need. Rio is optional as a second terminal; `scripts/rio-doctor.ps1` is read-only unless invoked with `-Apply`. iCUE backups are preserved but are not auto-restored.
 
 6. **Set up mpv as a separate, required configuration step.** WinGet installs the player binary, **not ModernZ**. For an independent configuration that does not depend on the Git repository:
 
