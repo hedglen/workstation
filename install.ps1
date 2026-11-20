@@ -1,4 +1,4 @@
-# Workstation 2.0. Preview by default; never performs system tweaks.
+# Workstation. Preview by default; never performs system tweaks.
 [CmdletBinding()]
 param(
     [switch]$Validate,
@@ -10,10 +10,10 @@ if ($Validate -and $Install) { throw 'Choose either -Validate or -Install.' }
 $manifestPath = Join-Path $PSScriptRoot 'apps.json'
 if (-not (Test-Path -LiteralPath $manifestPath)) { throw "Missing manifest: $manifestPath" }
 $manifest = Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
-if ($manifest.schemaVersion -ne 2) { throw 'Expected Workstation 2.0 manifest schemaVersion 2.' }
+if ($manifest.schemaVersion -ne 2) { throw 'Expected manifest schemaVersion 2.' }
 if (-not (Get-Command winget -ErrorAction SilentlyContinue)) { throw 'WinGet unavailable. Install Microsoft App Installer first.' }
 $mode = if ($Install) { 'INSTALL' } elseif ($Validate) { 'VALIDATE' } else { 'PREVIEW' }
-Write-Host "Workstation 2.0 | $mode" -ForegroundColor Cyan
+Write-Host "Workstation | $mode" -ForegroundColor Cyan
 $failed = [System.Collections.Generic.List[string]]::new()
 $completed = [System.Collections.Generic.List[string]]::new()
 $alreadyInstalled = [System.Collections.Generic.List[string]]::new()
