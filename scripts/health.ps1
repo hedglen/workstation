@@ -1,4 +1,4 @@
-# Read-only Workstation 2.0 health check; no installs, config edits or deletions.
+# Read-only Workstation health check; no installs, config edits or deletions.
 [CmdletBinding()]
 param()
 $root = Split-Path $PSScriptRoot -Parent
