@@ -72,7 +72,7 @@ Use **PowerShell 7** once WinGet and Git are available. Windows PowerShell 5.1 c
 
    **Git, Rio, and Corsair iCUE**: Review their individual configuration folders and restore only what you need. Rio is optional as a second terminal; `scripts/rio-doctor.ps1` is read-only unless invoked with `-Apply`. iCUE backups are preserved but are not auto-restored.
 
-6. **Set up mpv as a separate, required configuration step.** WinGet installs the player binary, **not ModernZ**. For an independent configuration that does not depend on the Git repository:
+6. **Set up mpv as a separate, required configuration step.** WinGet installs the player binary, **not ModernZ or the optional FSRCNNX upscale shader**. For an independent configuration that does not depend on the Git repository:
 
    ```powershell
    Set-Location "$HOME\workstation\mpv-config"
@@ -94,7 +94,7 @@ Use **PowerShell 7** once WinGet and Git are available. Windows PowerShell 5.1 c
    .\install.ps1 -Mode Diagnose  # Confirm executable and configuration paths
    ```
 
-   **Do not stop after Preview or Stage**: neither makes the normal mpv launch use ModernZ. The installer refuses to overwrite AppData if a portable override is detected. It preserves local favorites, saved volume, and watch-later state on upgrades. Read [mpv's full troubleshooting guide](mpv-config/README.md) before removing any legacy junction; never delete linked target directories as a shortcut.
+   **Do not stop after Preview or Stage**: neither makes the normal mpv launch use ModernZ or the optional FSRCNNX shader. The installer refuses to overwrite AppData if a portable override is detected. It preserves local favorites, saved volume, and watch-later state on upgrades. Read [mpv's full troubleshooting guide](mpv-config/README.md) before removing any legacy junction; never delete linked target directories as a shortcut. After installation, **Ctrl+F8** toggles FSRCNNX 2x super-resolution for low-res videos; normal HDR playback remains the default.
 
 7. Check repository integrity and preview application maintenance:
 
@@ -104,6 +104,18 @@ Use **PowerShell 7** once WinGet and Git are available. Windows PowerShell 5.1 c
    .\maintenance\update.ps1           # Preview only
    # .\maintenance\update.ps1 -Upgrade # Opt-in upgrades
    ```
+
+## Optional upgrade: enhanced 240p–720p mpv playback
+
+If this PC already has a working ModernZ installation and you want to add the **Ctrl+F8** FSRCNNX upscale toggle without reinstalling its other settings, run:
+
+```powershell
+git -C "$HOME\workstation" pull --ff-only origin master
+& "$HOME\workstation\mpv-config\install-upscaling.ps1"          # Preview only
+& "$HOME\workstation\mpv-config\install-upscaling.ps1" -Install # Shader and keybinding only
+```
+
+Restart mpv and press **Ctrl+F8** during playback to enable/disable enhanced upscaling. The shader is **off by default**. This is independent from the main app installer and preserves your existing mpv configuration. See [mpv enhancement details](mpv-config/README.md#enhanced-low-resolution-video-optional).
 
 ## Software policy
 
