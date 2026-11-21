@@ -55,7 +55,9 @@ $thumbfastCommit = '0f711de3138c9bd6718209d819ac54022c23ded2'
 $upstream = @(
     @{ Path = 'scripts/modernz.lua'; Url = "https://raw.githubusercontent.com/Samillion/ModernZ/$modernzCommit/modernz.lua" },
     @{ Path = 'fonts/modernz-icons.ttf'; Url = "https://raw.githubusercontent.com/Samillion/ModernZ/$modernzCommit/modernz-icons.ttf" },
-    @{ Path = 'scripts/thumbfast.lua'; Url = "https://raw.githubusercontent.com/po5/thumbfast/$thumbfastCommit/thumbfast.lua" }
+    @{ Path = 'scripts/thumbfast.lua'; Url = "https://raw.githubusercontent.com/po5/thumbfast/$thumbfastCommit/thumbfast.lua" },
+    # FSRCNNX 1.1 official 2x shader by igv; optional Ctrl+F8 toggle (not auto-enabled).
+    @{ Path = 'shaders/FSRCNNX_x2_8-0-4-1.glsl'; Url = 'https://github.com/igv/FSRCNN-TensorFlow/releases/download/1.1/FSRCNNX_x2_8-0-4-1.glsl' }
 )
 $tracked = @(
     'mpv.conf','input.conf',
@@ -66,7 +68,7 @@ $tracked = @(
 
 if ($Mode -eq 'Preview') {
     Write-Host 'PREVIEW: no changes made.' -ForegroundColor Yellow
-    Write-Host "Would install $($tracked.Count) tracked config files and $($upstream.Count) pinned assets."
+    Write-Host "Would install $($tracked.Count) tracked config files and $($upstream.Count) upstream assets (including optional FSRCNNX shader)."
     Write-Host "Would back up existing $target on Install."
     $overrides = @(Get-PortableOverrides)
     if ($overrides.Count) {
@@ -112,6 +114,10 @@ try {
         Write-Host "Downloading $($asset.Path)..."
         Invoke-WebRequest -Uri $asset.Url -OutFile $dest
         if ((Get-Item -LiteralPath $dest).Length -eq 0) { throw "Empty download: $($asset.Path)" }
+        if ($asset.Path -like '*.glsl') {
+            $header = Get-Content -LiteralPath $dest -TotalCount 20 -ErrorAction Stop | Out-String
+            if ($header -notmatch '//!HOOK|//!DESC') { throw "Downloaded shader does not look like an mpv GLSL shader: $($asset.Path)" }
+        }
     }
 } catch {
     Remove-Item -LiteralPath $stage -Force -Recurse -ErrorAction SilentlyContinue
