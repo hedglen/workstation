@@ -11,9 +11,35 @@
 - English audio preferred, stereo PCM to headphones/DAC; properly flagged forced English subtitles selected automatically, full English subtitles not selected by default.
 - Keyboard, mouse, and 12 Scimitar button assignments, including Num Lock on/off variants.
 
+## Enhanced low-resolution video (optional)
+
+For low-resolution sources around **240p–720p**, mpv includes an optional **FSRCNNX 2x** shader by igv. This is GPU neural super-resolution, not true restoration of discarded source detail. It can make some material more defined, but heavily compressed 240p clips may still have blockiness or ringing. Standard playback is **unchanged by default**, including HDR and hardware decoding.
+
+**Toggle during playback:** **Ctrl+F8** turns FSRCNNX on/off. It does not permanently enable the shader and does not change Scimitar buttons. The shader attempts a 2x enhancement stage; normal mpv scaling handles the remaining distance to 4K. Press **i** for mpv playback statistics; compare image quality and dropped frames with the shader on and off. The lighter FSRCNNX variant is selected for a better chance at smooth 60-fps playback with the RTX 3070 Ti.
+
+### Add this to an existing working mpv installation
+
+The full mpv configuration installer replaces the active AppData configuration (with backup), so **do not use it just to add upscaling**. Instead, pull the latest Workstation repository and use the narrow standalone upgrade:
+
+```powershell
+git -C "$HOME\workstation" pull --ff-only origin master
+& "$HOME\workstation\mpv-config\install-upscaling.ps1"          # Preview: no changes
+& "$HOME\workstation\mpv-config\install-upscaling.ps1" -Install # One shader + Ctrl+F8 binding
+```
+
+This downloads the FSRCNNX shader to `%APPDATA%\mpv\shaders\FSRCNNX_x2_8-0-4-1.glsl`, verifies it resembles an mpv GLSL shader, and appends **one** keybinding only if it is missing. The existing `input.conf` is backed up before any edit. It does not replace `mpv.conf`, ModernZ, thumbnails, favorite lists, subtitle preferences, or Scimitar bindings. It refuses to edit through active AppData symlinks or portable config overrides.
+
+Restart mpv, load a 240p/480p/720p video, and press **Ctrl+F8** to switch. Repeating the key toggles back to regular playback. If you don't like the effect on a particular clip, leave it off.
+
+### On a fresh PC
+
+The **normal** `mpv-config/install.ps1 -Mode Stage` and `-Mode Install` procedures include the official FSRCNNX 1.1 shader as an additional upstream asset and install the Ctrl+F8 binding from `input.conf`. You do **not** need to run `install-upscaling.ps1` after a successful fresh config installation.
+
+Upstream shader: [igv/FSRCNN-TensorFlow release 1.1](https://github.com/igv/FSRCNN-TensorFlow/releases/tag/1.1). The source is downloaded at installation time, not stored in Git. Online access is required.
+
 ## Safe staging and installation
 
-The main workstation WinGet installer installs `shinchiro.mpv`. This separate script stages configuration and pinned upstream ModernZ/thumbfast assets; it does not install mpv, FFmpeg, yt-dlp, alter PATH, or modify file associations.
+The main workstation WinGet installer installs `shinchiro.mpv`. This separate script stages configuration and upstream ModernZ/thumbfast/FSRCNNX assets; it does not install mpv, FFmpeg, yt-dlp, alter PATH, or modify file associations.
 
 ```powershell
 cd "$HOME\workstation\mpv-config"
@@ -60,10 +86,11 @@ This moves an existing `%APPDATA%\mpv` directory to a timestamped backup, instal
 
 ## Dependencies
 
-Downloaded on staging or installation, pinned to upstream Git commits:
+Downloaded on staging or installation. ModernZ/thumbfast are pinned to upstream Git commits; FSRCNNX uses its upstream 1.1 release:
 
 - ModernZ `579897e8c974c380caa5017dc7b27a69123c1333` (`modernz.lua`, `modernz-icons.ttf`), https://github.com/Samillion/ModernZ
 - thumbfast `0f711de3138c9bd6718209d819ac54022c23ded2` (`thumbfast.lua`), https://github.com/po5/thumbfast
+- FSRCNNX 1.1 `FSRCNNX_x2_8-0-4-1.glsl`, https://github.com/igv/FSRCNN-TensorFlow/releases/tag/1.1
 
 They are not copied into Git because the installer obtains them from the maintainers. Internet access is required while staging. The original projects retain their own licenses.
 
@@ -99,5 +126,5 @@ The favorites removal menu uses mpv's native `mp.input.select`, not uosc. The A-
 - Some videos have no forced subtitle track or incorrectly flag it, in which case manual selection with `s` is needed. If the selected subtitle behavior varies with audio language, inspect the track flags.
 - The `favorites.txt`, `volume.conf`, and `watch_later/` data files are local runtime state, not Git-tracked. The install backup can retain prior runtime state for manual migration.
 - The new audio setup decodes multichannel audio to stereo PCM; it does **not** bitstream Dolby Atmos to the Element IV.
-- No added shader stacks, automatic HDR toggling, GIF/clip export, standalone FFmpeg, SponsorBlock, or yt-dlp integration.
+- No automatic shader activation, HDR toggling, GIF/clip export, standalone FFmpeg, SponsorBlock, or yt-dlp integration. Optional FSRCNNX is toggled manually with Ctrl+F8.
 - This configuration works on the current PC. A **fresh-PC rebuild remains untested**; run `-Mode Stage` and validate controls before installing.
