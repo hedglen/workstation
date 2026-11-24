@@ -11,31 +11,26 @@
 - English audio preferred, stereo PCM to headphones/DAC; properly flagged forced English subtitles selected automatically, full English subtitles not selected by default.
 - Keyboard, mouse, and 12 Scimitar button assignments, including Num Lock on/off variants.
 
-## Enhanced low-resolution video (optional)
+## Adaptive rendering (automatic)
 
-For low-resolution sources around **240p–720p**, mpv includes an optional **FSRCNNX 2x** shader by igv. This is GPU neural super-resolution, not true restoration of discarded source detail. It can make some material more defined, but heavily compressed 240p clips may still have blockiness or ringing. Standard playback is **unchanged by default**, including HDR and hardware decoding.
+The adaptive Lua script selects rendering settings from coded dimensions, HDR transfer and frame rate. It uses the lightweight FSRCNNX 2x shader for SDR SD/720p up to 60 fps and 1080p up to 30 fps. Higher resolution, HDR and faster 1080p use conventional scaling. Mild debanding is enabled on SDR SD/720p; higher resolutions preserve source grain. Unknown transfer metadata conservatively disables automatic shader/debanding. HDR output and hardware decoding remain unchanged.
 
-**Toggle during playback:** **Ctrl+F8** turns FSRCNNX on/off. It does not permanently enable the shader and does not change Scimitar buttons. The shader attempts a 2x enhancement stage; normal mpv scaling handles the remaining distance to 4K. Press **i** for mpv playback statistics; compare image quality and dropped frames with the shader on and off. The lighter FSRCNNX variant is selected for a better chance at smooth 60-fps playback with the RTX 3070 Ti.
+- Ctrl+F8: Auto / Reference (restore original rendering settings).
+- Ctrl+F9: cycle Auto, Reference, Restoration (stronger SDR debanding), Performance (bilinear scaling).
+- Modes persist within the session; a new mpv process starts in Auto.
 
-### Add this to an existing working mpv installation
+### Upgrade an existing working installation
 
-The full mpv configuration installer replaces the active AppData configuration (with backup), so **do not use it just to add upscaling**. Instead, pull the latest Workstation repository and use the narrow standalone upgrade:
+Close mpv, then run:
 
-```powershell
+~~~powershell
 git -C "$HOME\workstation" pull --ff-only origin master
-& "$HOME\workstation\mpv-config\install-upscaling.ps1"          # Preview: no changes
-& "$HOME\workstation\mpv-config\install-upscaling.ps1" -Install # One shader + Ctrl+F8 binding
-```
+& "$HOME\workstation\mpv-config\install-upscaling.ps1" -Install
+~~~
 
-This downloads the FSRCNNX shader to `%APPDATA%\mpv\shaders\FSRCNNX_x2_8-0-4-1.glsl`, verifies it resembles an mpv GLSL shader, and appends **one** keybinding only if it is missing. The existing `input.conf` is backed up before any edit. It does not replace `mpv.conf`, ModernZ, thumbnails, favorite lists, subtitle preferences, or Scimitar bindings. It refuses to edit through active AppData symlinks or portable config overrides.
+This updates only the adaptive script and FSRCNNX shader, backing up existing copies. It does not replace mpv.conf, input.conf, ModernZ or runtime state. The adaptive script takes precedence over the legacy Ctrl+F8 binding. Fresh installs include both assets automatically. To revert an existing-install upgrade, close mpv and remove the new adaptive-render.lua script (or restore its prior backup).
 
-Restart mpv, load a 240p/480p/720p video, and press **Ctrl+F8** to switch. Repeating the key toggles back to regular playback. If you don't like the effect on a particular clip, leave it off.
-
-### On a fresh PC
-
-The **normal** `mpv-config/install.ps1 -Mode Stage` and `-Mode Install` procedures include the official FSRCNNX 1.1 shader as an additional upstream asset and install the Ctrl+F8 binding from `input.conf`. You do **not** need to run `install-upscaling.ps1` after a successful fresh config installation.
-
-Upstream shader: [igv/FSRCNN-TensorFlow release 1.1](https://github.com/igv/FSRCNN-TensorFlow/releases/tag/1.1). The source is downloaded at installation time, not stored in Git. Online access is required.
+Use Shift+i or i to inspect playback stats and dropped frames. These are conservative heuristics, not a guarantee of ideal image quality or real-time performance; Windows/GPU playback validation is still required.
 
 ## Safe staging and installation
 
@@ -126,5 +121,5 @@ The favorites removal menu uses mpv's native `mp.input.select`, not uosc. The A-
 - Some videos have no forced subtitle track or incorrectly flag it, in which case manual selection with `s` is needed. If the selected subtitle behavior varies with audio language, inspect the track flags.
 - The `favorites.txt`, `volume.conf`, and `watch_later/` data files are local runtime state, not Git-tracked. The install backup can retain prior runtime state for manual migration.
 - The new audio setup decodes multichannel audio to stereo PCM; it does **not** bitstream Dolby Atmos to the Element IV.
-- No automatic shader activation, HDR toggling, GIF/clip export, standalone FFmpeg, SponsorBlock, or yt-dlp integration. Optional FSRCNNX is toggled manually with Ctrl+F8.
+- Automatic shader selection is enabled. No automatic Windows HDR toggling, GIF/clip export, standalone FFmpeg, SponsorBlock, or yt-dlp integration.
 - This configuration works on the current PC. A **fresh-PC rebuild remains untested**; run `-Mode Stage` and validate controls before installing.
