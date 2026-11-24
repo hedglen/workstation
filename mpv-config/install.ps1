@@ -56,19 +56,19 @@ $upstream = @(
     @{ Path = 'scripts/modernz.lua'; Url = "https://raw.githubusercontent.com/Samillion/ModernZ/$modernzCommit/modernz.lua" },
     @{ Path = 'fonts/modernz-icons.ttf'; Url = "https://raw.githubusercontent.com/Samillion/ModernZ/$modernzCommit/modernz-icons.ttf" },
     @{ Path = 'scripts/thumbfast.lua'; Url = "https://raw.githubusercontent.com/po5/thumbfast/$thumbfastCommit/thumbfast.lua" },
-    # FSRCNNX 1.1 official 2x shader by igv; optional Ctrl+F8 toggle (not auto-enabled).
+    # FSRCNNX 1.1 official 2x shader by igv; automatically selected by adaptive-render.lua.
     @{ Path = 'shaders/FSRCNNX_x2_8-0-4-1.glsl'; Url = 'https://github.com/igv/FSRCNN-TensorFlow/releases/download/1.1/FSRCNNX_x2_8-0-4-1.glsl' }
 )
 $tracked = @(
     'mpv.conf','input.conf',
-    'scripts/ab-loop-manager.lua','scripts/boss-key.lua',
+    'scripts/ab-loop-manager.lua','scripts/boss-key.lua','scripts/adaptive-render.lua',
     'scripts/favorites.lua','scripts/remember-volume.lua',
     'script-opts/modernz.conf','script-opts/thumbfast.conf'
 )
 
 if ($Mode -eq 'Preview') {
     Write-Host 'PREVIEW: no changes made.' -ForegroundColor Yellow
-    Write-Host "Would install $($tracked.Count) tracked config files and $($upstream.Count) upstream assets (including optional FSRCNNX shader)."
+    Write-Host "Would install $($tracked.Count) tracked config files and $($upstream.Count) upstream assets (including adaptive FSRCNNX shader)."
     Write-Host "Would back up existing $target on Install."
     $overrides = @(Get-PortableOverrides)
     if ($overrides.Count) {
